@@ -83,57 +83,55 @@ SELECT
 FROM #cashregister cr
 INNER JOIN #amount a ON cr.codTipForPagto=a.codTipForPagto
 
-RETURN;
+INSERT INTO CI_MIDDLEWAY..ticketoffice_cashregister_closed (id_ticketoffice_user,close_date,codTipForPagto,TipForPagto,amount,amountDeclared,diff,id_base)
+SELECT
+    @id_ticketoffice_user
+    ,@date
+    ,cr.codTipForPagto
+    ,cr.TipForPagto
+    ,cr.amount
+    ,a.amount
+    ,cr.amount-a.amount
+    ,@id_base
+FROM #cashregister cr
+INNER JOIN #amount a ON cr.codTipForPagto=a.codTipForPagto
 
--- INSERT INTO CI_MIDDLEWAY..ticketoffice_cashregister_closed (id_ticketoffice_user,close_date,codTipForPagto,TipForPagto,amount,amountDeclared,diff,id_base)
--- SELECT
---     @id_ticketoffice_user
---     ,@date
---     ,cr.codTipForPagto
---     ,cr.TipForPagto
---     ,cr.amount
---     ,a.amount
---     ,cr.amount-a.amount
---     ,@id_base
--- FROM #cashregister cr
--- INNER JOIN #amount a ON cr.codTipForPagto=a.codTipForPagto
+-- SELECT @CodSaqueDiff, r.codTipForPagto, r.diff FROM #result r WHERE r.diff<>0
+-- SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff=0
+-- SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff<>0
 
--- -- SELECT @CodSaqueDiff, r.codTipForPagto, r.diff FROM #result r WHERE r.diff<>0
--- -- SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff=0
--- -- SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff<>0
+IF @hasDiff = 1
+BEGIN
+	SELECT @CodSaqueDiff = (SELECT COALESCE(MAX(CodSaque),0)+1 FROM tabSaque)
 
--- IF @hasDiff = 1
--- BEGIN
--- 	SELECT @CodSaqueDiff = (SELECT COALESCE(MAX(CodSaque),0)+1 FROM tabSaque)
-
--- 	INSERT INTO tabSaque (CodSaque, CodCaixa, CodUsuario, DatOperacao ,DatMovimento, TipSaque, CodMovimento)
---   		VALUES(@CodSaqueDiff, @CodCaixa, @CodUsuario, GETDATE(), @date,'D', @CodMovimento)
+	INSERT INTO tabSaque (CodSaque, CodCaixa, CodUsuario, DatOperacao ,DatMovimento, TipSaque, CodMovimento)
+  		VALUES(@CodSaqueDiff, @CodCaixa, @CodUsuario, GETDATE(), @date,'D', @CodMovimento)
 
 
---     INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
---         SELECT @CodSaqueDiff, r.codTipForPagto, r.diff FROM #result r WHERE r.diff<>0
--- END
+    INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
+        SELECT @CodSaqueDiff, r.codTipForPagto, r.diff FROM #result r WHERE r.diff<>0
+END
 
--- SELECT @codSaqueNormal = (SELECT COALESCE(MAX(CodSaque),0)+1 FROM tabSaque)
+SELECT @codSaqueNormal = (SELECT COALESCE(MAX(CodSaque),0)+1 FROM tabSaque)
 
--- INSERT INTO tabSaque (CodSaque, CodCaixa, CodUsuario, DatOperacao ,DatMovimento, TipSaque, CodMovimento)
---     VALUES(@codSaqueNormal, @CodCaixa, @CodUsuario, GETDATE(), @date,'F', @CodMovimento)
+INSERT INTO tabSaque (CodSaque, CodCaixa, CodUsuario, DatOperacao ,DatMovimento, TipSaque, CodMovimento)
+    VALUES(@codSaqueNormal, @CodCaixa, @CodUsuario, GETDATE(), @date,'F', @CodMovimento)
 
--- INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
---     SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff=0
+INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
+    SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff=0
 
--- IF @hasDiff = 1
--- BEGIN
---     INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
---         SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff<>0
--- END
+IF @hasDiff = 1
+BEGIN
+    INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
+        SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff<>0
+END
 
--- UPDATE tabMovCaixa SET 
--- Saldo = (Saldo - COALESCE((select SUM(amount) from #result),0))
--- ,ObsDiferenca = @justificative
--- ,StaMovimento='F'
--- WHERE DatMovimento = @date
--- AND CodCaixa = @CodCaixa AND CodMovimento = @CodMovimento AND StaMovimento='A'
+UPDATE tabMovCaixa SET 
+Saldo = (Saldo - COALESCE((select SUM(amount) from #result),0))
+,ObsDiferenca = @justificative
+,StaMovimento='F'
+WHERE DatMovimento = @date
+AND CodCaixa = @CodCaixa AND CodMovimento = @CodMovimento AND StaMovimento='A'
 
--- SELECT 1 success
+SELECT 1 success
 

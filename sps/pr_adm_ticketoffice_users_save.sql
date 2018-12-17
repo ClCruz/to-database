@@ -30,7 +30,7 @@ END
 
 IF @has = 1
 BEGIN
-    UPDATE CI_MIDDLEWAY..ticketoffice_user SET [login]=@login, [name]=@name, email=@email, active=@active WHERE id=@idAux
+    UPDATE CI_MIDDLEWAY..ticketoffice_user SET [login]=@login, [name]=@name, email=@email, active=@active, updated=GETDATE() WHERE id=@idAux
 END
 ELSE
 BEGIN
