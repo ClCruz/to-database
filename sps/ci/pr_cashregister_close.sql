@@ -1,17 +1,16 @@
+
+--exec sp_executesql N'EXEC pr_cashregister_close @P1, @P2, @P3',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01',N'50#100|48#400',N''
+
 ALTER PROCEDURE dbo.pr_cashregister_close (@id_ticketoffice_user UNIQUEIDENTIFIER
         ,@amount VARCHAR(MAX)
         ,@justificative VARCHAR(250) = NULL)
 
 AS
 
--- DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER
---         ,@amount VARCHAR(MAX)
---         ,@justificative VARCHAR(250) = NULL
+-- DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER = '8CC26A74-7E65-411E-B854-F7B281A46E01'
+--         ,@amount VARCHAR(MAX) = '50#100|48#400'
+--         ,@justificative VARCHAR(250) = ''
 
--- SELECT @id_ticketoffice_user='8CC26A74-7E65-411E-B854-F7B281A46E01'
---         ,@amount='48#60000'
---         --,@amount='48#15000|52#5000'
---         ,@justificative=''
 SET NOCOUNT ON;
 
 DECLARE @id_base INT
@@ -29,7 +28,7 @@ IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
 
 CREATE TABLE #amount (codTipForPagto INT, amount DECIMAL(18,2));
 
-CREATE TABLE #cashregister (codTipForPagto INT, TipForPagto VARCHAR(1000), amount DECIMAL(18,2), [date] VARCHAR(10))
+CREATE TABLE #cashregister (codTipForPagto INT, TipForPagto VARCHAR(1000), amount DECIMAL(18,2), [date] VARCHAR(10), [login] VARCHAR(1000), [name] VARCHAR(1000))
 
 CREATE TABLE #result (codTipForPagto INT, TipForPagto VARCHAR(1000), amount DECIMAL(18,2), amountDeclared DECIMAL(18,2), diff DECIMAL(18,2))
 
@@ -72,7 +71,6 @@ DECLARE @CodSaqueDiff INT = NULL
 SELECT @hasDiff=1 FROM #result WHERE diff<>0
 SELECT @hasNormal=1 FROM #result WHERE diff=0
 
-INSERT INTO CI_MIDDLEWAY..ticketoffice_cashregister_closed (id_ticketoffice_user,close_date,codTipForPagto,TipForPagto,amount,amountDeclared,diff,id_base)
 SELECT
     @id_ticketoffice_user
     ,@date
@@ -85,45 +83,57 @@ SELECT
 FROM #cashregister cr
 INNER JOIN #amount a ON cr.codTipForPagto=a.codTipForPagto
 
+RETURN;
+
+-- INSERT INTO CI_MIDDLEWAY..ticketoffice_cashregister_closed (id_ticketoffice_user,close_date,codTipForPagto,TipForPagto,amount,amountDeclared,diff,id_base)
+-- SELECT
+--     @id_ticketoffice_user
+--     ,@date
+--     ,cr.codTipForPagto
+--     ,cr.TipForPagto
+--     ,cr.amount
+--     ,a.amount
+--     ,cr.amount-a.amount
+--     ,@id_base
+-- FROM #cashregister cr
+-- INNER JOIN #amount a ON cr.codTipForPagto=a.codTipForPagto
+
+-- -- SELECT @CodSaqueDiff, r.codTipForPagto, r.diff FROM #result r WHERE r.diff<>0
+-- -- SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff=0
+-- -- SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff<>0
+
+-- IF @hasDiff = 1
+-- BEGIN
+-- 	SELECT @CodSaqueDiff = (SELECT COALESCE(MAX(CodSaque),0)+1 FROM tabSaque)
+
+-- 	INSERT INTO tabSaque (CodSaque, CodCaixa, CodUsuario, DatOperacao ,DatMovimento, TipSaque, CodMovimento)
+--   		VALUES(@CodSaqueDiff, @CodCaixa, @CodUsuario, GETDATE(), @date,'D', @CodMovimento)
 
 
--- SELECT @CodSaqueDiff, r.codTipForPagto, r.diff FROM #result r WHERE r.diff<>0
--- SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff=0
--- SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff<>0
--- RETURN;
+--     INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
+--         SELECT @CodSaqueDiff, r.codTipForPagto, r.diff FROM #result r WHERE r.diff<>0
+-- END
 
-IF @hasDiff = 1
-BEGIN
-	SELECT @CodSaqueDiff = (SELECT COALESCE(MAX(CodSaque),0)+1 FROM tabSaque)
+-- SELECT @codSaqueNormal = (SELECT COALESCE(MAX(CodSaque),0)+1 FROM tabSaque)
 
-	INSERT INTO tabSaque (CodSaque, CodCaixa, CodUsuario, DatOperacao ,DatMovimento, TipSaque, CodMovimento)
-  		VALUES(@CodSaqueDiff, @CodCaixa, @CodUsuario, GETDATE(), @date,'D', @CodMovimento)
+-- INSERT INTO tabSaque (CodSaque, CodCaixa, CodUsuario, DatOperacao ,DatMovimento, TipSaque, CodMovimento)
+--     VALUES(@codSaqueNormal, @CodCaixa, @CodUsuario, GETDATE(), @date,'F', @CodMovimento)
 
+-- INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
+--     SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff=0
 
-    INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
-        SELECT @CodSaqueDiff, r.codTipForPagto, r.diff FROM #result r WHERE r.diff<>0
-END
+-- IF @hasDiff = 1
+-- BEGIN
+--     INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
+--         SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff<>0
+-- END
 
-SELECT @codSaqueNormal = (SELECT COALESCE(MAX(CodSaque),0)+1 FROM tabSaque)
+-- UPDATE tabMovCaixa SET 
+-- Saldo = (Saldo - COALESCE((select SUM(amount) from #result),0))
+-- ,ObsDiferenca = @justificative
+-- ,StaMovimento='F'
+-- WHERE DatMovimento = @date
+-- AND CodCaixa = @CodCaixa AND CodMovimento = @CodMovimento AND StaMovimento='A'
 
-INSERT INTO tabSaque (CodSaque, CodCaixa, CodUsuario, DatOperacao ,DatMovimento, TipSaque, CodMovimento)
-    VALUES(@codSaqueNormal, @CodCaixa, @CodUsuario, GETDATE(), @date,'F', @CodMovimento)
-
-INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
-    SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff=0
-
-IF @hasDiff = 1
-BEGIN
-    INSERT INTO tabSaqDetalhe (CodSaque, CodTipForPagto, Valor)
-        SELECT @codSaqueNormal, r.codTipForPagto, r.amountDeclared FROM #result r WHERE r.diff<>0
-END
-
-UPDATE tabMovCaixa SET 
-Saldo = (Saldo - COALESCE((select SUM(amount) from #result),0))
-,ObsDiferenca = @justificative
-,StaMovimento='F'
-WHERE DatMovimento = @date
-AND CodCaixa = @CodCaixa AND CodMovimento = @CodMovimento AND StaMovimento='A'
-
-SELECT 1 success
+-- SELECT 1 success
 

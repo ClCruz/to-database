@@ -5,7 +5,9 @@ ALTER PROCEDURE dbo.pr_admin_event_save (@api VARCHAR(100), @id_evento INT
         ,@address VARCHAR(1000)
         ,@meta_description VARCHAR(1000)
         ,@meta_keyword VARCHAR(1000)
-        ,@id_genre INT)
+        ,@id_genre INT
+        ,@showInBanner BIT = 0
+        ,@bannerDescription VARCHAR(1000) = NULL)
 
 AS 
 
@@ -57,6 +59,8 @@ SET [description]=@description
     ,meta_description=@meta_description
     ,meta_keyword=@meta_keyword
     ,id_genre=@id_genre
+    ,showInBanner=@showInBanner
+    ,bannerDescription=@bannerDescription
 --    ,uri='/evento/'+@uri
     -- ,[address]=@address
 WHERE id_evento=@id_evento

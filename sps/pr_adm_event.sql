@@ -45,9 +45,13 @@ e.id_evento
 ,eei.minuteBefore
 ,'' [image]
 ,eei.cardimage
+,eei.imageoriginal
+,eei.cardbigimage
 ,eei.meta_description
 ,eei.meta_keyword
 ,eei.id_genre
+,eei.showInBanner
+,eei.bannerDescription
 FROM CI_MIDDLEWAY..mw_evento e
 INNER JOIN CI_MIDDLEWAY..partner_database pdb ON e.id_base=pdb.id_base
 LEFT JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
