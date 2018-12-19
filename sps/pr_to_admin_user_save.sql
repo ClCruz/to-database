@@ -1,11 +1,14 @@
+--exec sp_executesql N'EXEC pr_to_admin_user_save @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5',N'',N'teste',N'teste',N'teste@teste.com',N'456456',N'1',N'56f4485c63c0ef77d158f4739d4a4025148e1091'
+go
 
-CREATE PROCEDURE dbo.pr_to_admin_user_save (@api VARCHAR(100), @id VARCHAR(100), @name VARCHAR(1000), @login VARCHAR(1000), @email VARCHAR(1000), @document VARCHAR(50), @active BIT, @newPass VARCHAR(1000))
+
+ALTER PROCEDURE dbo.pr_to_admin_user_save (@api VARCHAR(100), @id VARCHAR(100), @name VARCHAR(1000), @login VARCHAR(1000), @email VARCHAR(1000), @document VARCHAR(50), @active BIT, @newPass VARCHAR(1000))
 
 AS 
 
-SET NOCOUNT ON;
+-- declare @api VARCHAR(100) = 'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5', @id VARCHAR(100)='', @name VARCHAR(1000)= 'teste', @login VARCHAR(1000)='teste', @email VARCHAR(1000)='teste@gmail.com', @document VARCHAR(50) = 'dddd', @active BIT= 1, @newPass VARCHAR(1000) = '56f4485c63c0ef77d158f4739d4a4025148e1091'
 
--- DECLARE @api VARCHAR(100) = 'live_keykeykey', @id VARCHAR(100) = '', @name VARCHAR(1000)='teste', @login VARCHAR(1000)= 'teste', @email VARCHAR(1000)='teste@teste.com', @active BIT = 1, @newPass VARCHAR(1000) = '56f4485c63c0ef77d158f4739d4a4025148e1091'
+SET NOCOUNT ON;
 
 DECLARE @hasAnotherWithLogin BIT = 0
         ,@has BIT = 0
@@ -14,14 +17,13 @@ DECLARE @hasAnotherWithLogin BIT = 0
 IF @id IS NOT NULL AND @id != ''
     SET @idAux = @id
 
-SELECT TOP 1 @hasAnotherWithLogin=1 FROM CI_MIDDLEWAY..to_admin_user WHERE LOWER([login])=RTRIM(LTRIM(LOWER(@login))) AND id!=@idAux
+SELECT TOP 1 @hasAnotherWithLogin=1 FROM CI_MIDDLEWAY..to_admin_user WHERE LOWER([login])=RTRIM(LTRIM(LOWER(@login))) AND (@idAux IS NULL OR id!=@idAux)
 SELECT TOP 1 @has=1 FROM CI_MIDDLEWAY..to_admin_user WHERE id=@idAux
 
 IF @hasAnotherWithLogin = 1
 BEGIN
     SELECT 0 success
-            ,'Já há outro produtor com esse login.' msg
-
+            ,'Já há outro usuário com esse login.' msg
     RETURN;
 END
 
