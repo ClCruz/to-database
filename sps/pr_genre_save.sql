@@ -1,4 +1,6 @@
-ALTER PROCEDURE dbo.pr_genre_save (@id INT, @name VARCHAR(1000))
+-- exec sp_executesql N'EXEC pr_genre_save @P1, @P2, @P3',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000)',N'',N'SCI-FI',N'1'
+
+ALTER PROCEDURE dbo.pr_genre_save (@id INT, @name VARCHAR(1000), @active BIT)
 
 AS
 
@@ -9,7 +11,7 @@ SET @name = RTRIM(LTRIM(@name));
 
 IF @id IS NOT NULL AND @id<>0
 BEGIN
-    UPDATE CI_MIDDLEWAY..genre SET [name]=@name WHERE id=@id
+    UPDATE CI_MIDDLEWAY..genre SET [name]=@name, active=@active WHERE id=@id
 END
 ELSE
 BEGIN
@@ -21,7 +23,7 @@ BEGIN
     BEGIN
         SELECT @idDb = MAX(id)+1 FROM CI_MIDDLEWAY..genre
 
-        INSERT INTO CI_MIDDLEWAY..genre (id, [name], active) VALUES (@id, @name, 1);
+        INSERT INTO CI_MIDDLEWAY..genre (id, [name], active) VALUES (@idDb, @name, 1);
     END
 END
 
