@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE dbo.pr_admin_event (@id_user UNIQUEIDENTIFIER, @search VARCHAR(100) = NULL, @currentPage INT = 1, @perPage INT = 10)
+ALTER PROCEDURE dbo.pr_admin_event (@id_user UNIQUEIDENTIFIER, @search VARCHAR(100) = NULL, @currentPage INT = 1, @perPage INT = 10)
 
 AS
 
@@ -16,7 +16,7 @@ SELECT
     ,eei.cardimage
     ,eei.uri
     ,le.ds_local_evento
-    ,g.name
+    ,g.name genreName
     ,m.ds_municipio
     ,es.ds_estado
     ,es.sg_estado
