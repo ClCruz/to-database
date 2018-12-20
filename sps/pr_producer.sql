@@ -22,9 +22,9 @@ SELECT
 FROM CI_MIDDLEWAY..mw_produtor p
 INNER JOIN CI_MIDDLEWAY..producer_user pu ON p.id_produtor=pu.id_produtor AND pu.id_admin_user=@loggedId
 WHERE 
-(@search IS NULL OR p.ds_razao_social LIKE '%'+@search+'%')
-OR (@search IS NULL OR p.cd_email LIKE '%'+@search+'%')
-OR (@search IS NULL OR p.cd_cpf_cnpj LIKE '%'+@search+'%')
+((@search IS NULL OR p.ds_razao_social LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS)
+OR (@search IS NULL OR p.cd_email LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS)
+OR (@search IS NULL OR p.cd_cpf_cnpj LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS))
 ORDER by p.ds_razao_social
  OFFSET (@currentPage-1)*@perPage ROWS
    FETCH NEXT @perPage ROWS ONLY;
