@@ -14,6 +14,7 @@ SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAM
 SELECT
     p.CodPeca
     ,e.id_evento
+    ,e.id_base
     ,p.id_produtor
     ,p.NomPeca
     ,p.CodTipPeca
