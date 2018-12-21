@@ -13,7 +13,6 @@ IF (@in_ativo = '') SET @in_ativo = NULL
 
 SELECT
 le.id_local_evento
-,lower(le.ds_local_evento)
 ,le.ds_local_evento
 ,le.ds_googlemaps
 ,le.in_ativo

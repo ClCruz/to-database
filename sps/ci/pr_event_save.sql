@@ -9,9 +9,10 @@ CREATE PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@id_local_evento int
     ,@ValIngresso numeric(11,2)
     ,@description VARCHAR(MAX)
-    ,@address VARCHAR(1000)
     ,@meta_description VARCHAR(1000)
     ,@meta_keyword VARCHAR(1000)
+    ,@opening_time VARCHAR(1000)
+    ,@insurance_policy VARCHAR(1000)
     ,@showInBanner BIT = 0
     ,@bannerDescription VARCHAR(1000) = NULL
     ,@QtIngrPorPedido smallint = 4
@@ -169,13 +170,6 @@ SELECT @genre=TipPeca FROM tabTipPeca WHERE CodTipPeca=@CodTipPeca
 SELECT @id_genre=g.id
 FROM CI_MIDDLEWAY..genre g
 WHERE RTRIM(LTRIM(g.name))=RTRIM(LTRIM(@genre)) COLLATE SQL_Latin1_General_Cp1251_CS_AS
-
-IF @address IS NOT NULL AND @address != '' AND @id_local_evento IS NOT NULL
-BEGIN
-    UPDATE CI_MIDDLEWAY..mw_local_evento
-    SET ds_googlemaps=@address
-    WHERE id_local_evento=@id_local_evento
-END
 
 UPDATE CI_MIDDLEWAY..mw_evento_extrainfo
 SET [description]=@description
