@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_state
+CREATE PROCEDURE dbo.pr_state_select
 
 AS
 

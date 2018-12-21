@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_place_get (@id_place INT)
+ALTER PROCEDURE dbo.pr_place_get (@id_place INT)
 
 AS
 
@@ -7,6 +7,9 @@ le.id_local_evento
 ,le.ds_local_evento
 ,le.ds_googlemaps
 ,le.in_ativo
+,le.id_municipio
+,le.id_tipo_local
+,m.id_estado
 ,m.ds_municipio
 ,e.sg_estado
 ,e.ds_estado

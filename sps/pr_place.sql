@@ -1,10 +1,10 @@
 --exec sp_executesql N'EXEC pr_place @P1, @P2, @P3, @P4, @P5, @P6',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000)',N'anzu',N'',N'',N'',N'1',N'10'
 
--- ALTER PROCEDURE dbo.pr_place (@search VARCHAR(100) = NULL, @id_state INT, @id_city INT, @in_ativo BIT, @currentPage INT = 1, @perPage INT = 10)
+ALTER PROCEDURE dbo.pr_place (@search VARCHAR(100) = NULL, @id_state INT, @id_city INT, @in_ativo BIT, @currentPage INT = 1, @perPage INT = 10)
 
--- AS
+AS
 
-DECLARE @search VARCHAR(100) = 'adeg', @id_state INT = '', @id_city INT = '', @in_ativo BIT = '', @currentPage INT = 1, @perPage INT = 10
+--DECLARE @search VARCHAR(100) = 'adeg', @id_state INT = '', @id_city INT = '', @in_ativo BIT = '', @currentPage INT = 1, @perPage INT = 10
 
 IF (@search = '') SET @search = NULL 
 IF (@id_state = '') SET @id_state = NULL 

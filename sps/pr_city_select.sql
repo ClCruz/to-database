@@ -1,4 +1,4 @@
-ALTER PROCEDURE dbo.pr_city (@id_state INT)
+CREATE PROCEDURE dbo.pr_city_select (@id_state INT)
 
 AS
 

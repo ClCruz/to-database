@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_placetype
+CREATE PROCEDURE dbo.pr_placetype_select
 
 AS
 
