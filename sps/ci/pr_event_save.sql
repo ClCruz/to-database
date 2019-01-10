@@ -1,4 +1,18 @@
-CREATE PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
+-- exec sp_executesql N'EXEC pr_event_save @P1,@P2,@P3,@P4,@P5,@P6,@P7,@P8,@P9,@P10,@P11,@P12,@P13,@P14,@P15,@P16,@P17,@P18,@P19',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000),@P9 nvarchar(4000),@P10 nvarchar(4000),@P11 nvarchar(4000),@P12 nvarchar(4000),@P13 nvarchar(4000),@P14 nvarchar(4000),@P15 nvarchar(4000),@P16 nvarchar(4000),@P17 nvarchar(4000),@P18 nvarchar(4000),@P19 nvarchar(4000)',N'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5',N'32',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'14',N'Replicas',N'89',N'60',N'12',N'265',N'<p>A scientist becomes obsessed with bringing back his family members who died in a traffic accident.</p>',N'desc',N'keyword',N'',N'',N'1',N'<p>evento show</p>',N'6',N'0',N'8'
+-- select * from tabPeca
+-- 
+-- select * from CI_MIDDLEWAY..mw_evento where id_evento=22739
+-- select * from CI_MIDDLEWAY..mw_evento_extrainfo where id_evento=22739
+
+/*
+delete from ci_middleway..mw_evento_extrainfo where id_evento in (select id_evento from CI_MIDDLEWAY..mw_evento where ds_evento like 'Replicas')
+delete from ci_middleway..mw_evento where id_evento in (select id_evento from CI_MIDDLEWAY..mw_evento where ds_evento like 'Replicas')
+delete from tabvalbilhete where codpeca in (select codPeca from CI_MIDDLEWAY..mw_evento where ds_evento like 'Replicas')
+delete from tabpeca where codpeca in (select codPeca from CI_MIDDLEWAY..mw_evento where ds_evento like 'Replicas')
+*/
+-- go
+
+ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@id_produtor INT
     ,@id_to_admin_user UNIQUEIDENTIFIER
     ,@CodPeca INT
@@ -7,7 +21,6 @@ CREATE PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@TemDurPeca int
     ,@CenPeca int
     ,@id_local_evento int
-    ,@ValIngresso numeric(11,2)
     ,@description VARCHAR(MAX)
     ,@meta_description VARCHAR(1000)
     ,@meta_keyword VARCHAR(1000)
@@ -15,21 +28,57 @@ CREATE PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@insurance_policy VARCHAR(1000)
     ,@showInBanner BIT = 0
     ,@bannerDescription VARCHAR(1000) = NULL
+--     ,@ValIngresso numeric(11,2) = 0
     ,@QtIngrPorPedido smallint = 4
     ,@in_obriga_cpf char(1) = '0'
     ,@qt_ingressos_por_cpf smallint = 4)
 
+
+
 AS
 
+-- declare @api VARCHAR(100) = 'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5'
+--     ,@id_produtor INT = 32
+--     ,@id_to_admin_user UNIQUEIDENTIFIER = 'F2177E5E-F727-4906-948D-4EEA9B9BBD0E'
+--     ,@CodPeca INT = ''
+--     ,@NomPeca VARCHAR(35) = 'Replicas'
+--     ,@CodTipPeca INT = '89'
+--     ,@TemDurPeca int = '60'
+--     ,@CenPeca int = '12'
+--     ,@id_local_evento int = '265'
+--     ,@description VARCHAR(MAX) = '<p>A scientist becomes obsessed with bringing back his family members who died in a traffic accident.</p>'
+--     ,@meta_description VARCHAR(1000) = 'desc'
+--     ,@meta_keyword VARCHAR(1000) = 'keyword'
+--     ,@opening_time VARCHAR(1000) = '1hr antes'
+--     ,@insurance_policy VARCHAR(1000) = 'apolice bradesco 123.x'
+--     ,@showInBanner BIT = 1
+--     ,@bannerDescription VARCHAR(1000) = '<p>evento show</p>'
+--     ,@QtIngrPorPedido smallint = 6
+--     ,@in_obriga_cpf char(1) = '0'
+--     ,@qt_ingressos_por_cpf smallint = 8
+
 SET NOCOUNT ON;
+
+DECLARE @ValIngresso numeric(11,2) = 0
+
+IF @CodPeca = 0 
+        SET @CodPeca = NULL
 
 DECLARE @id_partner UNIQUEIDENTIFIER
         ,@id_base INT
         ,@youshallnotpass BIT = 1
+        ,@id_genre INT = @CodTipPeca
+        ,@genre VARCHAR(1000)
 
 SELECT TOP 1 @id_partner=p.id FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
 SELECT TOP 1 @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
 SELECT @youshallnotpass=0 FROM CI_MIDDLEWAY..partner_database pd WHERE pd.id_base=@id_base AND pd.id_partner=@id_partner
+
+SELECT @genre=[name] FROM CI_MIDDLEWAY..genre WHERE id=@id_genre
+
+SELECT @CodTipPeca=tp.CodTipPeca
+FROM tabTipPeca tp
+WHERE RTRIM(LTRIM(tp.TipPeca))=RTRIM(LTRIM(@genre)) COLLATE SQL_Latin1_General_Cp1251_CS_AS
 
 IF @youshallnotpass=1
 BEGIN
@@ -158,14 +207,10 @@ END
 
 
 DECLARE @id_evento INT
-        ,@id_genre INT = NULL
-        ,@genre VARCHAR(MAX)
 
 SELECT @id_evento=id_evento FROM CI_MIDDLEWAY..mw_evento WHERE CodPeca=@CodPeca AND id_base=@id_base
 
 SELECT @id_local_evento=id_local_evento FROM CI_MIDDLEWAY..mw_evento where id_evento=@id_evento
-
-SELECT @genre=TipPeca FROM tabTipPeca WHERE CodTipPeca=@CodTipPeca
 
 SELECT @id_genre=g.id
 FROM CI_MIDDLEWAY..genre g
@@ -178,6 +223,8 @@ SET [description]=@description
     ,id_genre=@id_genre
     ,showInBanner=@showInBanner
     ,bannerDescription=@bannerDescription
+    ,opening_time=@opening_time
+    ,insurance_policy=@insurance_policy
 WHERE id_evento=@id_evento
 
 UPDATE CI_MIDDLEWAY..search
@@ -187,3 +234,6 @@ WHERE id_evento=@id_evento
 UPDATE CI_MIDDLEWAY..home
 SET outofdate=1
 WHERE id_evento=@id_evento
+
+SELECT @id_evento id_evento
+        ,@codPeca codPecca
