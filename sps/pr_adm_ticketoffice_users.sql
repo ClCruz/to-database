@@ -32,5 +32,5 @@ WHERE
 OR (@name IS NULL OR tou.[login] LIKE '%'+@name+'%')
 OR (@name IS NULL OR tou.email LIKE '%'+@name+'%')
 ORDER by tou.name
- OFFSET (@currentPage-1)*@perPage ROWS
-   FETCH NEXT @perPage ROWS ONLY;
+-- OFFSET (@currentPage-1)*@perPage ROWS
+--   FETCH NEXT @perPage ROWS ONLY;

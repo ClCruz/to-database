@@ -1,3 +1,7 @@
+-- exec sp_executesql N'EXEC pr_ticketoffice_user_add_base @P1',N'@P1 nvarchar(4000)',N'FEEF6152-0886-449D-A7B9-0CBE89DD60CD'
+
+-- select * from CI_MIDDLEWAY..ticketoffice_user_base
+
 -- pr_ticketoffice_user_add_base '8CC26A74-7E65-411E-B854-F7B281A46E01'
 -- exec sp_executesql N'EXEC pr_ticketoffice_user_add_base @P1',N'@P1 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01'
 -- select * from CI_MIDDLEWAY..ticketoffice_user_base
@@ -7,12 +11,18 @@ ALTER PROCEDURE pr_ticketoffice_user_add_base (@id UNIQUEIDENTIFIER)
 
 AS
 
+-- DECLARE @id UNIQUEIDENTIFIER = 'FEEF6152-0886-449D-A7B9-0CBE89DD60CD'
+
 SET NOCOUNT ON;
+
+DECLARE @id_base INT
+
+SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
 
 DECLARE @has BIT = 0
         ,@hasActive BIT = 0 
 
-SELECT TOP 1 @has = 1, @hasActive = active FROM CI_MIDDLEWAY..ticketoffice_user_base WHERE id_ticketoffice_user=@id
+SELECT TOP 1 @has = 1, @hasActive = active FROM CI_MIDDLEWAY..ticketoffice_user_base WHERE id_ticketoffice_user=@id AND id_base=@id_base
 
 IF @has = 1
 BEGIN
@@ -27,9 +37,6 @@ BEGIN
     RETURN;
 END
 
-DECLARE @id_base INT
-
-SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
 
 DECLARE @tou_login VARCHAR(1000), @tou_name VARCHAR(1000), @tou_email VARCHAR(1000)
 

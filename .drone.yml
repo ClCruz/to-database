@@ -1,0 +1,17 @@
+kind: 
+name: database
+
+steps:
+- name: install
+  image: blcoccaro/to-deploy:v2
+  commands:
+  - pwd
+  - git clone https://github.com/blcoccaro/runsqlfile.git
+  - cd runsqlfile
+  - npm install 
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
