@@ -1,6 +1,3 @@
---pr_getpurchase 'MWRKVIEABA'
-GO
-
 
 ALTER PROCEDURE dbo.pr_getpurchase (@codVenda VARCHAR(10) = NULL, @cpf VARCHAR(15) = NULL, @id_apresentacao INT = NULL)
 

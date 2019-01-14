@@ -1,5 +1,3 @@
--- pr_presentation 107
-
 ALTER PROCEDURE dbo.pr_presentation (@codPeca INT)
 
 AS

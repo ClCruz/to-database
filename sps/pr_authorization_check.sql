@@ -1,6 +1,3 @@
---pr_authorization_check 3418, 668
-go
-
 ALTER PROCEDURE dbo.pr_authorization_check (@id_user INT
                                             ,@id_programa INT)
 

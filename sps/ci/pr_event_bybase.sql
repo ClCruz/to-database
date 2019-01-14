@@ -1,6 +1,3 @@
--- pr_event_bybase 3244
-GO
-
 ALTER PROCEDURE dbo.pr_event_bybase (@codPeca INT)
 
 AS

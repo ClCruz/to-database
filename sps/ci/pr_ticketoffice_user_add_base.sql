@@ -1,12 +1,3 @@
--- exec sp_executesql N'EXEC pr_ticketoffice_user_add_base @P1',N'@P1 nvarchar(4000)',N'FEEF6152-0886-449D-A7B9-0CBE89DD60CD'
-
--- select * from CI_MIDDLEWAY..ticketoffice_user_base
-
--- pr_ticketoffice_user_add_base '8CC26A74-7E65-411E-B854-F7B281A46E01'
--- exec sp_executesql N'EXEC pr_ticketoffice_user_add_base @P1',N'@P1 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01'
--- select * from CI_MIDDLEWAY..ticketoffice_user_base
--- exec sp_executesql N'EXEC pr_ticketoffice_user_base_list @P1',N'@P1 nvarchar(4000)',N'93B93F5D-133A-4464-A57F-3C532BB33C59'
-GO
 ALTER PROCEDURE pr_ticketoffice_user_add_base (@id UNIQUEIDENTIFIER)
 
 AS

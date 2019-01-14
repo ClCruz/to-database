@@ -1,16 +1,3 @@
--- exec sp_executesql N'EXEC pr_event_save @P1,@P2,@P3,@P4,@P5,@P6,@P7,@P8,@P9,@P10,@P11,@P12,@P13,@P14,@P15,@P16,@P17,@P18,@P19',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000),@P9 nvarchar(4000),@P10 nvarchar(4000),@P11 nvarchar(4000),@P12 nvarchar(4000),@P13 nvarchar(4000),@P14 nvarchar(4000),@P15 nvarchar(4000),@P16 nvarchar(4000),@P17 nvarchar(4000),@P18 nvarchar(4000),@P19 nvarchar(4000)',N'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5',N'32',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'14',N'Replicas',N'89',N'60',N'12',N'265',N'<p>A scientist becomes obsessed with bringing back his family members who died in a traffic accident.</p>',N'desc',N'keyword',N'',N'',N'1',N'<p>evento show</p>',N'6',N'0',N'8'
--- select * from tabPeca
--- 
--- select * from CI_MIDDLEWAY..mw_evento where id_evento=22739
--- select * from CI_MIDDLEWAY..mw_evento_extrainfo where id_evento=22739
-
-/*
-delete from ci_middleway..mw_evento_extrainfo where id_evento in (select id_evento from CI_MIDDLEWAY..mw_evento where ds_evento like 'Replicas')
-delete from ci_middleway..mw_evento where id_evento in (select id_evento from CI_MIDDLEWAY..mw_evento where ds_evento like 'Replicas')
-delete from tabvalbilhete where codpeca in (select codPeca from CI_MIDDLEWAY..mw_evento where ds_evento like 'Replicas')
-delete from tabpeca where codpeca in (select codPeca from CI_MIDDLEWAY..mw_evento where ds_evento like 'Replicas')
-*/
--- go
 
 ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@id_produtor INT

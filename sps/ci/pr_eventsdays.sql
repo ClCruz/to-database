@@ -1,6 +1,3 @@
--- pr_eventsdays 146
--- GO
-
 CREATE PROCEDURE dbo.pr_eventsdays (@codPeca INT)
 
 AS

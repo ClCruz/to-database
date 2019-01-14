@@ -1,10 +1,3 @@
--- select top 100 * from CI_MIDDLEWAY..mw_evento_extrainfo order by id_evento desc
--- pr_adm_event 22666, 'live_keykeykey'
--- select * from mw_evento_extrainfo where uri='/evento/humor_stand_up_comedy_guarulhos'
--- select * from search where id_evento=22039
--- select * from mw_evento_extrainfo where id_evento>22600
-
-go
 
 ALTER PROCEDURE dbo.pr_adm_event (@id_evento INT, @api VARCHAR(100))
 

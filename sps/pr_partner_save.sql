@@ -1,5 +1,3 @@
---exec sp_executesql N'EXEC pr_partner_save @P1, @P2, @P3, @P4, @P5',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000)',N'5A087E34-006D-4279-8F9E-52D6338034BA',N'teste murdock',N'1',N'01/01/2018',N'01/01/2019'
-GO
 ALTER PROCEDURE dbo.pr_partner_save (@id UNIQUEIDENTIFIER
                                     ,@name VARCHAR(1000)
                                     ,@active BIT = 1

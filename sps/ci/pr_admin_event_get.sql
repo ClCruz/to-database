@@ -1,8 +1,4 @@
--- pr_admin_event_get 'f2177e5e-f727-4906-948d-4eea9b9bbd0e', 22695
--- exec sp_executesql N'EXEC pr_admin_event_get @P1, @P2',N'@P1 char(1),@P2 nvarchar(4000)',NULL,N'22695'
---teste
-
-ALTER PROCEDURE dbo.pr_admin_event_get (@id_user UNIQUEIDENTIFIER, @id_evento INT)
+CREATE PROCEDURE dbo.pr_admin_event_get (@id_user UNIQUEIDENTIFIER, @id_evento INT)
 
 AS
 

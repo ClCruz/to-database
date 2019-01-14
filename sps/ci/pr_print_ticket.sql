@@ -1,5 +1,4 @@
---pr_print_ticket 'MWRKVIEABA'
-GO
+
 ALTER PROCEDURE dbo.pr_print_ticket(@codVenda VARCHAR(10)
         ,@indice INT = NULL)
 

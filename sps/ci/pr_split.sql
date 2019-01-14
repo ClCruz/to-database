@@ -1,5 +1,3 @@
---
--- pr_split 235, 125
 CREATE PROCEDURE dbo.pr_split (@codPeca INT, @id_base INT)
 
 AS

@@ -1,17 +1,3 @@
--- -- select ds_evento from mw_evento where id_evento=21004
--- -- FESTIVAL SIRIUS DANCE     3 ANOS
-
--- A COMÉDIA DA REVOLUÇÃO SEXUAL - CCT
-
--- declare @d int = 23
--- select ascii(substring('FESTIVAL SIRIUS DANCE     3 ANOS', @d, 1)),substring('FESTIVAL SIRIUS DANCE     3 ANOS', @d, 1)
-
--- select ascii(' '),ASCII(' ')
-
-
-
--- select dbo.RemoveSpecialChars(ds_evento) from mw_evento where id_evento=21004
-go
 alter function dbo.RemoveSpecialChars (@s varchar(256)) returns varchar(256)
    with schemabinding
 begin

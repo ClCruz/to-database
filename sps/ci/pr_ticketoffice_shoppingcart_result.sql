@@ -1,6 +1,3 @@
--- pr_ticketoffice_shoppingcart_result '8cc26a74-7e65-411e-b854-f7b281a46e01'
--- select * from CI_MIDDLEWAY..ticketoffice_shoppingcart
-
 CREATE PROCEDURE dbo.pr_ticketoffice_shoppingcart_result (@id UNIQUEIDENTIFIER)
 
 AS

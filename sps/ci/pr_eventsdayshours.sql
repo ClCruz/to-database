@@ -1,9 +1,3 @@
--- pr_eventsdayshours 147, '31/10/2018'
--- GO
-
--- select CONVERT(DECIMAL(19,2),CONVERT(DECIMAL(19,4),50)-CONVERT(DECIMAL(19,4),50)* (CONVERT(DECIMAL(19,4),75)/100))
--- GO
-
 CREATE PROCEDURE dbo.pr_eventsdayshours (@codPeca INT, @datePresentation VARCHAR(10))
 
 AS

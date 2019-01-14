@@ -1,5 +1,3 @@
---pr_movimentCashRegister '8cc26a74-7e65-411e-b854-f7b281a46e01', '2018-11-01', 1
-
 ALTER PROCEDURE dbo.pr_movimentCashRegister (@id_ticketoffice_user UNIQUEIDENTIFIER
         ,@date DATETIME
         ,@CodMovimento INT)

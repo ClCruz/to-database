@@ -1,5 +1,3 @@
---  pr_generate_sitemap 'https://www.tixs.me'
-go
 ALTER PROCEDURE dbo.pr_generate_sitemap (@api VARCHAR(100))
 
 AS

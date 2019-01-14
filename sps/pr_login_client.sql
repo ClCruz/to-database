@@ -1,8 +1,3 @@
---exec sp_executesql N'EXEC pr_login @P1',N'@P1 varchar(8000)','blc'
-select token, dt_token_valid, cd_email_login from CI_MIDDLEWAY..mw_cliente where cd_email_login='blcoccaro@gmail.com'
-update CI_MIDDLEWAY..mw_cliente set cd_password='ca9e88ecec91bedd4b6ffe0257663db9' where cd_email_login='blcoccaro@gmail.com'
-GO
-
 CREATE PROCEDURE dbo.pr_login_client(@email VARCHAR(1000))
 
 AS

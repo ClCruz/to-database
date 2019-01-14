@@ -1,6 +1,4 @@
--- pr_map 166826
 
-go
 CREATE PROCEDURE dbo.pr_map (@id_apresentacao INT)
 
 AS

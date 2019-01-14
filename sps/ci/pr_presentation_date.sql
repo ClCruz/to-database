@@ -1,6 +1,3 @@
--- pr_presentation_date 1
-
-
 ALTER PROCEDURE dbo.pr_presentation_date (@codPeca INT)
 
 AS

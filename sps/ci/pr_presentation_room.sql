@@ -1,6 +1,3 @@
--- pr_presentation_room 1
-
-
 ALTER PROCEDURE dbo.pr_presentation_room (@codPeca INT)
 
 AS

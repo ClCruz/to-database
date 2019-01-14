@@ -1,9 +1,3 @@
--- exec sp_executesql N'EXEC pr_ticketoffice_user_add @P1, @P2, @P3, @P4',N'@P1 varchar(8000),@P2 varchar(8000),@P3 varchar(8000),@P4 varchar(8000)','blc','Bruno Luigi Coccaro','28e0cf9080659e96c04432e95ed90cfe25b6ef85','blcoccaro@gmail.com'
-
--- select * from ticketoffice_user
-
-GO
-
 ALTER PROCEDURE dbo.pr_ticketoffice_user_add(@login VARCHAR(1000), @name VARCHAR(1000), @password VARCHAR(1000), @email VARCHAR(1000))
 
 AS

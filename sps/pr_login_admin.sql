@@ -1,6 +1,3 @@
---exec sp_executesql N'EXEC pr_login @P1',N'@P1 varchar(8000)','blc'
-GO
-
 ALTER PROCEDURE dbo.pr_login_admin (@login VARCHAR(1000))
 
 AS

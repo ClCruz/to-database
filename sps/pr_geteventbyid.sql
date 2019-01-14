@@ -1,7 +1,3 @@
--- exec pr_search 'sao', @startAt=0
--- select * from search where id_evento=8157
--- GO
-
 CREATE PROCEDURE dbo.pr_geteventbyid(@id INT)
 
 AS

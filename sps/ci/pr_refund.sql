@@ -1,20 +1,3 @@
-
--- select * from tabLugSala where CodApresentacao in (SELECT CodApresentacao FROM tabApresentacao where CodPeca=146)
--- select * from CI_MIDDLEWAY..ticketoffice_gateway_result
--- select * from CI_MIDDLEWAY..ticketoffice_pinpad
---select * from CI_MIDDLEWAY..ticketoffice_shoppingcart
---pr_refund '8cc26a74-7e65-411e-b854-f7b281a46e01', '164FOOABCO', 0, '87517,87518'
-/*
-   select *
-    FROM tabLugSala d
-    WHERE d.CodVenda='1E7EDOABEO'
-    
-select * from CI_MIDDLEWAY..ticketoffice_shoppingcart_hist where codVenda='1E7EDOABEO'
-*/
-
-go
-
-
 CREATE PROCEDURE dbo.pr_refund (
     @id_ticketoffice_user UNIQUEIDENTIFIER
     ,@codVenda VARCHAR(10)

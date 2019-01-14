@@ -1,9 +1,3 @@
---pr_sell @id_ticketoffice_user='8cc26a74-7e65-411e-b854-f7b281a46e01',@id_payment=52
--- select * from CI_MIDDLEWAY..ticketoffice_shoppingcart
--- update CI_MIDDLEWAY..ticketoffice_shoppingcart set id_payment_type=52
--- select * from tabForPagamento where StaForPagto='A'
--- GO
-
 ALTER PROCEDURE pr_sell (@id_ticketoffice_user UNIQUEIDENTIFIER
         ,@id_payment INT
         ,@isComplementoMeia BIT = 0

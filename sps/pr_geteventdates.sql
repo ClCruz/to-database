@@ -1,7 +1,3 @@
--- exec pr_geteventdates 111
--- select * from search where id_evento=8157
--- GO
-
 ALTER PROCEDURE dbo.pr_geteventdates(@id INT)
 
 AS

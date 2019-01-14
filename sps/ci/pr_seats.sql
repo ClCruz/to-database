@@ -1,9 +1,3 @@
--- pr_seats 166846, '8CC26A747E65411EB854F7B281A46E01'
--- select * from tabResCliente
--- select * from tabLugSala where CodReserva='RBTXCFHBDO'
--- select * from tabResCliente where CodReserva='RBTXCFHBDO'
--- GO
-
 CREATE PROCEDURE dbo.pr_seats(@id_apresentacao INT, @id VARCHAR(36))
 
 AS

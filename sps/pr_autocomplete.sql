@@ -1,7 +1,3 @@
--- exec pr_autocomplete 'come', @api='live_keykeykey'
--- select * from search where text like '%rubi%'
-GO
-
 ALTER PROCEDURE dbo.pr_autocomplete(@search VARCHAR(100), @city VARCHAR(100) = NULL, @state VARCHAR(100) = NULL, @api VARCHAR(100) = NULL)
 
 AS

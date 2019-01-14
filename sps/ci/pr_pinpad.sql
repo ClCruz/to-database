@@ -1,6 +1,3 @@
---exec sp_executesql N'EXEC pr_pinpad @P1,@P2,@P3,@P4,@P5,@P6',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01',N'209',N'1',N'167231',N'53',N'null'
---exec sp_executesql N'EXEC pr_pinpad @P1,@P2,@P3,@P4,@P5,@P6',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01',N'44',N'151',N'167079',N'53',N'18266'
---select * from CI_MIDDLEWAY..ticketoffice_pinpad
 ALTER PROCEDURE dbo.pr_pinpad (@id_ticketoffice_user UNIQUEIDENTIFIER,@id_base INT,@codPeca INT,@id_apresentacao INT, @id_payment INT, @codCliente INT = NULL)
 
 AS

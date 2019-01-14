@@ -1,7 +1,3 @@
--- EXEC pr_geteventsforcards 'SANTOS', 'SAO PAULO', 'live_keykeykey'
--- GO
--- select * from home
-go
 ALTER PROCEDURE dbo.pr_generate_home
 
 AS

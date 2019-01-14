@@ -1,7 +1,3 @@
-USE CI_MIDDLEWAY;
-
-GO
-
 CREATE PROCEDURE dbo.seqPedidoVenda (@user VARCHAR(100) = NULL)
 
 AS

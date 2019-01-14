@@ -1,6 +1,3 @@
-
---exec sp_executesql N'EXEC pr_cashregister_close @P1, @P2, @P3',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01',N'50#100|48#400',N''
-
 ALTER PROCEDURE dbo.pr_cashregister_close (@id_ticketoffice_user UNIQUEIDENTIFIER
         ,@amount VARCHAR(MAX)
         ,@justificative VARCHAR(250) = NULL)

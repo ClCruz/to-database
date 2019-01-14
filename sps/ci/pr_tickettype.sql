@@ -1,6 +1,3 @@
---pr_tickettype 146, 166815
-
-
 CREATE PROCEDURE dbo.pr_tickettype (@CodPeca   INT, @id_apresentacao INT) 
 
 AS

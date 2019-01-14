@@ -1,9 +1,3 @@
--- exec pr_search @search='inner', @type='search', @startAt=0, @api='live_keykeykey'
--- select * from search where text like '%samba%' where id_evento=8157
--- GO
-
--- select * from search where id_genre=10
-
 ALTER PROCEDURE dbo.pr_search(@search VARCHAR(100), @type VARCHAR(100), @startAt INT = 0, @howMany INT = 10, @city VARCHAR(100) = NULL, @state VARCHAR(100) = NULL, @api VARCHAR(100))
 
 AS

@@ -1,6 +1,3 @@
--- pr_sell_type '8cc26a74-7e65-411e-b854-f7b281a46e01', 52
-go
-
 ALTER PROCEDURE dbo.pr_sell_type (@id_ticketoffice_user UNIQUEIDENTIFIER, @id_payment INT) 
 
 AS

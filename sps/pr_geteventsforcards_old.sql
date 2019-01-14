@@ -1,6 +1,3 @@
--- EXEC pr_geteventsforcards 'SANTOS', 'SAO PAULO', 'live_keykeykey'
--- GO
-
 ALTER PROCEDURE dbo.pr_geteventsforcards (@city VARCHAR(100) = NULL,@state VARCHAR(100) = NULL, @api VARCHAR(100) = NULL)
 
 AS

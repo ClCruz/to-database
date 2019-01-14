@@ -1,4 +1,3 @@
--- pr_cashregister_list '8cc26a74-7e65-411e-b854-f7b281a46e01' --d
 ALTER PROCEDURE pr_cashregister_list (@id_ticketoffice_user UNIQUEIDENTIFIER)
 
 AS

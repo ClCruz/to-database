@@ -1,4 +1,3 @@
---
 CREATE PROCEDURE dbo.pr_movimentday (
     @id_ticketoffice_user UNIQUEIDENTIFIER
     ,@date DATETIME)

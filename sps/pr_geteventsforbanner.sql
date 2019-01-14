@@ -1,6 +1,3 @@
--- EXEC pr_geteventsforbanner 'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5'
--- GO
-
 CREATE PROCEDURE dbo.pr_geteventsforbanner (@api VARCHAR(100) = NULL)
 
 AS

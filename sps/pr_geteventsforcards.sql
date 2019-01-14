@@ -1,6 +1,3 @@
--- EXEC pr_geteventsforcards 'SANTOS', 'SAO PAULO', 'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5'
--- GO
-
 ALTER PROCEDURE dbo.pr_geteventsforcards (@city VARCHAR(100) = NULL,@state VARCHAR(100) = NULL, @api VARCHAR(100) = NULL)
 
 AS

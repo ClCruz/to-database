@@ -1,6 +1,3 @@
--- pr_events 147
-go
-
 CREATE PROCEDURE dbo.pr_events (@id INT = NULL)
 
 AS
