@@ -8,9 +8,9 @@ steps:
   - pwd
   - git clone https://github.com/blcoccaro/runsqlfile.git
   - cd runsqlfile
-  - sed -i 's/__SQLFILES__/\/drone\/src\/sps\/ci/1' config.json
-  - sed -i 's/__CNN__/\/drone\/src\/jsons\/cnn.json/1' config.json
-  - sed -i 's/__DATABASES__/\/drone\/src\/jsons\/database.json/1' config.json
+  - sed -i 's/__SQLFILES__/drone\/\/src\/\/sps\/\/ci/1' config.json
+  - sed -i 's/__CNN__/drone\/src\/jsons\/\/cnn.json/1' config.json
+  - sed -i 's/__DATABASES__/drone\/\/src\/\/jsons\/\/database.json/1' config.json
   - cat config.json
   - npm install 
 
