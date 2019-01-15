@@ -1,4 +1,7 @@
-CREATE PROCEDURE dbo.pr_refund (
+--exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01',N'',N'0',N'543'
+--exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01',N'OH4OBOBBFO',N'0',N'518'
+
+ALTER PROCEDURE dbo.pr_refund (
     @id_ticketoffice_user UNIQUEIDENTIFIER
     ,@codVenda VARCHAR(10)
     ,@all BIT = 0
@@ -6,10 +9,10 @@ CREATE PROCEDURE dbo.pr_refund (
 
 AS
 
--- DECLARE    @id_ticketoffice_user UNIQUEIDENTIFIER = '8cc26a74-7e65-411e-b854-f7b281a46e01'
+-- DECLARE    @id_ticketoffice_user UNIQUEIDENTIFIER = '8CC26A74-7E65-411E-B854-F7B281A46E01'
 --     ,@all BIT = 0
---     ,@codVenda VARCHAR(10) = '1Q4BGGACOO'
---     ,@indiceList VARCHAR(MAX) = '87709,87710'
+--     ,@codVenda VARCHAR(10) = 'OH4OBOBBFO'
+--     ,@indiceList VARCHAR(MAX) = '518'
 
 
 SET NOCOUNT ON;
