@@ -85,6 +85,7 @@ WHERE CodCaixa=@codCaixa AND CodUsuario=@codUsuario AND StaMovimento='A'
 
 UPDATE ls
 SET ls.StaCadeira='V'
+    ,ls.CodTipBilhete=tosc.id_ticket_type
     ,ls.CodVenda=@codVenda
     ,ls.CodUsuario=@codUsuario
     ,ls.CodTipBilheteComplMeia=(CASE WHEN @isComplementoMeia = 1 THEN tosc.id_ticket_type ELSE ls.CodTipBilheteComplMeia END)
