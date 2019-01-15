@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_ticketoffice_lastsells (@id_ticketoffice_user UNIQUEIDENTIFIER)
+ALTER PROCEDURE dbo.pr_ticketoffice_lastsells (@id_ticketoffice_user UNIQUEIDENTIFIER)
 
 AS
 SET NOCOUNT ON;
@@ -33,7 +33,7 @@ INNER JOIN tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
 INNER JOIN tabPeca p ON a.CodPeca=p.CodPeca
 INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSetor se ON s.CodSala=se.CodSala
-INNER JOIN tabSalDetalhe sd ON a.CodSala=sd.CodSala AND ls.Indice=sd.Indice
+INNER JOIN tabSalDetalhe sd ON a.CodSala=sd.CodSala AND ls.Indice=sd.Indice AND sd.CodSetor=se.CodSetor
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON a.CodPeca=e.CodPeca AND e.id_base=@id_base
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND ls.CodApresentacao=ap.CodApresentacao
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosh ON tosh.id_base=e.id_base AND tosh.id_apresentacao=ap.id_apresentacao AND tosh.indice=ls.Indice
