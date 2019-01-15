@@ -53,7 +53,8 @@ SELECT
     @codCaixa=codCaixa
     ,@codUsuario=codUsuario
 FROM CI_MIDDLEWAY..ticketoffice_user_base
-WHERE id_ticketoffice_user=@id_ticketoffice_user;
+WHERE id_ticketoffice_user=@id_ticketoffice_user AND id_base=@id_base
+ORDER BY codCaixa DESC;
 
 SELECT @codMovimento=Codmovimento
         ,@date=DatMovimento
