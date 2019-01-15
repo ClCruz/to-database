@@ -75,7 +75,8 @@ SELECT
     ,@login=u.[login]
 FROM CI_MIDDLEWAY..ticketoffice_user_base toub
 INNER JOIN CI_MIDDLEWAY..ticketoffice_user u ON toub.id_ticketoffice_user=u.id
-WHERE id_ticketoffice_user=@id_ticketoffice_user;
+WHERE id_ticketoffice_user=@id_ticketoffice_user AND toub.id_base=@id_base
+ORDER BY codCaixa DESC;
 
 SELECT @codMovimento=Codmovimento
 FROM tabMovCaixa
