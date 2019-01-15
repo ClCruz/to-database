@@ -1,9 +1,14 @@
 ALTER PROCEDURE pr_cashregister_list (@id_ticketoffice_user UNIQUEIDENTIFIER)
 
 AS
--- DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER ='8cc26a74-7e65-411e-b854-f7b281a46e01'
+
+--DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER ='8cc26a74-7e65-411e-b854-f7b281a46e01'
 
 SET NOCOUNT ON;
+
+DECLARE @id_base INT
+
+SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
 
 DECLARE @data DATETIME
         ,@codCaixa INT
@@ -25,7 +30,11 @@ SELECT
 FROM tabMovCaixa mc
 INNER JOIN CI_MIDDLEWAY..ticketoffice_user_base toub ON mc.CodCaixa=toub.codCaixa AND mc.CodUsuario=toub.codUsuario
 WHERE mc.StaMovimento='A'
-AND toub.id_ticketoffice_user=@id_ticketoffice_user
+AND toub.id_ticketoffice_user=@id_ticketoffice_user AND toub.id_base=@id_base
+ORDER BY toub.codCaixa DESC;
+
+--select @data, @codCaixa, @codUsuario, @codMovimento
+-- return;
 
 IF OBJECT_ID('tempdb.dbo.#purchase', 'U') IS NOT NULL
     DROP TABLE #purchase; 
