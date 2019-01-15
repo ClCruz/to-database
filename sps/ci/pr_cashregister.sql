@@ -25,7 +25,7 @@ BEGIN
         @codCaixa=codCaixa
         ,@codUsuario=codUsuario
     FROM CI_MIDDLEWAY..ticketoffice_user_base
-    WHERE id_ticketoffice_user=@id;
+    WHERE id_ticketoffice_user=@id AND id_base=@id_base ORDER BY codCaixa DESC;
 END
 EXEC SP_MOV_UPD001 @codCaixa, @codUsuario
 

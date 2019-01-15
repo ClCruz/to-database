@@ -32,6 +32,10 @@ INSERT INTO #cashregister EXEC pr_cashregister_list @id_ticketoffice_user;
 
 DELETE FROM #cashregister WHERE codTipForPagto<>@payment
 
+DECLARE @id_base INT
+
+SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
+
 INSERT INTO #amount (codTipForPagto, amount)
     SELECT @payment, @amount
 
@@ -50,7 +54,8 @@ SELECT
     @codCaixa=codCaixa
     ,@codUsuario=codUsuario
 FROM CI_MIDDLEWAY..ticketoffice_user_base
-WHERE id_ticketoffice_user=@id_ticketoffice_user;
+WHERE id_ticketoffice_user=@id_ticketoffice_user AND id_base=@id_base
+ORDER BY codCaixa DESC;
 
 SELECT @codMovimento=Codmovimento
         ,@date=DatMovimento
