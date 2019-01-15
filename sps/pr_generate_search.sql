@@ -12,6 +12,10 @@ IF OBJECT_ID('tempdb.dbo.#toAdd', 'U') IS NOT NULL
 IF OBJECT_ID('tempdb.dbo.#dont', 'U') IS NOT NULL
     DROP TABLE #dont; 
 
+IF OBJECT_ID('tempdb.dbo.#tocheckoutofdate', 'U') IS NOT NULL
+    DROP TABLE #tocheckoutofdate; 
+
+
 SELECT
     id_evento
 into #dont
@@ -70,6 +74,26 @@ ORDER BY (CASE WHEN ds_municipio = @city COLLATE SQL_Latin1_General_Cp1251_CS_AS
                      AND es.sg_estado = @state COLLATE SQL_Latin1_General_Cp1251_CS_AS THEN 2
                 WHEN ap.dt_apresentacao<=@nowOrder THEN 3
                 ELSE 4 END)
+
+
+SELECT DISTINCT
+e.id_evento
+,(CASE WHEN DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE() THEN 1 ELSE 0 END) AS hasPresentation
+,(CASE WHEN e.in_ativo = 1 THEN 1 ELSE 0 END) hasActive
+,(CASE WHEN b.in_ativo = 1 THEN 1 ELSE 0 END) hasActiveBase
+INTO #tocheckoutofdate
+FROM CI_MIDDLEWAY..mw_evento e
+INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento
+INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
+INNER JOIN #dont dt ON e.id_evento=dt.id_evento
+LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
+
+UPDATE d
+SET d.outofdate=1
+FROM search d
+INNER JOIN #tocheckoutofdate tcheck ON d.id_evento=tcheck.id_evento
+WHERE tcheck.hasActive = 0 OR tcheck.hasActiveBase = 0 OR tcheck.hasPresentation = 0
 
 DELETE d
 FROM search d

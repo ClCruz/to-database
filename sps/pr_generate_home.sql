@@ -86,6 +86,26 @@ FROM home d
 INNER JOIN #toAdd tadd ON d.id_evento=tadd.id_evento
 
 
+SELECT DISTINCT
+e.id_evento
+,(CASE WHEN DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE() THEN 1 ELSE 0 END) AS hasPresentation
+,(CASE WHEN e.in_ativo = 1 THEN 1 ELSE 0 END) hasActive
+,(CASE WHEN b.in_ativo = 1 THEN 1 ELSE 0 END) hasActiveBase
+INTO #tocheckoutofdate
+FROM CI_MIDDLEWAY..mw_evento e
+INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento
+INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
+INNER JOIN #dont dt ON e.id_evento=dt.id_evento
+LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
+
+UPDATE d
+SET d.outofdate=1
+FROM home d
+INNER JOIN #tocheckoutofdate tcheck ON d.id_evento=tcheck.id_evento
+WHERE tcheck.hasActive = 0 OR tcheck.hasActiveBase = 0 OR tcheck.hasPresentation = 0
+
+
 INSERT INTO home (outofdate,[id_evento],[ds_evento],[codPeca],[ds_nome_teatro],[ds_municipio],[ds_estado],[sg_estado],[ds_regiao_geografica],[cardimage],[cardbigimage],[imageoriginal],[uri],[dates],[badges],[promotion])
 SELECT
 0
