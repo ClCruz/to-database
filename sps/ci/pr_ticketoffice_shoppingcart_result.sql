@@ -1,4 +1,6 @@
-CREATE PROCEDURE dbo.pr_ticketoffice_shoppingcart_result (@id UNIQUEIDENTIFIER)
+--pr_ticketoffice_shoppingcart_result 'acca6ac6-8e05-4f18-9b7b-507dcad696ac'
+
+ALTER PROCEDURE dbo.pr_ticketoffice_shoppingcart_result (@id UNIQUEIDENTIFIER)
 
 AS
 
@@ -28,7 +30,7 @@ INNER JOIN CI_MIDDLEWAY.dbo.mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apr
 INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
 INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSetor se ON s.CodSala=se.CodSala
-INNER JOIN tabSalDetalhe sd ON s.CodSala=sd.CodSala AND tosc.indice=sd.Indice
+INNER JOIN tabSalDetalhe sd ON s.CodSala=sd.CodSala AND tosc.indice=sd.Indice AND sd.CodSetor=se.CodSetor
 INNER JOIN tabLugSala ls ON ap.CodApresentacao=ls.CodApresentacao AND tosc.indice=ls.Indice
 LEFT JOIN tabTipBilhete tpb ON tosc.id_ticket_type=tpb.CodTipBilhete
 WHERE id_ticketoffice_user=@id
