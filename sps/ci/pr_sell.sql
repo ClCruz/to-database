@@ -96,6 +96,7 @@ INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_aprese
 INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
 INNER JOIN tabLugSala ls ON ls.CodApresentacao=a.CodApresentacao AND ls.Indice=tosc.indice
 WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+      AND tosc.id_base=@id_base
 
 DECLARE @amountDecimal DECIMAL(18,2)
         ,@amount INT
