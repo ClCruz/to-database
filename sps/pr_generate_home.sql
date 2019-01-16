@@ -6,16 +6,19 @@ AS
 
 SET NOCOUNT ON;
 
-IF OBJECT_ID('tempdb.dbo.#toAdd', 'U') IS NOT NULL
-    DROP TABLE #toAdd; 
+IF OBJECT_ID('tempdb.dbo.#newevents', 'U') IS NOT NULL
+    DROP TABLE #newevents; 
 
-IF OBJECT_ID('tempdb.dbo.#dont', 'U') IS NOT NULL
-    DROP TABLE #dont; 
+IF OBJECT_ID('tempdb.dbo.#rightnow', 'U') IS NOT NULL
+    DROP TABLE #rightnow; 
+
+IF OBJECT_ID('tempdb.dbo.#outofdate', 'U') IS NOT NULL
+    DROP TABLE #outofdate; 
 
 SELECT
     id_evento
-into #dont
-FROM home where outofdate=0
+into #rightnow
+FROM home
 
 SELECT
 e.id_evento
@@ -51,7 +54,7 @@ e.id_evento
             AND subpc.dt_fim_promocao>=GETDATE()
             FOR XML PATH ('')
         ), 2, 8000) [promotion]
-INTO #toAdd
+INTO #newevents
 FROM CI_MIDDLEWAY..mw_evento e
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento
@@ -60,13 +63,10 @@ INNER JOIN CI_MIDDLEWAY..mw_local_evento le ON e.id_local_evento=le.id_local_eve
 INNER JOIN CI_MIDDLEWAY..mw_municipio mu ON le.id_municipio=mu.id_municipio
 INNER JOIN CI_MIDDLEWAY..mw_estado es ON mu.id_estado=es.id_estado
 LEFT JOIN CI_MIDDLEWAY..mw_regiao_geografica regi ON es.id_regiao_geografica=regi.id_regiao_geografica
-LEFT JOIN #dont dt ON e.id_evento=dt.id_evento
 WHERE 
     DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
     AND e.in_ativo=1
     AND b.in_ativo=1
-    AND dt.id_evento IS NULL
-    --AND ds_municipio = @city COLLATE Latin1_general_CI_AI
 GROUP BY 
 e.id_evento
 ,e.ds_evento
@@ -81,30 +81,46 @@ e.id_evento
 ,eei.imageoriginal
 ,eei.uri
 
-DELETE d
-FROM home d
-INNER JOIN #toAdd tadd ON d.id_evento=tadd.id_evento
-
-
-SELECT DISTINCT
-e.id_evento
-,(CASE WHEN DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE() THEN 1 ELSE 0 END) AS hasPresentation
-,(CASE WHEN e.in_ativo = 1 THEN 1 ELSE 0 END) hasActive
-,(CASE WHEN b.in_ativo = 1 THEN 1 ELSE 0 END) hasActiveBase
-INTO #tocheckoutofdate
-FROM CI_MIDDLEWAY..mw_evento e
-INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
-INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento
-INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
-INNER JOIN #dont dt ON e.id_evento=dt.id_evento
-LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
 
 UPDATE d
 SET d.outofdate=1
 FROM home d
-INNER JOIN #tocheckoutofdate tcheck ON d.id_evento=tcheck.id_evento
-WHERE tcheck.hasActive = 0 OR tcheck.hasActiveBase = 0 OR tcheck.hasPresentation = 0
+INNER JOIN #newevents tadd ON d.id_evento=tadd.id_evento
 
+DELETE d
+FROM #rightnow d
+INNER JOIN #newevents tadd ON d.id_evento=tadd.id_evento
+
+DELETE d
+FROM #newevents d
+INNER JOIN #rightnow tadd ON d.id_evento=tadd.id_evento
+
+SELECT
+t.id_evento
+INTO #outofdate
+FROM (
+    SELECT DISTINCT
+    e.id_evento
+    ,(CASE WHEN DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE() THEN 1 ELSE 0 END) AS hasPresentation
+    ,(CASE WHEN e.in_ativo = 1 THEN 1 ELSE 0 END) hasActive
+    ,(CASE WHEN b.in_ativo = 1 THEN 1 ELSE 0 END) hasActiveBase
+    FROM CI_MIDDLEWAY..mw_evento e
+    INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
+    INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento
+    INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
+    INNER JOIN #rightnow dt ON e.id_evento=dt.id_evento
+    LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
+) as t
+WHERE t.hasActive = 0 
+OR t.hasActiveBase = 0 
+OR t.hasPresentation=0
+
+UPDATE d
+SET d.outofdate=1
+FROM home d
+INNER JOIN #outofdate tcheck ON d.id_evento=tcheck.id_evento
+
+DELETE FROM home WHERE outofdate=1
 
 INSERT INTO home (outofdate,[id_evento],[ds_evento],[codPeca],[ds_nome_teatro],[ds_municipio],[ds_estado],[sg_estado],[ds_regiao_geografica],[cardimage],[cardbigimage],[imageoriginal],[uri],[dates],[badges],[promotion])
 SELECT
@@ -124,6 +140,5 @@ SELECT
 ,datas
 ,badges
 ,[promotion]
-FROM #toAdd
+FROM #newevents
 
-DELETE FROM home WHERE outofdate=1;

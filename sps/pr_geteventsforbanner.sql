@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_geteventsforbanner (@api VARCHAR(100) = NULL)
+ALTER PROCEDURE dbo.pr_geteventsforbanner (@api VARCHAR(100) = NULL)
 
 AS
 
@@ -38,9 +38,7 @@ INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento
 INNER JOIN CI_MIDDLEWAY..partner_database pd ON e.id_base=pd.id_base AND pd.id_partner=@id_partner
 LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
 WHERE 
-    DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
-    AND e.in_ativo=1
-    AND eei.showInBanner = 1
+    eei.showInBanner = 1
 GROUP BY 
 h.id_evento
 ,h.ds_evento
