@@ -1,13 +1,18 @@
 {
-    "names": ["tixsme"
-            ,"bringressos"
-            ,"ciadeingressos"
-            ,"ci_localhost"
-            ,"sazarteingressos"
-            ,"vivaingressos"
-            ,"construcaoteatral"
-            ,"CI_TESTES"
-            ,"cultingressos"
-            ,"teatroumc"
-            ,"cafeteatrorubi"]
+    "names": [
+        "tixsme"
+,"bringressos"
+,"ciadeingressos"
+,"ci_localhost"
+,"sazarteingressos"
+,"vivaingressos"
+,"construcaoteatral"
+,"CI_TESTES"
+,"cultingressos"
+,"teatroumc"
+,"cafeteatrorubi"
+,"ingressonanet"
+,"viveremsantos"
+,"ci_model"
+,"teatromodulo"]
 }
