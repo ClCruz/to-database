@@ -14,6 +14,9 @@ SELECT
     ,p.[key]
     ,p.key_test
     ,p.name
+    ,p.isDemo
+    ,p.isTrial
+    ,p.isDev
     ,COUNT(*) OVER() totalCount
     ,@currentPage currentPage
 FROM CI_MIDDLEWAY..[partner] p
