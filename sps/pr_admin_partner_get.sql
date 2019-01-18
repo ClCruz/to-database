@@ -14,6 +14,7 @@ SELECT
     ,p.[key]
     ,p.key_test
     ,p.name
+    ,p.uniquename
     ,p.isDemo
     ,p.isTrial
     ,p.isDev

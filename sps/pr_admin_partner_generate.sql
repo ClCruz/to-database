@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE dbo.pr_admin_partner_generate 
+ALTER PROCEDURE dbo.pr_admin_partner_generate 
     (@id_user UNIQUEIDENTIFIER
     ,@id UNIQUEIDENTIFIER
     ,@keyTo VARCHAR(100))

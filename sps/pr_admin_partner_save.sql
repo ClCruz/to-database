@@ -2,6 +2,7 @@
 ALTER PROCEDURE dbo.pr_admin_partner_save 
     (@loggedId UNIQUEIDENTIFIER
     ,@id UNIQUEIDENTIFIER
+    ,@uniquename VARCHAR(500)
     ,@name VARCHAR(1000)
     ,@domain VARCHAR(1000)
     ,@dateStart DATETIME
@@ -85,11 +86,30 @@ BEGIN
             ,isDev=@isDev
     WHERE
         id=@id
+
+    SELECT 1 success
+            ,'Alterado com sucesso.' msg
+
+    RETURN;
 END
 ELSE
 BEGIN
 
-   IF OBJECT_ID('tempdb.dbo.#keypartner', 'U') IS NOT NULL
+    DECLARE @hasUniqueName BIT = 0;
+
+    SET @uniquename=lower(@uniquename);
+
+    SELECT @hasUniqueName = 1 FROM CI_MIDDLEWAY..[partner] WHERE LOWER(uniquename)=@uniquename
+
+    IF @hasUniqueName = 1
+    BEGIN
+        SELECT 0 success
+                ,'Nome único já existente.' msg
+
+        RETURN;
+    END
+
+    IF OBJECT_ID('tempdb.dbo.#keypartner', 'U') IS NOT NULL
         DROP TABLE #keypartner; 
 
     CREATE TABLE #keypartner ([key] VARCHAR(100), [key_test] VARCHAR(100));
@@ -98,6 +118,12 @@ BEGIN
 
     SELECT @key=[key], @key_test=key_test FROM #keypartner
 
-    INSERT INTO CI_MIDDLEWAY..[partner] ([key], key_test, [name], active, dateStart, dateEnd, domain)
-     VALUES (@key, @key_test, @name, @active, @dateStart, @dateEnd, @domain)
+    INSERT INTO CI_MIDDLEWAY..[partner] ([key], key_test, [name], active, dateStart, dateEnd, domain, uniquename)
+     VALUES (@key, @key_test, @name, @active, @dateStart, @dateEnd, @domain, @uniquename)
+
+    SELECT 1 success
+            ,'Incluido com sucesso.' msg
+
+    RETURN;
+
 END

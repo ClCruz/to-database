@@ -17,6 +17,7 @@ SELECT
     ,p.isDemo
     ,p.isTrial
     ,p.isDev
+    ,p.uniquename
     ,COUNT(*) OVER() totalCount
     ,@currentPage currentPage
 FROM CI_MIDDLEWAY..[partner] p
