@@ -1,7 +1,7 @@
 {
     "user": "dev.me",
     "password": "!t.me@dev#$",
-    "server": "192.168.81.16", 
+    "server": "172.30.5.3", 
     "port": 1435,
     "database": "xxx" 
 }
