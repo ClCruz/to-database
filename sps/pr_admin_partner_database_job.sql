@@ -13,9 +13,9 @@ IF @uniquename IS NOT NULL
 BEGIN
 
     DECLARE @sql_statement nvarchar(4000);
-    SET @sql_statement = N'RESTORE DATABASE ['+@uniquename+'] FROM  DISK = N''D:\ticketoffice_system\CI_MODEL.bak'' WITH  FILE = 1, '
-    SET @sql_statement = @sql_statement + N'MOVE N''TMSMultiEventos33_Data'' TO N''D:\MSSQLSERVER\tixsme_databases\data\'+@uniquename+'.mdf'', '
-    SET @sql_statement = @sql_statement + N'MOVE N''TMSMultiEventos33_Log'' TO N''D:\MSSQLSERVER\tixsme_databases\log\'+@uniquename+'_1.ldf'',  NOUNLOAD, STATS = 5'
+    SET @sql_statement = N'RESTORE DATABASE ['+@uniquename+'] FROM  DISK = N''E:\ticketoffice_system\model.bak'' WITH  FILE = 1, '
+    SET @sql_statement = @sql_statement + N'MOVE N''TMSMultiEventos33_Data'' TO N''E:\sql\'+@uniquename+'.mdf'', '
+    SET @sql_statement = @sql_statement + N'MOVE N''TMSMultiEventos33_Log'' TO N''E:\sql\'+@uniquename+'_1.ldf'',  NOUNLOAD, STATS = 5'
 
     EXEC sp_executesql @sql_statement;
 
