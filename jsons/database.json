@@ -1,20 +1,22 @@
 {
     "names": [
-        "tixsme"
-,"bringressos"
-,"ciadeingressos"
-,"ci_localhost"
-,"sazarteingressos"
-,"vivaingressos"
-,"construcaoteatral"
-,"CI_TESTES"
-,"cultingressos"
-,"teatroumc"
-,"cafeteatrorubi"
-,"ingressonanet"
-,"viveremsantos"
-,"ci_model"
-,"teatromodulo"
-,"famillyproducoes"
-,"jjrproducoes"]
+        "amigosecia",
+        "bringressos",
+        "cafeteatrorubi",
+        "ciadeingressos",
+        "construcaoteatral",
+        "cultingressos",
+        "eventoslitoral",
+        "famillyproducoes",
+        "ingressonanet",
+        "localhost",
+        "marketplayclub",
+        "sazarte",
+        "teatromodulo",
+        "teatroumc",
+        "tixsme",
+        "totestando",
+        "vivaingressos",
+        "viveremsantos"
+    ]
 }
