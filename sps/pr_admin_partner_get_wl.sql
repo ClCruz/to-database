@@ -14,6 +14,8 @@ DECLARE @domain VARCHAR(1000)
         ,@databaseStatus VARCHAR(1000) = 'not_init'
         ,@userStatus VARCHAR(1000) = 'not_init'
         ,@apikey VARCHAR(200) = ''
+        ,@videoURI_MP4 VARCHAR(1000) = ''
+        ,@videoURI_WEBM VARCHAR(1000) = ''
 
         ,@json_ga VARCHAR(100)
         ,@json_meta_description VARCHAR(MAX)
@@ -43,7 +45,6 @@ SELECT @userOK = 1 FROM master.sys.server_principals WHERE [name]='api.'+@unique
 
 SELECT @databaseStatus=[status] FROM CI_MIDDLEWAY..whitelabelconf WHERE id_partner=@id AND [type]='database'
 SELECT @userStatus=[status] FROM CI_MIDDLEWAY..whitelabelconf WHERE id_partner=@id AND [type]='user'
-
 
 SELECT @json_meta_description=wlc.json_meta_description
         ,@json_ga=wlc.json_ga
