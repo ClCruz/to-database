@@ -1,4 +1,4 @@
-ALTER PROCEDURE dbo.pr_admin_partner_database_list
+CREATE PROCEDURE dbo.pr_admin_partner_database_list
 
 AS
 

@@ -30,6 +30,5 @@ END
 INSERT INTO CI_MIDDLEWAY..to_admin_user_base (id_to_admin_user, id_base, id_evento, createdby)
 SELECT @id, @id_base, @id_evento, @id_user
 
-
 SELECT 1 success
         ,'' msg
