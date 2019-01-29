@@ -1,3 +1,9 @@
+-- -- exec sp_executesql N'EXEC pr_sell @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 char(1)',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'52',N'',NULL
+-- -- select * from tabIngresso where Indice=98
+-- -- Violation of PRIMARY KEY constraint 'PK_tabIngresso'. Cannot insert duplicate key in object 'dbo.tabIngresso'. The duplicate key value is (5M7GGOBDIO, 98).
+-- -- Violation of PRIMARY KEY constraint 'PK_tabIngresso'. Cannot insert duplicate key in object 'dbo.tabIngresso'. The duplicate key value is (5O4GDCBEOO, 98).
+-- select * from tabIngresso
+
 ALTER PROCEDURE pr_sell (@id_ticketoffice_user UNIQUEIDENTIFIER
         ,@id_payment INT
         ,@isComplementoMeia BIT = 0
@@ -5,7 +11,15 @@ ALTER PROCEDURE pr_sell (@id_ticketoffice_user UNIQUEIDENTIFIER
 
 AS
 
+-- select * from tabControleSeqVenda d where  d.codbar='0001010225170000100099'
+
 SET NOCOUNT ON;
+
+-- DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER='F2177E5E-F727-4906-948D-4EEA9B9BBD0E'
+--         ,@id_payment INT=52
+--         ,@isComplementoMeia BIT = ''
+--         ,@codCliente INT = NULL
+
 
 
 BEGIN TRY
@@ -19,11 +33,6 @@ BEGIN
     IF LTRIM(RTRIM(@codCliente)) = '' OR LTRIM(RTRIM(@codCliente)) = 'null'
         SET @codCliente = NULL
 END
--- DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER
---         ,@id_payment INT
---         ,@isComplementoMeia BIT = 0
---         ,@codCliente INT = NULL
---         ,@NumeroBIN VARCHAR(6) = NULL
 
 -- SET @id_ticketoffice_user='8cc26a74-7e65-411e-b854-f7b281a46e01'
 -- SET @id_payment=52
@@ -139,11 +148,11 @@ CREATE TABLE #helper (indice int, id_apresentacao int, codapresentacao int, numL
 SELECT @cliente_Nome=c.Nome,@cliente_DDD=c.DDD, @cliente_Telefone=Telefone, @cliente_Ramal=Ramal, @cliente_CPF=CPF, @cliente_RG=RG FROM tabCliente c WHERE Codigo=@codCliente
 
 INSERT INTO #helper (indice, id_apresentacao, codapresentacao, numLancamento, id_shoppingCart, CodTipLancamento)
-    SELECT tosc.indice, tosc.id_apresentacao, a.CodApresentacao, l.NumLancamento, tosc.id, l.CodTipLancamento
+    SELECT tosc.indice, tosc.id_apresentacao, a.CodApresentacao, @NumLancamento, tosc.id, 1
     FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc
     INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao
     INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
-    LEFT JOIN tabLancamento l ON ap.CodApresentacao=l.CodApresentacao AND tosc.indice=l.Indice
+    -- LEFT JOIN tabLancamento l ON ap.CodApresentacao=l.CodApresentacao AND tosc.indice=l.Indice    
     WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
 
 IF (@codCliente IS NOT NULL)
@@ -186,12 +195,11 @@ SELECT
     ,h.indice
     ,1
     ,
-right('00000'+convert(varchar,h.codapresentacao),5)
-+convert(char(1), sd.CodSetor)
-+right(convert(varchar(8),a.DatApresentacao,112),4)
-+right('0000'+replace(convert(varchar(5),a.HorSessao),':',''),4)
-+right('00000'+convert(varchar(4),tosc.id_ticket_type),3)					
-+right('00000'+convert(varchar(10),h.indice),5)
+right('00000'+convert(varchar,h.codapresentacao),5) --5
++convert(char(1), sd.CodSetor) --6
++right('0000'+replace(convert(varchar(5),a.HorSessao),':',''),4) --10
++right('00000'+convert(varchar(10),h.indice),5) --15
++LEFT(CONVERT(VARCHAR(100),newid()),6) --21
     ,'L'
 FROM #helper h
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id
