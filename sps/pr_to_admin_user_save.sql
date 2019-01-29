@@ -8,6 +8,7 @@ SET NOCOUNT ON;
 
 DECLARE @hasAnotherWithLogin BIT = 0
         ,@has BIT = 0
+        ,@hasTicketoffice BIT = 0
         ,@idAux UNIQUEIDENTIFIER = NULL
 
 IF @id IS NOT NULL AND @id != ''
@@ -15,6 +16,7 @@ IF @id IS NOT NULL AND @id != ''
 
 SELECT TOP 1 @hasAnotherWithLogin=1 FROM CI_MIDDLEWAY..to_admin_user WHERE LOWER([login])=RTRIM(LTRIM(LOWER(@login))) AND (@idAux IS NULL OR id!=@idAux)
 SELECT TOP 1 @has=1 FROM CI_MIDDLEWAY..to_admin_user WHERE id=@idAux
+SELECT TOP 1 @hasTicketoffice=1 FROM CI_MIDDLEWAY..ticketoffice_user WHERE id=@idAux
 
 IF @hasAnotherWithLogin = 1
 BEGIN
@@ -23,15 +25,30 @@ BEGIN
     RETURN;
 END
 
+
+
 IF @has = 1
 BEGIN
     UPDATE CI_MIDDLEWAY..to_admin_user SET [login]=@login, [name]=@name, email=@email, document=@document, active=@active, updated=GETDATE() WHERE id=@idAux
 END
 ELSE
 BEGIN
-    INSERT INTO CI_MIDDLEWAY..to_admin_user (updated,[login],[password],lastLogin,[name],email, document,active,currentToken,tokenValidUntil)
-    SELECT GETDATE(),@login,@newPass, NULL, @name, @email, @document, 1, NULL, NULL
+    SET @idAux = NEWID();
+    INSERT INTO CI_MIDDLEWAY..to_admin_user (id, updated,[login],[password],lastLogin,[name],email, document,active,currentToken,tokenValidUntil)
+    SELECT @idAux, GETDATE(),@login,@newPass, NULL, @name, @email, @document, 1, NULL, NULL
 END
+
+IF @hasTicketoffice = 1
+BEGIN
+    UPDATE CI_MIDDLEWAY..ticketoffice_user SET [login]=@login, [name]=@name, email=@email, active=@active, updated=GETDATE() WHERE id=@idAux    
+END
+ELSE
+BEGIN
+    INSERT INTO CI_MIDDLEWAY..ticketoffice_user (id, updated,[login],[password],lastLogin,[name],email,active)
+    SELECT @idAux, GETDATE(),@login,@newPass, NULL, @name, @email, 1
+END
+
+UPDATE CI_MIDDLEWAY..ticketoffice_user SET active=0 WHERE [login]=@login AND active=1 AND id!=@idAux
 
 SELECT 1 success
         ,'' msg

@@ -11,20 +11,15 @@ DECLARE @id_base INT
 SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
 
 DECLARE @has BIT = 0
-        ,@hasActive BIT = 0 
+        ,@active BIT = 0
 
-SELECT TOP 1 @has = 1, @hasActive = active FROM CI_MIDDLEWAY..ticketoffice_user_base WHERE id_ticketoffice_user=@id AND id_base=@id_base
+SELECT TOP 1 @has = 1 FROM CI_MIDDLEWAY..ticketoffice_user_base WHERE id_ticketoffice_user=@id AND id_base=@id_base
+
+SELECT TOP 1 @active = active FROM CI_MIDDLEWAY..to_admin_user_base WHERE id_to_admin_user=@id AND id_base=@id_base
 
 IF @has = 1
 BEGIN
-    IF @hasActive = 1
-    BEGIN
-        UPDATE CI_MIDDLEWAY..ticketoffice_user_base SET active=0 WHERE id_ticketoffice_user=@id
-    END
-    ELSE
-    BEGIN
-        UPDATE CI_MIDDLEWAY..ticketoffice_user_base SET active=1 WHERE id_ticketoffice_user=@id
-    END
+    UPDATE CI_MIDDLEWAY..ticketoffice_user_base SET active=@active WHERE id_ticketoffice_user=@id AND id_base=@id_base
     RETURN;
 END
 
