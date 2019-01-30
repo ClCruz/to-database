@@ -26,7 +26,7 @@ SELECT
 FROM CI_MIDDLEWAY..mw_evento e
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_local_evento le ON e.id_local_evento=le.id_local_evento
-INNER JOIN CI_MIDDLEWAY..to_admin_user_base taub ON e.id_base=taub.id_base AND taub.id_to_admin_user=@id_user
+INNER JOIN CI_MIDDLEWAY..to_admin_user_base taub ON e.id_base=taub.id_base AND taub.id_to_admin_user=@id_user AND taub.active=1
 LEFT JOIN CI_MIDDLEWAY..mw_municipio m ON m.id_municipio=le.id_municipio
 LEFT JOIN CI_MIDDLEWAY..mw_estado es ON m.id_estado=es.id_estado
 LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id

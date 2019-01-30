@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_admin_event_get (@id_user UNIQUEIDENTIFIER, @id_evento INT)
+ALTER PROCEDURE dbo.pr_admin_event_get (@id_user UNIQUEIDENTIFIER, @id_evento INT)
 
 AS
 
@@ -40,7 +40,7 @@ SELECT
 FROM tabPeca p
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca AND e.id_base=@id_base
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
-INNER JOIN CI_MIDDLEWAY..to_admin_user_base taub ON taub.id_base=e.id_base AND taub.id_to_admin_user=@id_user
+INNER JOIN CI_MIDDLEWAY..to_admin_user_base taub ON taub.id_base=e.id_base AND taub.id_to_admin_user=@id_user AND taub.active=1
 INNER JOIN CI_MIDDLEWAY..mw_local_evento le ON p.id_local_evento=le.id_local_evento
 INNER JOIN CI_MIDDLEWAY..mw_municipio m ON le.id_municipio=m.id_municipio
 WHERE e.id_evento=@id_evento

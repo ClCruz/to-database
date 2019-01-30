@@ -15,6 +15,6 @@ b.id_base
 ,b.ds_nome_teatro
 ,(CASE WHEN gs.id_base IS NULL THEN 0 ELSE ( CASE WHEN gs.last_id <> @lastId THEN 0 ELSE 1 END ) END) active
 FROM CI_MIDDLEWAY..mw_base b
-INNER JOIN CI_MIDDLEWAY..to_admin_user_base taub ON b.id_base=taub.id_base AND taub.id_to_admin_user=@id_user
+INNER JOIN CI_MIDDLEWAY..to_admin_user_base taub ON b.id_base=taub.id_base AND taub.id_to_admin_user=@id_user AND taub.active=1
 LEFT JOIN CI_MIDDLEWAY..genre_sync gs ON b.id_base=gs.id_base
 WHERE b.in_ativo=1

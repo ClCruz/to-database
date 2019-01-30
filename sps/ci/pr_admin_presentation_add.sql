@@ -4,6 +4,8 @@ SET @fullobj = '22695#1#2019-01-24#20:00#123#1#0|22695#1#2019-01-24#21:00#423#1#
 
 SET NOCOUNT ON;
 
+IF OBJECT_ID('tempdb.dbo.#final', 'U') IS NOT NULL
+    DROP TABLE #final; 
 IF OBJECT_ID('tempdb.dbo.#aux', 'U') IS NOT NULL
     DROP TABLE #aux; 
 IF OBJECT_ID('tempdb.dbo.#deeper', 'U') IS NOT NULL
@@ -12,6 +14,8 @@ IF OBJECT_ID('tempdb.dbo.#deeper2', 'U') IS NOT NULL
     DROP TABLE #deeper2; 
 
 CREATE TABLE #aux (id UNIQUEIDENTIFIER, id_evento INT, codPeca INT, codSala INT, presentationDate DATETIME, presentationTime VARCHAR(5), amount INT, allowweb BIT, allowticketoffice BIT, hasAnother BIT, numBordero INT, codApresentacaoInsert INT);
+--CREATE TABLE #final (codApresentacao INT,DatApresentacao DATETIME,CodPeca INT,CodSala INT,HorSessao VARCHAR(5),ValPeca MONEY NULL,NumBordero INT NULL,StaAtivoWeb CHAR(1),StaAtivoBilheteria CHAR(1))
+
 
 CREATE TABLE #deeper (id UNIQUEIDENTIFIER, obj VARCHAR(MAX));
 CREATE TABLE #deeper2 (id INT, obj VARCHAR(MAX));
@@ -115,9 +119,7 @@ DECLARE @lastcodApresetancao INT
 
 SELECT @lastcodapresetancao=MAX(codApresentacao) FROM tabApresentacao
 
--- INSERT INTO tabApresentacao (codApresentacao,DatApresentacao,CodPeca
--- 	,CodSala,HorSessao,ValPeca
--- 	,NumBordero,StaAtivoWeb,StaAtivoBilheteria)
+-- INSERT INTO tabApresentacao (codApresentacao,DatApresentacao,CodPeca,CodSala,HorSessao,ValPeca,NumBordero,StaAtivoWeb,StaAtivoBilheteria)
 
 SELECT 
 	@lastcodapresetancao+ROW_NUMBER() OVER (ORDER BY a.presentationDate, a.presentationTime) AS RowNumber
@@ -125,109 +127,24 @@ SELECT
 	,a.codPeca
 	,a.codSala
 	,a.presentationTime
-	,(CONVERT(MONEY,a.amount)/CONVERT(MONEY,100))
+	,(CONVERT(MONEY,a.amount)/CONVERT(MONEY,100)) amount
 	,a.numBordero
-	,(CASE WHEN a.allowweb = 1 THEN 'S' ELSE 'N' END)
-	,(CASE WHEN a.allowticketoffice = 1 THEN 'S' ELSE 'N' END)
+	,(CASE WHEN a.allowweb = 1 THEN 'S' ELSE 'N' END) allowweb
+	,(CASE WHEN a.allowticketoffice = 1 THEN 'S' ELSE 'N' END) allowticketoffice
+	
+INTO #final
 FROM #aux a
 
--- select * from tabApresentacao
--- sp_help tabApresentacao
--- VALUES (
--- 	@CodApresentacao
--- 	,@DatApresentacao
--- 	,@CodPeca
--- 	,@CodSala
--- 	,@HorSessao
--- 	,@ValPeca
--- 	,@NumBordero
--- 	,@StaAtivoWeb
--- 	,@StaAtivoBilheteria
--- 	)
 
--- SELECT
--- *
--- FROM #aux a
+SELECT *, 0 FROM #final
+UNION ALL 
+SELECT *, 1 FROM #final
+UNION ALL 
+SELECT *, 2 FROM #final
+UNION ALL 
+SELECT *, 3 FROM #final
+UNION ALL 
+SELECT *, 4 FROM #final
+UNION ALL 
+SELECT *, 5 FROM #final
 
-
-SET NOCOUNT OFF;
-
-
-return;
-
--- DECLARE @DatApresentacao DATETIME
--- 	,@CodPeca INT
--- 	,@CodSala INT
--- 	,@HorSessao VARCHAR(5)
--- 	,@ValPeca MONEY 
--- 	,@StaAtivoWeb VARCHAR(1)
--- 	,@StaAtivoBilheteria VARCHAR(1)
-
--- DECLARE @CodApresentacao INT
--- 	,@NumBordero INT
--- 	,@DatAprCompleta SMALLDATETIME
-
--- SET NOCOUNT ON
-
--- SELECT @DatAprCompleta = CONVERT(SMALLDATETIME, (convert(VARCHAR(10), @DatApresentacao, 112) + ' ' + @HorSessao))
-
--- IF EXISTS (
--- 		SELECT 1
--- 		FROM tabApresentacao
--- 		WHERE (CodSala = @CodSala)
--- 			AND (CONVERT(SMALLDATETIME, (CONVERT(VARCHAR(10), DatApresentacao, 112) + ' ' + HorSessao)) = @DatAprCompleta)
--- 		)
--- BEGIN
--- 	RAISERROR (
--- 			'Ja existe uma apresentacao para esta data/hora'
--- 			,16
--- 			,1
--- 			)
-
--- 	RETURN
--- END
-
--- SELECT @NumBordero = ISNULL((MAX(NumBordero) + 1), 1)
--- FROM tabApresentacao
--- WHERE (
--- 		(CodSala = @CodSala)
--- 		AND (CodPeca = @CodPeca)
--- 		AND (CONVERT(SMALLDATETIME, (CONVERT(VARCHAR(10), DatApresentacao, 112) + ' ' + HorSessao)) < @DatAprCompleta)
--- 		)
-
--- UPDATE tabApresentacao
--- SET NumBordero = (NumBordero + 1)
--- WHERE (@NumBordero IS NOT NULL)
--- 	AND (CodSala = @CodSala)
--- 	AND (CodPeca = @CodPeca)
--- 	AND (CONVERT(SMALLDATETIME, (CONVERT(VARCHAR(10), DatApresentacao, 112) + ' ' + HorSessao)) > @DatAprCompleta)
-
--- SELECT @CodApresentacao = ISNULL((
--- 			SELECT MAX(CodApresentacao)
--- 			FROM tabApresentacao
--- 			) + 1, 0)
-
--- SET NOCOUNT OFF
-
--- INSERT INTO tabApresentacao (
--- 	CodApresentacao
--- 	,DatApresentacao
--- 	,CodPeca
--- 	,CodSala
--- 	,HorSessao
--- 	,ValPeca
--- 	,NumBordero
--- 	,StaAtivoWeb
--- 	,StaAtivoBilheteria
--- 	)
--- VALUES (
--- 	@CodApresentacao
--- 	,@DatApresentacao
--- 	,@CodPeca
--- 	,@CodSala
--- 	,@HorSessao
--- 	,@ValPeca
--- 	,@NumBordero
--- 	,@StaAtivoWeb
--- 	,@StaAtivoBilheteria
--- 	)
