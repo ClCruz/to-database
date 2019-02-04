@@ -1,0 +1,8 @@
+ALTER PROCEDURE dbo.pr_purchase_payment_method_hoursinadvance (@id INT)
+
+AS
+
+SELECT TOP 1
+    QT_HR_ANTECED 
+FROM CI_MIDDLEWAY..MW_MEIO_PAGAMENTO 
+WHERE CD_MEIO_PAGAMENTO = @id

@@ -26,6 +26,6 @@ WHERE
 OR (@search IS NULL OR p.domain LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS)
 OR (@search IS NULL OR p.[key] LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS)
 OR (@search IS NULL OR p.[key_test] LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS))
-ORDER by p.name
+ORDER by (CASE WHEN p.isDemo = 0 AND p.isTrial = 0 AND p.isDev = 0 THEN 0 ELSE 1 END), p.name
  OFFSET (@currentPage-1)*@perPage ROWS
    FETCH NEXT @perPage ROWS ONLY;
