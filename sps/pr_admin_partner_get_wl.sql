@@ -1,8 +1,15 @@
-ALTER PROCEDURE dbo.pr_admin_partner_get_wl (@id UNIQUEIDENTIFIER)
+--exec sp_executesql N'EXEC pr_admin_partner_get_wl @P1, @P2',N'@P1 nvarchar(4000),@P2 nvarchar(4000)',N'00000000-0000-0000-0000-000000000000',N'bringressos'
+
+ALTER PROCEDURE dbo.pr_admin_partner_get_wl (@id UNIQUEIDENTIFIER, @uniquenamesearch VARCHAR(1000))
 
 AS
 
 SET NOCOUNT ON;
+
+IF @id = '00000000-0000-0000-0000-000000000000'
+BEGIN
+        SELECT @id=id FROM CI_MIDDLEWAY..[partner] p WHERE p.uniquename=@uniquenamesearch
+END
 
 -- DECLARE @id UNIQUEIDENTIFIER = '1a0fdc45-e934-4c9e-bf4c-8fc8c11474a1';
 
