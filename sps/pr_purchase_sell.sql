@@ -1,18 +1,36 @@
---pr_purchase_get_current 'j5pu5q3um4cn4hcmuetsvcf9n0'
+--exec sp_executesql N'EXEC pr_purchase_sell @P1,@P2,@P3,@P4',N'@P1 nvarchar(4000),@P2 int,@P3 int,@P4 nvarchar(4000)',N'30',200,2,N'910'
 
-CREATE PROCEDURE dbo.pr_purchase_sell (@id_cliente INT
+ALTER PROCEDURE dbo.pr_purchase_sell (@id_cliente INT
         ,@totalAmount INT
         ,@id_pedido_venda INT
         ,@cd_meio_pagamento INT)
 
 AS
---DECLARE @id_session VARCHAR(1000) = 'j5pu5q3um4cn4hcmuetsvcf9n0'
+--begin tran
+-- DECLARE @id_cliente INT = 30
+--         ,@totalAmount INT = 200
+--         ,@id_pedido_venda INT = 2
+--         ,@cd_meio_pagamento INT = 910
 
+-- rollback  
+-- select * from ci_localhost..tablugsala where CodApresentacao=24
+-- INSERT INTO #execsell (success,id_base, codVenda, id_pedido_venda,ErrorNumber,ErrorSeverity,ErrorState,ErrorProcedure,ErrorLine,ErrorMessage) EXEC [ci_localhost]..pr_sell_web 30, 200, 2, 910, 'DB4AHCBOOO'
+-- select * FROM #execsell
 
 SET NOCOUNT ON;
 
+DECLARE @codVenda VARCHAR(10)
+
 IF OBJECT_ID('tempdb.dbo.#bases', 'U') IS NOT NULL
     DROP TABLE #bases; 
+
+IF OBJECT_ID('tempdb.dbo.#execsell', 'U') IS NOT NULL
+    DROP TABLE #execsell; 
+
+IF OBJECT_ID('tempdb.dbo.#codVendaTemp', 'U') IS NOT NULL
+    DROP TABLE #codVendaTemp; 
+
+CREATE TABLE #codVendaTemp (codVenda VARCHAR(10));
 
 CREATE TABLE #bases (id_base INT, done BIT)
 
@@ -33,6 +51,10 @@ BEGIN TRY
 
   BEGIN TRANSACTION sellweb
 
+  INSERT INTO #codVendaTemp EXEC CI_MIDDLEWAY..seqCodVenda @id_pedido_venda;
+  SELECT TOP 1 @codVenda=codVenda FROM #codVendaTemp
+
+
 
     WHILE (EXISTS (SELECT 1 FROM #bases WHERE done=0 ))
     BEGIN
@@ -44,14 +66,61 @@ BEGIN TRY
         SELECT TOP 1 @db_name=b.ds_nome_base_sql FROM CI_MIDDLEWAY..mw_base b WHERE b.id_base=@currentBase;
 
         SET @toExec=''
-        SET @toExec = 'INSERT INTO #execsell (success,id_base, codVenda, id_pedido_venda,ErrorNumber,ErrorSeverity,ErrorState,ErrorProcedure,ErrorLine,ErrorMessage) EXEC dbo.'+@db_name+'.dbo.pr_sell_web '+CONVERT(VARCHAR(10),@id_cliente)+', '+CONVERT(VARCHAR(10),@totalAmount)+', '+CONVERT(VARCHAR(10),@id_pedido_venda)+', '+CONVERT(VARCHAR(10),@cd_meio_pagamento)
+        SET @toExec = 'INSERT INTO #execsell (success,id_base, codVenda, id_pedido_venda,ErrorNumber,ErrorSeverity,ErrorState,ErrorProcedure,ErrorLine,ErrorMessage) '
+        SET @toExec = @toExec+' EXEC ['+@db_name+']..pr_sell_web '+CONVERT(VARCHAR(10),@id_cliente)
+        SET @toExec = @toExec+', '+CONVERT(VARCHAR(10),@totalAmount)
+        SET @toExec = @toExec+', '+CONVERT(VARCHAR(10),@id_pedido_venda)
+        SET @toExec = @toExec+', '+CONVERT(VARCHAR(10),@cd_meio_pagamento)
+        SET @toExec = @toExec+', '''+@codVenda+''''
+        -- print @toExec
 
         exec sp_executesql @toExec
         
         UPDATE #bases SET done=1 WHERE id_base=@currentBase;
     END
 
-  COMMIT TRANSACTION sellweb
+  DECLARE @hasError BIT = 0
+
+  SELECT @hasError=1 FROM #execsell WHERE success=0
+
+  IF @hasError = 1
+  BEGIN
+    ROLLBACK TRANSACTION sellweb
+
+    SELECT 0 success
+        , (SELECT TOP 1 id_base FROM #execsell WHERE success=0) id_base
+        , @codVenda codVenda
+        , @id_pedido_venda id_pedido_venda
+        , (SELECT TOP 1 ErrorNumber FROM #execsell WHERE success=0) AS ErrorNumber
+        , (SELECT TOP 1 ErrorSeverity FROM #execsell WHERE success=0) AS ErrorSeverity
+        , (SELECT TOP 1 ErrorState FROM #execsell WHERE success=0) AS ErrorState
+        , (SELECT TOP 1 ErrorProcedure FROM #execsell WHERE success=0) AS ErrorProcedure
+        , (SELECT TOP 1 ErrorLine FROM #execsell WHERE success=0) AS ErrorLine
+        , (SELECT TOP 1 ErrorMessage FROM #execsell WHERE success=0) AS ErrorMessage
+  END
+  ELSE
+  BEGIN
+    DECLARE @id_session VARCHAR(100)
+
+    SELECT @id_session=csc.id_session FROM CI_MIDDLEWAY..current_session_client csc WHERE csc.id_cliente=@id_cliente
+
+    DELETE FROM CI_MIDDLEWAY..mw_reserva WHERE id_session=@id_session
+    DELETE FROM CI_MIDDLEWAY..current_session_client WHERE id_cliente=@id_cliente
+
+    COMMIT TRANSACTION sellweb
+
+    SELECT 1 success
+        , (SELECT TOP 1 id_base FROM #execsell) id_base
+        , @codVenda codVenda
+        , @id_pedido_venda id_pedido_venda
+        ,NULL AS ErrorNumber
+        ,NULL AS ErrorSeverity
+        ,NULL AS ErrorState
+        ,NULL AS ErrorProcedure
+        ,NULL AS ErrorLine
+        ,NULL AS ErrorMessage
+  END
+
 END TRY
 BEGIN CATCH 
   IF (@@TRANCOUNT > 0)
@@ -60,6 +129,7 @@ BEGIN CATCH
    END 
     SELECT
         0 success
+        ,NULL id_base
         ,NULL codVenda
         ,@id_pedido_venda id_pedido_venda
         ,ERROR_NUMBER() AS ErrorNumber

@@ -293,6 +293,12 @@ SELECT @totalWithoutDiscount = SUM(r.amount) FROM #result r
 SELECT @totalWithDiscount = SUM(r.amountallWithoutService) FROM #result r
 SELECT @totalWithService = SUM(r.amountallWithService) FROM #result r
 
+UPDATE d
+SET d.amountcalculated = r.amountallWithoutService
+    ,d.amountServicecalculeted = r.serviceAmountINT
+FROM CI_MIDDLEWAY..mw_reserva d
+INNER JOIN #result r ON d.id_reserva=r.id
+
 SELECT 
 r.id
 ,r.indice

@@ -1,4 +1,8 @@
-CREATE PROCEDURE dbo.pr_purchase_generate_pedido_venda (
+
+--select * from mw_pedido_venda
+--exec sp_executesql N'EXEC pr_purchase_generate_pedido_venda @P1, @P2, @P3,@P4,@P5,@P6,@P7,@P8,@P9,@P10,@P11,@P12,@P13',N'@P1 nvarchar(4000),@P2 char(1),@P3 int,@P4 int,@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000),@P9 nvarchar(4000),@P10 nvarchar(4000),@P11 nvarchar(4000),@P12 nvarchar(4000),@P13 nvarchar(4000)',N'30',NULL,200,200,0,N'424242',N'1',N'172.17.0.1',N'localhost',N'',N'',N'',N'matt murdock'
+
+ALTER PROCEDURE dbo.pr_purchase_generate_pedido_venda (
         @id_cliente INT
         ,@id_operador INT
         ,@amountTotalINT INT
@@ -12,6 +16,11 @@ CREATE PROCEDURE dbo.pr_purchase_generate_pedido_venda (
         ,@nm_cliente_voucher VARCHAR(60)
         ,@ds_email_voucher VARCHAR(100)
         ,@nm_titular_cartao VARCHAR(60)
+        ,@id_pedido_ipagare VARCHAR(36)
+        ,@cd_numero_autorizacao VARCHAR(50)
+        ,@cd_numero_transacao VARCHAR(50)
+        ,@id_transaction_braspag VARCHAR(36)
+        ,@id_meio_pagamento INT
         )
 
 AS
@@ -27,17 +36,17 @@ DECLARE @id_pedido_venda INT  = NULL
         ,@in_situacao VARCHAR(10) = 'P'
         ,@in_situacao_despacho VARCHAR(10) = 'D'
         ,@in_retirada_entrega VARCHAR(10) = 'E'
-        ,@frete NUMERIC(15,2) = NULL
-        ,@vl_total_pedido NUMERIC(15,2) = NULL
-        ,@vl_total_ingressos NUMERIC(15,2) = NULL
-        ,@vl_total_taxa_conveniencia NUMERIC(15,2) = NULL
+        ,@frete NUMERIC(15,2) = 0
+        ,@vl_total_pedido NUMERIC(15,2) = CONVERT(NUMERIC(15,2),@amountTotalINT)/CONVERT(NUMERIC(15,2),100)
+        ,@vl_total_ingressos NUMERIC(15,2) = CONVERT(NUMERIC(15,2),@amountTotalwithoutserviceINT)/CONVERT(NUMERIC(15,2),100)
+        ,@vl_total_taxa_conveniencia NUMERIC(15,2) = CONVERT(NUMERIC(15,2),@amountTotalServiceINT)/CONVERT(NUMERIC(15,2),100)
 
-SELECT @id_pedido_venda=MAX(id_pedido_venda) FROM CI_MIDDLEWAY..mw_pedido_venda
+SELECT @id_pedido_venda=MAX(id_pedido_venda)+1 FROM CI_MIDDLEWAY..mw_pedido_venda
 
 IF @id_pedido_venda IS NULL
     SET @id_pedido_venda=1
 
-INSERT INTO MW_PEDIDO_VENDA
+INSERT INTO CI_MIDDLEWAY..MW_PEDIDO_VENDA
     (ID_PEDIDO_VENDA
     ,ID_CLIENTE
     ,ID_USUARIO_CALLCENTER
@@ -55,7 +64,13 @@ INSERT INTO MW_PEDIDO_VENDA
     ,nr_beneficio
     ,nm_cliente_voucher
     ,ds_email_voucher
-    ,nm_titular_cartao)
+    ,nm_titular_cartao
+    ,id_pedido_ipagare
+    ,cd_numero_autorizacao
+    ,cd_numero_transacao
+    ,id_transaction_braspag
+    ,id_meio_pagamento)
+    
 VALUES
     (@id_pedido_venda
     , @id_cliente
@@ -75,6 +90,11 @@ VALUES
     , @nm_cliente_voucher
     , @ds_email_voucher
     , @nm_titular_cartao
+    , @id_pedido_ipagare
+    , @cd_numero_autorizacao
+    , @cd_numero_transacao
+    , @id_transaction_braspag
+    , @id_meio_pagamento
     )
 
 
@@ -89,7 +109,7 @@ BEGIN
     SELECT @id_host = id FROM CI_MIDDLEWAY..host WHERE host = @host
 END
 
-INSERT INTO order_host (id_pedido_venda, indice, id_host, id_cliente)
+INSERT INTO CI_MIDDLEWAY..order_host (id_pedido_venda, indice, id_host, id_cliente)
 SELECT 
     @id_pedido_venda
     , r.id_cadeira

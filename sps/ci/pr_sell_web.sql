@@ -1,13 +1,20 @@
+-- begin tran
+-- rollback
+-- select * from ci_localhost..tablugsala where CodApresentacao=24
+-- EXEC [ci_localhost]..pr_sell_web 30, 200, 2, 910
+
 ALTER PROCEDURE pr_sell_web (@id_cliente INT
         ,@totalAmount INT
         ,@id_pedido_venda INT
         ,@cd_meio_pagamento INT
-        ,@ID_PEDIDO_IPAGARE	VARCHAR(36)
-        ,@CD_NUMERO_AUTORIZACAO VARCHAR(50)
-        ,@CD_NUMERO_TRANSACAO VARCHAR(50)
-        ,@NR_CARTAO_CREDITO VARCHAR(16))
+        ,@codVenda VARCHAR(10) = NULL)
 
 AS
+
+-- DECLARE @id_cliente INT = 30
+--         ,@totalAmount INT = 200
+--         ,@id_pedido_venda INT = 2
+--         ,@cd_meio_pagamento INT = 910
 
 SET NOCOUNT ON;
 
@@ -23,8 +30,11 @@ DECLARE @codUsuario INT = 255 -- usuario web
         ,@CodTipLancamento INT
         ,@quantity INT
         ,@id_meio_pagamento INT
+        ,@NR_CARTAO_CREDITO VARCHAR(16)
 
 SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
+
+SELECT @NR_CARTAO_CREDITO=pv.cd_bin_cartao FROM CI_MIDDLEWAY..mw_pedido_venda pv WHERE pv.id_pedido_venda=@id_pedido_venda
 
 SELECT @quantity=COUNT(1) 
 FROM CI_MIDDLEWAY..mw_reserva r
@@ -78,7 +88,6 @@ BEGIN
 END
 
 DECLARE @now DATETIME = GETDATE()
-        ,@codVenda VARCHAR(10) = NULL
 
 
 DECLARE @NomeEmpresa VARCHAR(100)
@@ -86,20 +95,6 @@ DECLARE @NomeEmpresa VARCHAR(100)
         ,@idpedidovenda BIGINT
 
 SELECT @NomeEmpresa=NomEmpresa FROM tabEmpresa
-
-IF @codVenda IS NULL
-BEGIN
-    IF OBJECT_ID('tempdb.dbo.#codVendaTemp', 'U') IS NOT NULL
-        DROP TABLE #codVendaTemp; 
-
-    DECLARE @userHelp VARCHAR(100) = CONVERT(VARCHAR(100),@id_cliente)
-
-    CREATE TABLE #codVendaTemp (codVenda VARCHAR(10));
-
-    INSERT INTO #codVendaTemp EXEC CI_MIDDLEWAY..seqCodVenda @id_pedido_venda;
-
-    SELECT @codVenda=codVenda FROM #codVendaTemp
-END
 
 UPDATE ls
 SET ls.StaCadeira='V'
@@ -114,22 +109,6 @@ INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
 INNER JOIN tabLugSala ls ON ls.CodApresentacao=a.CodApresentacao AND ls.Indice=r.id_cadeira
 INNER JOIN CI_MIDDLEWAY..current_session_client csc ON r.id_session=csc.id_session COLLATE SQL_Latin1_General_CP1_CI_AS
 WHERE csc.id_cliente=@id_cliente
-
-update CI_MIDDLEWAY..mw_pedido_venda
-	SET id_pedido_ipagare = @ID_PEDIDO_IPAGARE,
-		cd_numero_autorizacao = @CD_NUMERO_AUTORIZACAO,
-		cd_numero_transacao = @CD_NUMERO_TRANSACAO,
-		in_situacao = 'F',
-		cd_bin_cartao = @NR_CARTAO_CREDITO
-WHERE
-	id_pedido_venda = @id_pedido_venda
-
-
-UPDATE CI_MIDDLEWAY..mw_item_pedido_venda
-    SET CodVenda=@codVenda
-WHERE
-    id_pedido_venda=@id_pedido_venda
-
 
 DECLARE @NumLancamento INT
 SELECT @NumLancamento = (SELECT COALESCE(MAX(NumLancamento),0)+1 FROM tabLancamento)
@@ -283,6 +262,47 @@ INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON r.id_apresentacao=ap.id_apresenta
 INNER JOIN CI_MIDDLEWAY..MW_APRESENTACAO_BILHETE AB ON AB.ID_APRESENTACAO = R.ID_APRESENTACAO AND AB.IN_ATIVO = 1 AND AB.ID_APRESENTACAO_BILHETE = R.ID_APRESENTACAO_BILHETE
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento AND e.id_base=@id_base
 INNER JOIN CI_MIDDLEWAY..current_session_client csc ON r.id_session=csc.id_session COLLATE SQL_Latin1_General_CP1_CI_AS
+WHERE csc.id_cliente=@id_cliente
+
+
+UPDATE ls
+SET ls.id_session=NULL
+FROM CI_MIDDLEWAY..mw_reserva r
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON r.id_apresentacao=ap.id_apresentacao
+INNER JOIN CI_MIDDLEWAY..MW_APRESENTACAO_BILHETE AB ON AB.ID_APRESENTACAO = R.ID_APRESENTACAO AND AB.IN_ATIVO = 1 AND AB.ID_APRESENTACAO_BILHETE = R.ID_APRESENTACAO_BILHETE
+INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento AND e.id_base=@id_base
+INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
+INNER JOIN tabLugSala ls ON ls.CodApresentacao=a.CodApresentacao AND ls.Indice=r.id_cadeira
+INNER JOIN CI_MIDDLEWAY..current_session_client csc ON r.id_session=csc.id_session COLLATE SQL_Latin1_General_CP1_CI_AS
+WHERE csc.id_cliente=@id_cliente
+
+update CI_MIDDLEWAY..mw_pedido_venda
+	SET in_situacao = 'F'
+WHERE
+	id_pedido_venda = @id_pedido_venda
+
+
+INSERT INTO CI_MIDDLEWAY..MW_ITEM_PEDIDO_VENDA (id_pedido_venda, id_reserva, ID_APRESENTACAO
+                                                ,ID_APRESENTACAO_BILHETE,DS_LOCALIZACAO,DS_SETOR
+                                                ,QT_INGRESSOS,VL_UNITARIO,VL_TAXA_CONVENIENCIA
+                                                ,CODVENDA,INDICE, tickettype)
+SELECT 
+    @id_pedido_venda, r.id_reserva, r.id_apresentacao
+    , r.id_apresentacao_bilhete, sd.NomObjeto, se.NomSetor
+    , 1, (CONVERT(NUMERIC(15,2),r.amountcalculated)/CONVERT(NUMERIC(15,2),100)), (CONVERT(NUMERIC(15,2),r.amountServicecalculeted)/CONVERT(NUMERIC(15,2),100))
+    ,@codVenda, r.id_cadeira,tb.ds_nome_site
+FROM CI_MIDDLEWAY..mw_reserva r
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON r.id_apresentacao=ap.id_apresentacao
+INNER JOIN CI_MIDDLEWAY..MW_APRESENTACAO_BILHETE AB ON AB.ID_APRESENTACAO = R.ID_APRESENTACAO AND AB.IN_ATIVO = 1 AND AB.ID_APRESENTACAO_BILHETE = R.ID_APRESENTACAO_BILHETE
+INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento AND e.id_base=@id_base
+INNER JOIN tabPeca p ON e.codPeca=p.CodPeca
+INNER JOIN CI_MIDDLEWAY..current_session_client csc ON r.id_session=csc.id_session COLLATE SQL_Latin1_General_CP1_CI_AS
+INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
+INNER JOIN tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND r.id_cadeira=ls.Indice
+INNER JOIN tabSala s ON a.CodSala=s.CodSala
+INNER JOIN tabSalDetalhe sd ON sd.Indice=ls.indice AND sd.CodSala=a.CodSala
+INNER JOIN tabTipBilhete tb ON ab.CodTipBilhete=tb.CodTipBilhete
+INNER JOIN tabSetor se ON sd.CodSetor=se.CodSetor AND a.CodSala=se.CodSala
 WHERE csc.id_cliente=@id_cliente
 
 
