@@ -1,4 +1,4 @@
---pr_purchase_get_current 'thslkr39i6nhon6qgbgs5bnoc2'
+--pr_purchase_get_current '6lp3jnara0n0jmflihg6kh4c93'
 
 ALTER PROCEDURE dbo.pr_purchase_get_current (@id_session VARCHAR(1000))
 
@@ -26,7 +26,7 @@ CREATE TABLE #data_bases (id UNIQUEIDENTIFIER, id_base INT, base_sql VARCHAR(100
     ,NomObjeto VARCHAR(1000),NomSetor VARCHAR(1000),PerDescontoSetor FLOAT
     ,[Status] VARCHAR(1000),PerDesconto FLOAT,QtdVendaPorLote INT
     ,StaTipBilhMeiaEstudante VARCHAR(1000),StaTipBilhete VARCHAR(1000),TipBilhete VARCHAR(1000), ID_PROMOCAO_CONTROLE INT
-    ,id_evento INT, id_apresentacao INT, id_reserva INT, hoursinadvance INT, in_taxa_por_pedido VARCHAR(1), id_apresentacao_bilhete INT, nr_beneficio VARCHAR(32))
+    ,id_evento INT, id_apresentacao INT, id_reserva INT, hoursinadvance INT, in_taxa_por_pedido VARCHAR(1), id_apresentacao_bilhete INT, nr_beneficio VARCHAR(32),QT_INGRESSOS_POR_CPF INT, purchasebythiscpf INT)
 
 SELECT e.id_base, e.id_evento, e.CodPeca, a.CodApresentacao,a.id_apresentacao, r.id_reserva, r.id_cadeira
 INTO #aux
@@ -34,6 +34,11 @@ FROM CI_MIDDLEWAY..MW_EVENTO E
 INNER JOIN CI_MIDDLEWAY..MW_APRESENTACAO A ON A.ID_EVENTO = E.ID_EVENTO
 INNER JOIN CI_MIDDLEWAY..MW_RESERVA R ON R.ID_APRESENTACAO = A.ID_APRESENTACAO
 WHERE R.id_session = @id_session
+
+DECLARE @cpf VARCHAR(100)
+SELECT @cpf=c.cd_cpf FROM CI_MIDDLEWAY..current_session_client csc
+INNER JOIN CI_MIDDLEWAY..mw_cliente c ON csc.id_cliente=c.id_cliente
+WHERE csc.id_session=@id_session
 
 INSERT INTO #bases (id_base, done)
 SELECT DISTINCT id_base,0
@@ -56,7 +61,7 @@ BEGIN
     SET @toExec = @toExec + ',NomObjeto,NomSetor,PerDescontoSetor '
     SET @toExec = @toExec + ',[Status],PerDesconto,QtdVendaPorLote '
     SET @toExec = @toExec + ',StaTipBilhMeiaEstudante,StaTipBilhete,TipBilhete, ID_PROMOCAO_CONTROLE'
-    SET @toExec = @toExec + ',id_evento, id_apresentacao, id_reserva,hoursinadvance,in_taxa_por_pedido,id_apresentacao_bilhete, nr_beneficio) '
+    SET @toExec = @toExec + ',id_evento, id_apresentacao, id_reserva,hoursinadvance,in_taxa_por_pedido,id_apresentacao_bilhete, nr_beneficio,QT_INGRESSOS_POR_CPF,purchasebythiscpf) '
     SET @toExec = @toExec + 'SELECT DISTINCT '
     SET @toExec = @toExec + '        NEWID() '
     SET @toExec = @toExec + '        , ' + CONVERT(VARCHAR(10),@currentBase)
@@ -93,6 +98,17 @@ BEGIN
     SET @toExec = @toExec + '        ,(SELECT TOP 1 SUB.IN_TAXA_POR_PEDIDO FROM CI_MIDDLEWAY..MW_TAXA_CONVENIENCIA SUB WHERE SUB.ID_EVENTO = E.ID_EVENTO AND SUB.DT_INICIO_VIGENCIA <= GETDATE() ORDER BY SUB.DT_INICIO_VIGENCIA DESC) in_taxa_por_pedido'
     SET @toExec = @toExec + '        ,apb.id_apresentacao_bilhete '
     SET @toExec = @toExec + '        ,r.nr_beneficio '
+    SET @toExec = @toExec + '        ,p.QT_INGRESSOS_POR_CPF '
+
+    SET @toExec = @toExec + '        ,( '
+    SET @toExec = @toExec + '        SELECT SUM(CASE subH.CODTIPLANCAMENTO WHEN 1 THEN 1 ELSE -1 END)  '
+    SET @toExec = @toExec + '        FROM '+@db_name+'.dbo.tabCliente subC '
+    SET @toExec = @toExec + '        INNER JOIN '+@db_name+'.dbo.tabHisCliente subH ON subH.CODIGO = subC.CODIGO '
+    SET @toExec = @toExec + '        INNER JOIN '+@db_name+'.dbo.tabApresentacao subA ON subA.CODAPRESENTACAO = subH.CODAPRESENTACAO '
+    SET @toExec = @toExec + '        INNER JOIN '+@db_name+'.dbo.tabApresentacao subA2 ON subA2.DATAPRESENTACAO = subA.DATAPRESENTACAO AND subA2.CODPECA = subA.CODPECA AND subA2.HORSESSAO = subA.HORSESSAO '
+    SET @toExec = @toExec + '        WHERE subC.CPF = '''+@cpf+''' AND subA2.CODAPRESENTACAO = a.codApresentacao '
+    SET @toExec = @toExec + '        ) AS purchasebythiscpf '
+
     SET @toExec = @toExec + ' FROM '+@db_name+'.dbo.tabLugSala ls '
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao '
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabPeca p ON a.CodPeca=p.CodPeca '
@@ -150,4 +166,6 @@ SELECT
     ,in_taxa_por_pedido
     ,id_apresentacao_bilhete
     ,nr_beneficio
+    ,QT_INGRESSOS_POR_CPF
+    ,purchasebythiscpf
 FROM #data_bases

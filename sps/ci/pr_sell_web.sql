@@ -26,6 +26,7 @@ DECLARE @codUsuario INT = 255 -- usuario web
         ,@in_retira_entrega VARCHAR(20) = NULL
         ,@id_usuario_callcenter INT = NULL
         ,@codForPagto INT
+        ,@CodTipForPagto INT
         ,@id_base INT
         ,@CodTipLancamento INT
         ,@quantity INT
@@ -55,6 +56,9 @@ from CI_MIDDLEWAY..mw_meio_pagamento mp
 INNER JOIN CI_MIDDLEWAY..mw_meio_pagamento_forma_pagamento mpfp	on mpfp.id_base = @id_base and mpfp.id_meio_pagamento = mp.id_meio_pagamento
 WHERE
 	mp.cd_meio_pagamento = @cd_meio_pagamento
+
+
+SELECT @CodTipForPagto=tfp.CodTipForPagto FROM tabForPagamento tfp WHERE CodForPagto=@codForPagto
 
 BEGIN TRY
 
@@ -243,6 +247,10 @@ INNER JOIN tabTipBilhete tb ON ab.CodTipBilhete=tb.CodTipBilhete
 INNER JOIN tabSetor se ON sd.CodSetor=se.CodSetor AND a.CodSala=se.CodSala
 WHERE csc.id_cliente=@id_cliente
 
+IF @CodTipForPagto = 47
+BEGIN
+    SET @NR_CARTAO_CREDITO = 'BOLETO'
+END
 
 INSERT INTO tabDetPagamento (CodForPagto, NumLancamento, Agencia, Numero, DatValidade,Observacao )
 		VALUES(@CodForPagto, @NumLancamento, null, @NR_CARTAO_CREDITO, '0000',null)
@@ -276,11 +284,13 @@ INNER JOIN tabLugSala ls ON ls.CodApresentacao=a.CodApresentacao AND ls.Indice=r
 INNER JOIN CI_MIDDLEWAY..current_session_client csc ON r.id_session=csc.id_session COLLATE SQL_Latin1_General_CP1_CI_AS
 WHERE csc.id_cliente=@id_cliente
 
-update CI_MIDDLEWAY..mw_pedido_venda
-	SET in_situacao = 'F'
-WHERE
-	id_pedido_venda = @id_pedido_venda
-
+IF @CodTipForPagto != 47
+BEGIN
+    update CI_MIDDLEWAY..mw_pedido_venda
+        SET in_situacao = 'F'
+    WHERE
+        id_pedido_venda = @id_pedido_venda
+END
 
 INSERT INTO CI_MIDDLEWAY..MW_ITEM_PEDIDO_VENDA (id_pedido_venda, id_reserva, ID_APRESENTACAO
                                                 ,ID_APRESENTACAO_BILHETE,DS_LOCALIZACAO,DS_SETOR

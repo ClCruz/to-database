@@ -1,21 +1,13 @@
---exec sp_executesql N'EXEC pr_purchase_sell @P1,@P2,@P3,@P4',N'@P1 nvarchar(4000),@P2 int,@P3 int,@P4 nvarchar(4000)',N'30',200,2,N'910'
-
 ALTER PROCEDURE dbo.pr_purchase_sell (@id_cliente INT
         ,@totalAmount INT
         ,@id_pedido_venda INT
         ,@cd_meio_pagamento INT)
 
 AS
---begin tran
 -- DECLARE @id_cliente INT = 30
---         ,@totalAmount INT = 200
---         ,@id_pedido_venda INT = 2
---         ,@cd_meio_pagamento INT = 910
-
--- rollback  
--- select * from ci_localhost..tablugsala where CodApresentacao=24
--- INSERT INTO #execsell (success,id_base, codVenda, id_pedido_venda,ErrorNumber,ErrorSeverity,ErrorState,ErrorProcedure,ErrorLine,ErrorMessage) EXEC [ci_localhost]..pr_sell_web 30, 200, 2, 910, 'DB4AHCBOOO'
--- select * FROM #execsell
+--         ,@totalAmount INT = 100
+--         ,@id_pedido_venda INT = 52
+--         ,@cd_meio_pagamento INT = 911
 
 SET NOCOUNT ON;
 
@@ -82,6 +74,8 @@ BEGIN TRY
   DECLARE @hasError BIT = 0
 
   SELECT @hasError=1 FROM #execsell WHERE success=0
+
+--   SELECT * FROM #execsell
 
   IF @hasError = 1
   BEGIN
