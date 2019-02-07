@@ -1,12 +1,13 @@
-ALTER PROCEDURE dbo.pr_generate_sitemap (@api VARCHAR(100))
+ALTER PROCEDURE dbo.pr_generate_sitemap (@uniquename VARCHAR(100))
 
 AS
+-- DECLARE @uniquename VARCHAR(100) = 'bringressos'
 
 --0.6
 DECLARE @homeChange VARCHAR(100) = 'always'
         ,@eventChange VARCHAR(100) = 'daily'
         ,@other VARCHAR(100) = 'never'
-        ,@domain VARCHAR(1000) = 'https://www.tixs.me'
+        ,@domain VARCHAR(1000) = 'DOMAIN'
 
 SET NOCOUNT ON;
 
@@ -14,7 +15,7 @@ DECLARE @id_partner UNIQUEIDENTIFIER
         ,@domainPartner VARCHAR(1000) = NULL
 
 SELECT TOP 1 @id_partner=p.id
-            ,@domainPartner=p.domain FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api
+            ,@domainPartner=p.domain FROM CI_MIDDLEWAY..[partner] p WHERE p.uniquename=@uniquename
 
 
 IF @domainPartner IS NULL
@@ -46,8 +47,8 @@ SELECT '<?xml version="1.0" encoding="UTF-8"?>' as result
 UNION ALL
 SELECT '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' as result
 UNION ALL
-SELECT '<url><loc>'+@domain+'/</loc><lastmod>'+CONVERT(VARCHAR(10),GETDATE(),120)+'</lastmod><changefreq>'+@homeChange+'</changefreq><priority>1.0</priority></url>' as result
+SELECT '<url><loc>'+CONCAT('https://',@domain)+'/</loc><lastmod>'+CONVERT(VARCHAR(10),GETDATE(),120)+'</lastmod><changefreq>'+@homeChange+'</changefreq><priority>1.0</priority></url>' as result
 UNION ALL
-SELECT '<url><loc>'+CONCAT(@domain,h.name)+'</loc><lastmod>'+h.created+'</lastmod><changefreq>'+@eventChange+'</changefreq><priority>0.8</priority></url>' as result FROM #helper h
+SELECT '<url><loc>'+CONCAT('https://',@domain,h.name)+'</loc><lastmod>'+h.created+'</lastmod><changefreq>'+@eventChange+'</changefreq><priority>0.8</priority></url>' as result FROM #helper h
 UNION ALL
 SELECT '</urlset>' as result
