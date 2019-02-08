@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_eventsdayshours (@codPeca INT, @datePresentation VARCHAR(10))
+ALTER PROCEDURE dbo.pr_eventsdayshours (@codPeca INT, @datePresentation VARCHAR(10))
 
 AS
 
@@ -20,7 +20,7 @@ SELECT DISTINCT
     ,s.NomSala
     ,s.NomRedSala
     ,s.IngressoNumerado
-    ,a.ValPeca
+    ,FORMAT(a.ValPeca,'C', 'pt-br') ValPeca
     ,se.PerDesconto
     ,CONVERT(DECIMAL(19,2),(CONVERT(DECIMAL(19,4),a.ValPeca)-(CONVERT(DECIMAL(19,4),a.ValPeca)*(CONVERT(DECIMAL(19,4),se.PerDesconto/100))))) cost
 FROM tabPeca p

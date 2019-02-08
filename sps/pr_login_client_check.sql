@@ -1,3 +1,5 @@
+-- pr_login_client_check 'gabriel.c.craveiro+070299@gmail.com'
+
 ALTER PROCEDURE dbo.pr_login_client_check(@email VARCHAR(1000))
 
 AS

@@ -1,13 +1,19 @@
--- pr_purchase_info_email 9
+-- select * from CI_MIDDLEWAY..mw_base
+
+-- pr_purchase_info_email_ticketoffice 'G6WDHOBFCO'
 
 
-ALTER PROCEDURE dbo.pr_purchase_info_email (@id_pedido_venda INT)
+ALTER PROCEDURE dbo.pr_purchase_info_email_ticketoffice (@codVenda VARCHAR(10))
 
 AS
 
--- DECLARE @id_pedido_venda INT = 9
+-- DECLARE @codVenda VARCHAR(10) = 'G64FGOBFHO'
 
 SET NOCOUNT ON;
+
+DECLARE @id_base INT
+
+SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
 
 IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
     DROP TABLE #result; 
@@ -16,11 +22,11 @@ SELECT DISTINCT
     e.id_evento
     ,eei.cardimage
     ,eei.uri
-    ,c.ds_nome + ' ' + c.ds_sobrenome [buyer_name]
-    ,c.cd_email_login buyer_email
-    ,c.cd_cpf buyer_document
-    ,pv.id_pedido_venda voucher_id
-    ,ipv.CodVenda voucher_code
+    ,'' [buyer_name]
+    ,'' buyer_email
+    ,'' buyer_document
+    ,'' voucher_id
+    ,ls.CodVenda voucher_code
     ,'' voucher_link
     ,'' voucher_event_image
     ,'' voucher_event_link
@@ -28,31 +34,30 @@ SELECT DISTINCT
     ,le.ds_local_evento voucher_local_name
     ,mu.ds_municipio voucher_event_city
     ,mue.sg_estado voucher_event_state
-    ,ipv.tickettype voucher_event_tickettype
+    ,tb.TipBilhete voucher_event_tickettype
     ,CONVERT(VARCHAR(10),ap.dt_apresentacao,103) voucher_event_date
     ,ap.hr_apresentacao voucher_event_hour
-    ,ipv.vl_unitario voucher_event_amount
-    ,ipv.vl_taxa_conveniencia voucher_event_service
-    ,h.name hostname
-    ,h.host hostfull
-    ,ISNULL((SELECT TOP 1 1 FROM CI_MIDDLEWAY..email_ticket_print subetp WHERE subetp.codVenda=ipv.CodVenda AND subetp.seen = 0),0) printcodehas
-    ,ISNULL((SELECT TOP 1 subetp.code FROM CI_MIDDLEWAY..email_ticket_print subetp WHERE subetp.codVenda=ipv.CodVenda AND subetp.seen = 0 ORDER BY subetp.created),'') printcode
-    ,'web' [type]
+    ,0 voucher_event_amount
+    ,0 voucher_event_service
+    ,'' hostname
+    ,'' hostfull
+    ,ISNULL((SELECT TOP 1 1 FROM CI_MIDDLEWAY..email_ticket_print subetp WHERE subetp.codVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS AND subetp.seen = 0),0) printcodehas
+    ,ISNULL((SELECT TOP 1 subetp.code FROM CI_MIDDLEWAY..email_ticket_print subetp WHERE subetp.codVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS AND subetp.seen = 0 ORDER BY subetp.created),'') printcode
 INTO #result
-FROM CI_MIDDLEWAY..mw_pedido_venda pv
-INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON pv.id_pedido_venda=ipv.id_pedido_venda
-INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete ab ON ipv.id_apresentacao_bilhete=ab.id_apresentacao_bilhete
-INNER JOIN CI_MIDDLEWAY..order_host oh ON pv.id_pedido_venda=oh.id_pedido_venda AND ipv.Indice=oh.indice
-INNER JOIN CI_MIDDLEWAY..host h ON oh.id_host=h.id
-INNER JOIN CI_MIDDLEWAY..mw_cliente c ON pv.id_cliente=c.id_cliente
-INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON ipv.id_apresentacao=ap.id_apresentacao
-INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento
+FROM tabLugSala ls
+INNER JOIN tabTipBilhete tb ON ls.CodTipBilhete=tb.CodTipBilhete
+INNER JOIN tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete ab ON ap.id_apresentacao=ab.id_apresentacao AND ls.CodTipBilhete=ab.CodTipBilhete
+INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento AND e.id_base=@id_base
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_local_evento le ON e.id_local_evento=le.id_local_evento
 INNER JOIN CI_MIDDLEWAY..mw_municipio mu ON le.id_municipio=mu.id_municipio
 INNER JOIN CI_MIDDLEWAY..mw_estado mue ON mu.id_estado=mue.id_estado
 WHERE 
-    pv.id_pedido_venda=@id_pedido_venda
+    ls.CodVenda=@codVenda COLLATE SQL_Latin1_General_CP1_CI_AS AND ls.StaCadeira='V'
+
+
 
 
 SELECT
@@ -81,7 +86,6 @@ SELECT
     ,FORMAT((SELECT SUM(voucher_event_amount) FROM #result),'C', 'pt-br') voucher_event_amount_total
     ,FORMAT((SELECT SUM(voucher_event_service) FROM #result),'C', 'pt-br') voucher_event_service_total
     ,FORMAT(((SELECT SUM(voucher_event_amount) FROM #result)+(SELECT SUM(voucher_event_service) FROM #result)),'C', 'pt-br') voucher_event_value_total
-    ,r.printcode
-    ,r.printcodehas
-    ,r.[type]
+    ,printcode
+    ,printcodehas
 FROM #result r

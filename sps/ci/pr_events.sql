@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_events (@id INT = NULL)
+ALTER PROCEDURE dbo.pr_events (@id INT = NULL)
 
 AS
 
@@ -11,7 +11,7 @@ SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAM
 SELECT DISTINCT
     p.CodPeca
     ,p.NomPeca
-    ,p.ValIngresso
+    ,FORMAT(p.ValIngresso,'C', 'pt-br') ValIngresso
     ,p.in_vende_site
     ,(CONVERT(VARCHAR(10),p.DatIniPeca,103) + ' a ' + CONVERT(VARCHAR(10),p.DatFinPeca,103)) [days]
     ,p.TemDurPeca
@@ -20,6 +20,7 @@ SELECT DISTINCT
     ,p.in_obriga_rg needRG
     ,p.in_obriga_tel needPhone
     ,p.in_obriga_nome needName
+    ,eei.ticketoffice_askemail
     ,eei.cardimage
     ,e.id_evento
 FROM tabPeca p
