@@ -1,3 +1,4 @@
+
 ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@id_produtor INT
     ,@id_to_admin_user UNIQUEIDENTIFIER
@@ -64,7 +65,7 @@ SELECT @genre=[name] FROM CI_MIDDLEWAY..genre WHERE id=@id_genre
 
 SELECT @CodTipPeca=tp.CodTipPeca
 FROM tabTipPeca tp
-WHERE RTRIM(LTRIM(tp.TipPeca))=RTRIM(LTRIM(@genre)) COLLATE SQL_Latin1_General_Cp1251_CS_AS
+WHERE RTRIM(LTRIM(tp.TipPeca))=RTRIM(LTRIM(@genre)) COLLATE SQL_Latin1_General_Cp1251_CI_AS
 
 IF @youshallnotpass=1
 BEGIN
@@ -200,7 +201,7 @@ SELECT @id_local_evento=id_local_evento FROM CI_MIDDLEWAY..mw_evento where id_ev
 
 SELECT @id_genre=g.id
 FROM CI_MIDDLEWAY..genre g
-WHERE RTRIM(LTRIM(g.name))=RTRIM(LTRIM(@genre)) COLLATE SQL_Latin1_General_Cp1251_CS_AS
+WHERE RTRIM(LTRIM(g.name))=RTRIM(LTRIM(@genre)) COLLATE SQL_Latin1_General_Cp1251_CI_AS
 
 UPDATE CI_MIDDLEWAY..mw_evento_extrainfo
 SET [description]=@description

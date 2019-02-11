@@ -25,7 +25,7 @@ BEGIN
     INSERT INTO #indice (indice)
         SELECT ls.Indice
         FROM tabLugSala ls
-        WHERE ls.CodReserva=@codReseva COLLATE SQL_Latin1_General_Cp1251_CS_AS AND StaCadeira='R'
+        WHERE ls.CodReserva=@codReseva COLLATE SQL_Latin1_General_Cp1251_CI_AS AND StaCadeira='R'
 END
 ELSE
 BEGIN
@@ -51,6 +51,6 @@ INNER JOIN #helper h ON d.id_apresentacao=h.id_apresentacao AND d.id_cadeira=h.I
 
 DELETE d
 FROM tabLugSala d
-INNER JOIN #helper h ON d.CodApresentacao=h.CodApresentacao AND d.CodReserva=h.CodReserva COLLATE SQL_Latin1_General_Cp1251_CS_AS AND d.Indice=h.Indice AND d.StaCadeira='R'
+INNER JOIN #helper h ON d.CodApresentacao=h.CodApresentacao AND d.CodReserva=h.CodReserva COLLATE SQL_Latin1_General_Cp1251_CI_AS AND d.Indice=h.Indice AND d.StaCadeira='R'
 
 SELECT 1 success

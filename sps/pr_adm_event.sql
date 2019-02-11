@@ -15,8 +15,8 @@ SELECT @uri=eei.uri FROM CI_MIDDLEWAY..mw_evento_extrainfo eei WHERE eei.id_even
 
 IF @uri IS NULL OR @uri = ''
 BEGIN
-    SELECT @uri = '/evento/' + replace(replace(lower(dbo.RemoveSpecialChars(e.ds_evento collate SQL_Latin1_General_Cp1251_CS_AS)),'-',''),' ', '_')
-        + '_' + replace(replace(lower(dbo.RemoveSpecialChars((CASE WHEN le.id_local_evento IS NULL THEN b.ds_nome_teatro ELSE le.ds_local_evento END) collate SQL_Latin1_General_Cp1251_CS_AS)),'-',''),' ', '_')
+    SELECT @uri = '/evento/' + replace(replace(lower(dbo.RemoveSpecialChars(e.ds_evento collate SQL_Latin1_General_Cp1251_CI_AS)),'-',''),' ', '_')
+        + '_' + replace(replace(lower(dbo.RemoveSpecialChars((CASE WHEN le.id_local_evento IS NULL THEN b.ds_nome_teatro ELSE le.ds_local_evento END) collate SQL_Latin1_General_Cp1251_CI_AS)),'-',''),' ', '_')
         + '_' + CONVERT(VARCHAR(10),e.id_evento)
     FROM CI_MIDDLEWAY..mw_evento e
     INNER JOIN CI_MIDDLEWAY..mw_base b on e.id_base=b.id_base

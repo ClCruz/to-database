@@ -61,7 +61,7 @@ BEGIN
 							SELECT @id_genre=g.id
 							FROM tabPeca p 
 							INNER JOIN CI_RAPOSO..tabTipPeca tp ON p.CodTipPeca=tp.CodTipPeca 
-							INNER JOIN CI_MIDDLEWAY..genre g ON RTRIM(LTRIM(tp.TipPeca))=RTRIM(LTRIM(g.name)) COLLATE SQL_Latin1_General_Cp1251_CS_AS 
+							INNER JOIN CI_MIDDLEWAY..genre g ON RTRIM(LTRIM(tp.TipPeca))=RTRIM(LTRIM(g.name)) COLLATE SQL_Latin1_General_Cp1251_CI_AS 
 							WHERE p.codPeca=@codPeca
 
 							IF (@id_genre IS NULL)
@@ -92,8 +92,8 @@ BEGIN
                             IF @changedURL=1
                             BEGIN
                                 UPDATE eei
-                                SET eei.uri='/evento/' + replace(replace(lower(CI_MIDDLEWAY.dbo.RemoveSpecialChars(e.ds_evento collate SQL_Latin1_General_Cp1251_CS_AS) COLLATE SQL_Latin1_General_CP1_CI_AS),'-',''),' ', '_')
-                                    + '_' + replace(replace(lower(CI_MIDDLEWAY.dbo.RemoveSpecialChars((CASE WHEN le.id_local_evento IS NULL THEN b.ds_nome_teatro ELSE le.ds_local_evento END) collate SQL_Latin1_General_Cp1251_CS_AS) COLLATE SQL_Latin1_General_CP1_CI_AS),'-',''),' ', '_')
+                                SET eei.uri='/evento/' + replace(replace(lower(CI_MIDDLEWAY.dbo.RemoveSpecialChars(e.ds_evento collate SQL_Latin1_General_Cp1251_CI_AS) COLLATE SQL_Latin1_General_CP1_CI_AS),'-',''),' ', '_')
+                                    + '_' + replace(replace(lower(CI_MIDDLEWAY.dbo.RemoveSpecialChars((CASE WHEN le.id_local_evento IS NULL THEN b.ds_nome_teatro ELSE le.ds_local_evento END) collate SQL_Latin1_General_Cp1251_CI_AS) COLLATE SQL_Latin1_General_CP1_CI_AS),'-',''),' ', '_')
                                     + '_' + CONVERT(VARCHAR(10),e.id_evento)                            
                                 FROM CI_MIDDLEWAY..mw_evento_extrainfo eei
                                 INNER JOIN CI_MIDDLEWAY..mw_evento e ON eei.id_evento=e.id_evento
@@ -133,8 +133,8 @@ BEGIN
                             
 
                             INSERT INTO CI_MIDDLEWAY..mw_evento_extrainfo (id_evento, cardimage, cardbigimage, imageoriginal, [uri], minuteBefore)
-                                SELECT DISTINCT e.id_evento,'/evento/{id}/{default_card}', '/evento/{id}/{default_big}', '/ori/{id}/{default_ori}','/evento/' + replace(replace(lower(CI_MIDDLEWAY.dbo.RemoveSpecialChars(e.ds_evento collate SQL_Latin1_General_Cp1251_CS_AS) COLLATE SQL_Latin1_General_CP1_CI_AS),'-',''),' ', '_')
-                                + '_' + replace(replace(lower(CI_MIDDLEWAY.dbo.RemoveSpecialChars((CASE WHEN le.id_local_evento IS NULL THEN b.ds_nome_teatro ELSE le.ds_local_evento END) collate SQL_Latin1_General_Cp1251_CS_AS) COLLATE SQL_Latin1_General_CP1_CI_AS),'-',''),' ', '_')
+                                SELECT DISTINCT e.id_evento,'/evento/{id}/{default_card}', '/evento/{id}/{default_big}', '/ori/{id}/{default_ori}','/evento/' + replace(replace(lower(CI_MIDDLEWAY.dbo.RemoveSpecialChars(e.ds_evento collate SQL_Latin1_General_Cp1251_CI_AS) COLLATE SQL_Latin1_General_CP1_CI_AS),'-',''),' ', '_')
+                                + '_' + replace(replace(lower(CI_MIDDLEWAY.dbo.RemoveSpecialChars((CASE WHEN le.id_local_evento IS NULL THEN b.ds_nome_teatro ELSE le.ds_local_evento END) collate SQL_Latin1_General_Cp1251_CI_AS) COLLATE SQL_Latin1_General_CP1_CI_AS),'-',''),' ', '_')
                                 + '_' + CONVERT(VARCHAR(10),e.id_evento)
 								,(@QT_HR_ANTECED*60)
                                 from CI_MIDDLEWAY..mw_evento e

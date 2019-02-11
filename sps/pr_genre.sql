@@ -11,7 +11,7 @@ g.id
 ,COUNT(*) OVER() totalCount
 ,@currentPage currentPage
 FROM CI_MIDDLEWAY..genre g
-WHERE (@search IS NULL OR g.name LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS)
+WHERE (@search IS NULL OR g.name LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS)
 ORDER BY [name]
  OFFSET (@currentPage-1)*@perPage ROWS
    FETCH NEXT @perPage ROWS ONLY;

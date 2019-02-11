@@ -1,4 +1,4 @@
---pr_event 'inner_circle_cota_de_ingressos_22678', 'live_keykeykey'
+--pr_event 'comedy_night_teatro_renaissance_22707', 'live_578abaf329f84119bb7c1e55dfdc7e0f4f20e693cd2c4bc7a5bc0a0965fae322'
 
 ALTER PROCEDURE dbo.pr_event (@key VARCHAR(100), @api VARCHAR(100))
 

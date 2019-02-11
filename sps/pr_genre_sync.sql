@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_genre_sync (@id_base INT)
+ALTER PROCEDURE dbo.pr_genre_sync (@id_base INT)
 
 AS
 
@@ -33,7 +33,7 @@ FROM CI_MIDDLEWAY..genre g
 
 DELETE d 
 FROM #toAdd d
-INNER JOIN #helper h ON RTRIM(LTRIM(h.name))=RTRIM(LTRIM(LOWER(d.name))) COLLATE SQL_Latin1_General_Cp1251_CS_AS
+INNER JOIN #helper h ON RTRIM(LTRIM(h.name))=RTRIM(LTRIM(LOWER(d.name))) COLLATE SQL_Latin1_General_Cp1251_CI_AS
 
 DECLARE @maxId_CI INT
 SELECT @maxId_CI=(MAX(id)+1) FROM #helper

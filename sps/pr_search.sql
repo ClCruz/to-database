@@ -25,7 +25,7 @@ DECLARE @searchText VARCHAR(100)
 SELECT TOP 1 @id_partner=p.id FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
 
 
-SET @searchText = dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(@search) COLLATE SQL_Latin1_General_Cp1251_CS_AS)))
+SET @searchText = dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(@search) COLLATE SQL_Latin1_General_Cp1251_CI_AS)))
 
 
 IF OBJECT_ID('tempdb.dbo.#aux', 'U') IS NOT NULL
@@ -40,7 +40,7 @@ BEGIN
     INSERT INTO #aux (id_evento)
     SELECT s.id_evento
     FROM CI_MIDDLEWAY..search s
-    WHERE s.[text] LIKE '%'+@searchText+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS;
+    WHERE s.[text] LIKE '%'+@searchText+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS;
 END
 
 IF @type = 'search_bycity'
@@ -48,7 +48,7 @@ BEGIN
     INSERT INTO #aux (id_evento)
     SELECT s.id_evento
     FROM CI_MIDDLEWAY..search s
-    WHERE s.ds_municipio LIKE @searchText COLLATE SQL_Latin1_General_Cp1251_CS_AS;
+    WHERE s.ds_municipio LIKE @searchText COLLATE SQL_Latin1_General_Cp1251_CI_AS;
 END
 
 IF @type = 'search_bystate'
@@ -56,7 +56,7 @@ BEGIN
     INSERT INTO #aux (id_evento)
     SELECT s.id_evento
     FROM CI_MIDDLEWAY..search s
-    WHERE s.ds_estado LIKE @searchText COLLATE SQL_Latin1_General_Cp1251_CS_AS;
+    WHERE s.ds_estado LIKE @searchText COLLATE SQL_Latin1_General_Cp1251_CI_AS;
 END
 
 IF @type = 'search_bylocal'
@@ -64,7 +64,7 @@ BEGIN
     INSERT INTO #aux (id_evento)
     SELECT s.id_evento
     FROM CI_MIDDLEWAY..search s
-    WHERE s.ds_nome_teatro LIKE @searchText COLLATE SQL_Latin1_General_Cp1251_CS_AS;
+    WHERE s.ds_nome_teatro LIKE @searchText COLLATE SQL_Latin1_General_Cp1251_CI_AS;
 END
 
 IF @type = 'search_bygenre'
@@ -72,7 +72,7 @@ BEGIN
     INSERT INTO #aux (id_evento)
     SELECT s.id_evento
     FROM CI_MIDDLEWAY..search s
-    WHERE s.ds_genre LIKE @searchText COLLATE SQL_Latin1_General_Cp1251_CS_AS;
+    WHERE s.ds_genre LIKE @searchText COLLATE SQL_Latin1_General_Cp1251_CI_AS;
 END
 
 

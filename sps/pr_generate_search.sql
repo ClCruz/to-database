@@ -26,15 +26,15 @@ DECLARE @nowOrder DATETIME = DATEADD(day,15, GETDATE())
 
 SELECT DISTINCT
 e.id_evento
-,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(e.ds_evento) COLLATE SQL_Latin1_General_Cp1251_CS_AS))) ds_evento
-,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(le.ds_local_evento) COLLATE SQL_Latin1_General_Cp1251_CS_AS))) ds_nome_teatro
-,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(mu.ds_municipio) COLLATE SQL_Latin1_General_Cp1251_CS_AS))) ds_municipio
-,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(es.sg_estado) COLLATE SQL_Latin1_General_Cp1251_CS_AS))) sg_estado
-,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(es.ds_estado) COLLATE SQL_Latin1_General_Cp1251_CS_AS))) ds_estado
-,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(g.name) COLLATE SQL_Latin1_General_Cp1251_CS_AS))) ds_genre
-,(CASE WHEN ds_municipio = @city COLLATE SQL_Latin1_General_Cp1251_CS_AS THEN 1
-                WHEN ds_municipio != @city COLLATE SQL_Latin1_General_Cp1251_CS_AS
-                     AND es.sg_estado = @state COLLATE SQL_Latin1_General_Cp1251_CS_AS THEN 2
+,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(e.ds_evento) COLLATE SQL_Latin1_General_Cp1251_CI_AS))) ds_evento
+,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(le.ds_local_evento) COLLATE SQL_Latin1_General_Cp1251_CI_AS))) ds_nome_teatro
+,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(mu.ds_municipio) COLLATE SQL_Latin1_General_Cp1251_CI_AS))) ds_municipio
+,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(es.sg_estado) COLLATE SQL_Latin1_General_Cp1251_CI_AS))) sg_estado
+,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(es.ds_estado) COLLATE SQL_Latin1_General_Cp1251_CI_AS))) ds_estado
+,dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(g.name) COLLATE SQL_Latin1_General_Cp1251_CI_AS))) ds_genre
+,(CASE WHEN ds_municipio = @city COLLATE SQL_Latin1_General_Cp1251_CI_AS THEN 1
+                WHEN ds_municipio != @city COLLATE SQL_Latin1_General_Cp1251_CI_AS
+                     AND es.sg_estado = @state COLLATE SQL_Latin1_General_Cp1251_CI_AS THEN 2
                 WHEN ap.dt_apresentacao<=@nowOrder THEN 3
                 ELSE 4 END) orderhelper
 ,0 outofdate
@@ -65,9 +65,9 @@ WHERE
     DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
     AND e.in_ativo=1
     AND b.in_ativo=1
-ORDER BY (CASE WHEN ds_municipio = @city COLLATE SQL_Latin1_General_Cp1251_CS_AS THEN 1
-                WHEN ds_municipio != @city COLLATE SQL_Latin1_General_Cp1251_CS_AS
-                     AND es.sg_estado = @state COLLATE SQL_Latin1_General_Cp1251_CS_AS THEN 2
+ORDER BY (CASE WHEN ds_municipio = @city COLLATE SQL_Latin1_General_Cp1251_CI_AS THEN 1
+                WHEN ds_municipio != @city COLLATE SQL_Latin1_General_Cp1251_CI_AS
+                     AND es.sg_estado = @state COLLATE SQL_Latin1_General_Cp1251_CI_AS THEN 2
                 WHEN ap.dt_apresentacao<=@nowOrder THEN 3
                 ELSE 4 END)
 

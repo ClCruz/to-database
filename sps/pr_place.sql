@@ -34,10 +34,10 @@ INNER JOIN CI_MIDDLEWAY..mw_estado e ON m.id_estado=e.id_estado
 INNER JOIN CI_MIDDLEWAY..mw_tipo_local tl ON le.id_tipo_local=tl.id_tipo_local
 LEFT JOIN CI_MIDDLEWAY..partner_local_evento ple ON le.id_local_evento=ple.id_local_evento AND ple.id_partner=@id_partner
 WHERE --1=1 
-((@search IS NULL OR lower(le.ds_local_evento) LIKE '%'+lower(@search)+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS)
-OR (@search IS NULL OR lower(m.ds_municipio) LIKE '%'+lower(@search)+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS)
-OR (@search IS NULL OR lower(e.ds_estado) LIKE '%'+lower(@search)+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS)
-OR (@search IS NULL OR lower(e.sg_estado) LIKE '%'+lower(@search)+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS))
+((@search IS NULL OR lower(le.ds_local_evento) LIKE '%'+lower(@search)+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS)
+OR (@search IS NULL OR lower(m.ds_municipio) LIKE '%'+lower(@search)+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS)
+OR (@search IS NULL OR lower(e.ds_estado) LIKE '%'+lower(@search)+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS)
+OR (@search IS NULL OR lower(e.sg_estado) LIKE '%'+lower(@search)+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS))
 AND (@id_city IS NULL OR le.id_municipio=@id_city)
 AND (@id_state IS NULL OR m.id_estado=@id_city)
 AND (@in_ativo IS NULL OR le.in_ativo=1)

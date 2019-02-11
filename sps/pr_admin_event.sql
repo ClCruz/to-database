@@ -30,8 +30,8 @@ INNER JOIN CI_MIDDLEWAY..to_admin_user_base taub ON e.id_base=taub.id_base AND t
 LEFT JOIN CI_MIDDLEWAY..mw_municipio m ON m.id_municipio=le.id_municipio
 LEFT JOIN CI_MIDDLEWAY..mw_estado es ON m.id_estado=es.id_estado
 LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
-WHERE ((@search IS NULL OR e.ds_evento LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS)
-OR (@search IS NULL OR le.ds_local_evento LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CS_AS))
+WHERE ((@search IS NULL OR e.ds_evento LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS)
+OR (@search IS NULL OR le.ds_local_evento LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS))
 ORDER by e.ds_evento
  OFFSET (@currentPage-1)*@perPage ROWS
     FETCH NEXT @perPage ROWS ONLY;
