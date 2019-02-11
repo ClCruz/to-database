@@ -1,4 +1,3 @@
-
 ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@id_produtor INT
     ,@id_to_admin_user UNIQUEIDENTIFIER
@@ -15,7 +14,6 @@ ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@insurance_policy VARCHAR(1000)
     ,@showInBanner BIT = 0
     ,@bannerDescription VARCHAR(1000) = NULL
---     ,@ValIngresso numeric(11,2) = 0
     ,@QtIngrPorPedido smallint = 4
     ,@in_obriga_cpf char(1) = '0'
     ,@qt_ingressos_por_cpf smallint = 4

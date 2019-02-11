@@ -24,7 +24,7 @@ IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
 
 CREATE TABLE #amount (codTipForPagto INT, amount DECIMAL(18,2));
 
-CREATE TABLE #cashregister (codTipForPagto INT, TipForPagto VARCHAR(1000), amount DECIMAL(18,2))
+CREATE TABLE #cashregister (codTipForPagto INT, TipForPagto VARCHAR(1000), amount DECIMAL(18,2), [date] VARCHAR(10), [login] VARCHAR(1000), [name] VARCHAR(1000))
 
 CREATE TABLE #result (codTipForPagto INT, TipForPagto VARCHAR(1000), amount DECIMAL(18,2), amountDeclared DECIMAL(18,2), diff DECIMAL(18,2))
 
