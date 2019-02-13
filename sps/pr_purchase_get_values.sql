@@ -1,6 +1,6 @@
 -- SELECT * FROM CI_MIDDLEWAY..mw_reserva
 -- EXEC pr_purchase_get_current 'thslkr39i6nhon6qgbgs5bnoc2';
--- pr_purchase_get_values 30
+-- pr_purchase_get_values 36
 
 -- DECLARE @id_client INT = 30
 
@@ -8,7 +8,7 @@ ALTER PROCEDURE dbo.pr_purchase_get_values (@id_client INT)
 
 AS
 
--- DECLARE @id_client INT = 30
+-- DECLARE @id_client INT = 36
 
 DECLARE @id_session VARCHAR(100)
 
@@ -88,6 +88,8 @@ CREATE TABLE #current (
     , in_taxa_por_pedido VARCHAR(1)
     , id_apresentacao_bilhete INT
     , nr_beneficio VARCHAR(32)
+    ,QT_INGRESSOS_POR_CPF INT
+    , purchasebythiscpf INT
     )
 
 SELECT @id_session = csc.id_session

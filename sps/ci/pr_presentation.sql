@@ -31,7 +31,7 @@ SELECT
     ,est.sg_estado
     ,a.CodApresentacao
     ,ap.id_apresentacao
-    ,s.NomSala
+    ,(CASE WHEN s.nameonsite IS NULL THEN s.NomSala ELSE s.nameonsite END) NomSala
     -- ,se.NomSetor
     ,a.ValPeca
     ,a.CodSala

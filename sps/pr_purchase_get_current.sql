@@ -1,10 +1,9 @@
---pr_purchase_get_current '6lp3jnara0n0jmflihg6kh4c93'
+--pr_purchase_get_current 'kafes18uutadrdcclnmblqtb55'
 
 ALTER PROCEDURE dbo.pr_purchase_get_current (@id_session VARCHAR(1000))
 
 AS
---DECLARE @id_session VARCHAR(1000) = 'j5pu5q3um4cn4hcmuetsvcf9n0'
-
+-- DECLARE @id_session VARCHAR(1000) = 'kafes18uutadrdcclnmblqtb55'
 
 SET NOCOUNT ON;
 
