@@ -1,3 +1,5 @@
+--pr_purchase_installments 36
+
 CREATE PROCEDURE dbo.pr_purchase_installments (@id_client INT)
 
 AS

@@ -1,3 +1,5 @@
+-- pr_ticketoffice_mobile_selected '12345'
+
 ALTER PROCEDURE dbo.pr_ticketoffice_mobile_selected (@code VARCHAR(100))
 
 AS
@@ -8,7 +10,9 @@ SELECT
     ,s.NomSala
     ,se.NomSetor
     ,ls.StaCadeira
-    ,CONVERT(VARCHAR(10),tosc.created,103) + ' ' + CONVERT(VARCHAR(8),tosc.created,114)  created
+    ,CONVERT(VARCHAR(10),tosc.created,103) + ' ' + CONVERT(VARCHAR(8),tosc.created,114) created
+    ,e.ds_evento
+    ,CONVERT(VARCHAR(10),ap.dt_apresentacao,103) + ' ' + ap.hr_apresentacao [date]
 FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc
 INNER JOIN CI_MIDDLEWAY..ticketoffice_pairdevice topd ON tosc.id_ticketoffice_user=topd.id_ticketoffice_user
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao
