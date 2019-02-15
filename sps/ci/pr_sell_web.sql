@@ -100,14 +100,6 @@ DECLARE @NomeEmpresa VARCHAR(100)
 
 SELECT @NomeEmpresa=NomEmpresa FROM tabEmpresa
 
-IF @cd_meio_pagamento != 911
-BEGIN
-    update CI_MIDDLEWAY..mw_pedido_venda
-        SET in_situacao = 'F'
-    WHERE
-        id_pedido_venda = @id_pedido_venda
-END
-
 UPDATE ls
 SET ls.StaCadeira='V'
     ,ls.CodTipBilhete=ab.CodTipBilhete
@@ -207,7 +199,8 @@ right('00000'+convert(varchar,a.codapresentacao),5) --5
 +convert(char(1), sd.CodSetor) --6
 +right('0000'+replace(convert(varchar(5),a.HorSessao),':',''),4) --10
 +right('00000'+convert(varchar(10),ls.indice),5) --15
-+LEFT(CONVERT(VARCHAR(100),newid()),6) --21
++right('000000'+convert(varchar,r.id_reserva),6)
+--+LEFT(CONVERT(VARCHAR(100),newid()),6) --21
     ,'L'
 FROM CI_MIDDLEWAY..mw_reserva r
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON r.id_apresentacao=ap.id_apresentacao
