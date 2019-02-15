@@ -18,7 +18,11 @@ ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@QtIngrPorPedido smallint = 4
     ,@in_obriga_cpf char(1) = '0'
     ,@qt_ingressos_por_cpf smallint = 4
-    ,@ticketoffice_askemail BIT = 0)
+    ,@ticketoffice_askemail BIT = 0
+    ,@free_installments INT
+    ,@max_installments INT
+    ,@interest_rate INT)
+    
 
 
 
@@ -213,6 +217,9 @@ SET [description]=@description
     ,opening_time=@opening_time
     ,insurance_policy=@insurance_policy
     ,ticketoffice_askemail=@ticketoffice_askemail
+    ,free_installments=@free_installments
+    ,max_installments=@max_installments
+    ,interest_rate=@interest_rate
 WHERE id_evento=@id_evento
 
 UPDATE CI_MIDDLEWAY..search

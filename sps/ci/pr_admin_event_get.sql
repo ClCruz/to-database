@@ -29,6 +29,9 @@ SELECT
     ,eei.cardbigimage
     ,eei.imageoriginal
     ,eei.cardimage
+    ,eei.free_installments
+    ,eei.max_installments
+    ,eei.interest_rate
     ,eei.opening_time
     ,eei.insurance_policy
     ,p.QtIngrPorPedido
