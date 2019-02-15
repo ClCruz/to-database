@@ -100,6 +100,14 @@ DECLARE @NomeEmpresa VARCHAR(100)
 
 SELECT @NomeEmpresa=NomEmpresa FROM tabEmpresa
 
+IF @cd_meio_pagamento != 911
+BEGIN
+    update CI_MIDDLEWAY..mw_pedido_venda
+        SET in_situacao = 'F'
+    WHERE
+        id_pedido_venda = @id_pedido_venda
+END
+
 UPDATE ls
 SET ls.StaCadeira='V'
     ,ls.CodTipBilhete=ab.CodTipBilhete
@@ -284,13 +292,6 @@ INNER JOIN tabLugSala ls ON ls.CodApresentacao=a.CodApresentacao AND ls.Indice=r
 INNER JOIN CI_MIDDLEWAY..current_session_client csc ON r.id_session=csc.id_session COLLATE SQL_Latin1_General_CP1_CI_AS
 WHERE csc.id_cliente=@id_cliente
 
-IF @CodTipForPagto != 47
-BEGIN
-    update CI_MIDDLEWAY..mw_pedido_venda
-        SET in_situacao = 'F'
-    WHERE
-        id_pedido_venda = @id_pedido_venda
-END
 
 INSERT INTO CI_MIDDLEWAY..MW_ITEM_PEDIDO_VENDA (id_pedido_venda, id_reserva, ID_APRESENTACAO
                                                 ,ID_APRESENTACAO_BILHETE,DS_LOCALIZACAO,DS_SETOR
