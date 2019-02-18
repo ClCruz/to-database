@@ -63,7 +63,7 @@ DECLARE @id_partner UNIQUEIDENTIFIER
 
 SELECT TOP 1 @id_partner=p.id FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
 SELECT TOP 1 @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
-SELECT @youshallnotpass=0 FROM CI_MIDDLEWAY..partner_database pd WHERE pd.id_base=@id_base AND pd.id_partner=@id_partner
+SELECT @youshallnotpass=0 FROM CI_MIDDLEWAY..to_admin_user_base pd WHERE pd.id_base=@id_base AND pd.id_to_admin_user=@id_to_admin_user
 
 SELECT @genre=[name] FROM CI_MIDDLEWAY..genre WHERE id=@id_genre
 
