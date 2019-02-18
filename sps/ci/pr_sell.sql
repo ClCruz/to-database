@@ -254,6 +254,19 @@ UPDATE CI_MIDDLEWAY..ticketoffice_shoppingcart SET id_pedido_venda=@idpedidovend
 INSERT INTO CI_MIDDLEWAY..ticketoffice_shoppingcart_hist (id,created, id_shoppingcart_old,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, sell_date)
 SELECT newid(),created, id,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, @now FROM CI_MIDDLEWAY..ticketoffice_shoppingcart WHERE id_ticketoffice_user=@id_ticketoffice_user
 
+DECLARE @codForPagto INT
+        ,@id_evento INT
+
+SELECT  
+    @codForPagto = tosc.id_payment_type
+    ,@id_evento = ap.id_evento
+FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao
+INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
+INNER JOIN tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND tosc.indice=ls.Indice
+WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+
+EXEC CI_MIDDLEWAY.dbo.pr_admin_to_cashregister_moviment @id_ticketoffice_user, @amount, 'add', @id_base, @codForPagto, @id_evento, @codVenda
 
 DECLARE @nextStep VARCHAR(100)
         ,@isMoney BIT
