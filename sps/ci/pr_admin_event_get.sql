@@ -34,6 +34,7 @@ SELECT
     ,eei.interest_rate
     ,eei.opening_time
     ,eei.insurance_policy
+    ,eei.uri
     ,p.QtIngrPorPedido
     ,p.qt_ingressos_por_cpf
     ,p.in_obriga_cpf
