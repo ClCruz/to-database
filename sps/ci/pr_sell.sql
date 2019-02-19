@@ -1,8 +1,4 @@
--- -- exec sp_executesql N'EXEC pr_sell @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 char(1)',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'52',N'',NULL
--- -- select * from tabIngresso where Indice=98
--- -- Violation of PRIMARY KEY constraint 'PK_tabIngresso'. Cannot insert duplicate key in object 'dbo.tabIngresso'. The duplicate key value is (5M7GGOBDIO, 98).
--- -- Violation of PRIMARY KEY constraint 'PK_tabIngresso'. Cannot insert duplicate key in object 'dbo.tabIngresso'. The duplicate key value is (5O4GDCBEOO, 98).
--- select * from tabIngresso
+-- exec sp_executesql N'EXEC pr_sell @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 char(1)',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'52',N'',NULL
 
 ALTER PROCEDURE pr_sell (@id_ticketoffice_user UNIQUEIDENTIFIER
         ,@id_payment INT
@@ -110,7 +106,8 @@ WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
 DECLARE @amountDecimal DECIMAL(18,2)
         ,@amount INT
 
-SELECT @amount=SUM(tosc.amount_topay) FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc --WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+SELECT @amount=SUM(tosc.amount_topay) FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+
 SET @amountDecimal=CONVERT(DECIMAL(18,2),@amount)/100
 
 UPDATE tabMovCaixa SET Saldo=COALESCE(SALDO+@amountDecimal,0) WHERE CodCaixa=@codCaixa AND StaMovimento='A'
@@ -254,19 +251,13 @@ UPDATE CI_MIDDLEWAY..ticketoffice_shoppingcart SET id_pedido_venda=@idpedidovend
 INSERT INTO CI_MIDDLEWAY..ticketoffice_shoppingcart_hist (id,created, id_shoppingcart_old,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, sell_date)
 SELECT newid(),created, id,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, @now FROM CI_MIDDLEWAY..ticketoffice_shoppingcart WHERE id_ticketoffice_user=@id_ticketoffice_user
 
-DECLARE @codForPagto INT
-        ,@id_evento INT
-
-SELECT  
-    @codForPagto = tosc.id_payment_type
-    ,@id_evento = ap.id_evento
+INSERT INTO CI_MIDDLEWAY.[dbo].[ticketoffice_cashregister_moviment] ([id_ticketoffice_user],[id_ticketoffice_cashregister_closed],[isopen],[amount],[type],[id_base],[codForPagto],[id_evento],[codVenda])
+SELECT tosc.id_ticketoffice_user,NULL,1,tosc.amount_topay,'add',tosc.id_base,tosc.id_payment_type,ap.id_evento,@codVenda
 FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao
 INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
 INNER JOIN tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND tosc.indice=ls.Indice
 WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
-
-EXEC CI_MIDDLEWAY.dbo.pr_admin_to_cashregister_moviment @id_ticketoffice_user, @amount, 'add', @id_base, @codForPagto, @id_evento, @codVenda
 
 DECLARE @nextStep VARCHAR(100)
         ,@isMoney BIT
