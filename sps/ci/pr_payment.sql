@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_payment (@ticketoffice BIT = NULL)
+ALTER PROCEDURE dbo.pr_payment (@ticketoffice BIT = NULL)
 
 AS
 
@@ -10,7 +10,7 @@ tabForPagamento.CodForPagto
 ,StaForPagto
 FROM tabForPagamento 
 INNER JOIN tabTipForPagamento ON tabForPagamento.CodTipForPagto = tabTipForPagamento.CodTipForPagto
-WHERE (StaForPagto = 'A') --AND (tabForPagamento.TipCaixa = @TipCaixa OR @TipCaixa is null )
+WHERE (StaForPagto = 'A' AND TipCaixa!='C') --AND (tabForPagamento.TipCaixa = @TipCaixa OR @TipCaixa is null )
 ORDER BY ForPagto
 
 
