@@ -1,20 +1,22 @@
 -- pr_ticketoffice_cashregister_list 'f2177e5e-f727-4906-948d-4eea9b9bbd0e', 'open', 'resultbybase'
 -- pr_ticketoffice_cashregister_list 'f2177e5e-f727-4906-948d-4eea9b9bbd0e', 'open', 'resultbyevent'
 -- pr_ticketoffice_cashregister_list 'f2177e5e-f727-4906-948d-4eea9b9bbd0e', 'open', 'resultbyall'
+--'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'21/02/2019',N'resultbyall',N'0',N'C59F097E-CC57-4E62-A9C7-C555C7ECB44A'
 
 ALTER PROCEDURE dbo.pr_ticketoffice_cashregister_list (@id_ticketoffice_user UNIQUEIDENTIFIER, @date VARCHAR(100), @resultBy VARCHAR(100), @id_base INT, @id_ticketoffice_cashregister UNIQUEIDENTIFIER)
 
 AS
 
 -- DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER = 'f2177e5e-f727-4906-948d-4eea9b9bbd0e'
---         , @date VARCHAR(100) = 'open'
+--         -- , @date VARCHAR(100) = 'open'
 --         , @id_base INT = 0
 --         , @resultBy VARCHAR(100) = 'resultbybase'
 --         -- , @resultBy VARCHAR(100) = 'resultbybase'
 --         -- , @resultBy VARCHAR(100) = 'resultbyevent'
 --         -- , @resultBy VARCHAR(100) = 'resultbyall'
---         -- , @date VARCHAR(100) = '11/02/2019'
-
+--         , @date VARCHAR(100) = '11/02/2019'
+--         , @id_ticketoffice_cashregister UNIQUEIDENTIFIER = 'C59F097E-CC57-4E62-A9C7-C555C7ECB44A'
+-- select * from CI_MIDDLEWAY..ticketoffice_cashregister
 SET NOCOUNT ON;
 
 IF @id_base = 0
@@ -89,7 +91,7 @@ WHERE tocrm.id_ticketoffice_user=@id_ticketoffice_user
 -- AND (@date IS NULL OR CONVERT(VARCHAR(10),tocrc.closed,103)=@date)
 AND (@date IS NOT NULL OR tocrm.isopen=1)
 AND (@id_base IS NULL OR tocrm.id_base=@id_base)
-AND (@date IS NULL OR tocrc.id_ticketoffice_user_closed=@id_ticketoffice_cashregister)
+AND (@date IS NULL OR tocrc.id=@id_ticketoffice_cashregister)
 
 
 INSERT INTO #bases (id_base, done, [name])
