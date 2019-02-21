@@ -11,7 +11,7 @@ AS
 
 INSERT INTO [dbo].[ticketoffice_cashregister_moviment]
            ([id_ticketoffice_user]
-           ,[id_ticketoffice_cashregister_closed]
+           ,[id_ticketoffice_cashregister]
            ,[isopen]
            ,[amount]
            ,[type]

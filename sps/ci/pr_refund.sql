@@ -102,6 +102,14 @@ SELECT @CodCliente=c.CodCliente FROM tabComprovante c WHERE c.CodVenda=@codVenda
 IF @total>0
 BEGIN
 
+    INSERT INTO CI_MIDDLEWAY.[dbo].[ticketoffice_cashregister_moviment] ([id_ticketoffice_user],[id_ticketoffice_cashregister],[isopen],[amount],[type],[id_base],[codForPagto],[id_evento],[codVenda])
+    SELECT tosc.id_ticketoffice_user,NULL,1,tosc.amount_topay,'refund',tosc.id_base,tosc.id_payment_type,ap.id_evento,@codVenda
+    FROM CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc
+    INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao
+    INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
+    INNER JOIN tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND tosc.indice=ls.Indice
+    WHERE tosc.codVenda=@codVenda
+
     UPDATE csv
         SET statusingresso='E'
     FROM tabControleSeqVenda csv 
@@ -136,6 +144,8 @@ BEGIN
     FROM tabLugSala d
     INNER JOIN #helper h ON d.CodApresentacao=h.CodApresentacao AND d.Indice=h.Indice
     WHERE d.CodVenda=@codVenda
+
+
 
     IF @all = 1
     BEGIN

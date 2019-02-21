@@ -1,15 +1,10 @@
-CREATE PROCEDURE dbo.pr_currentCashRegister (@id UNIQUEIDENTIFIER)
+CREATE PROCEDURE dbo.pr_currentCashRegister (@id UNIQUEIDENTIFIER, @id_base INT)
 
 AS
 
--- DECLARE @id UNIQUEIDENTIFIER
+DECLARE @id UNIQUEIDENTIFIER
 
 -- SELECT @id='8cc26a74-7e65-411e-b854-f7b281a46e01'
-
-
-DECLARE @id_base INT
-
-SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
 
 SELECT
 	tou.id

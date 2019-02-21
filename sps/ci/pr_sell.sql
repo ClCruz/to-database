@@ -251,7 +251,7 @@ UPDATE CI_MIDDLEWAY..ticketoffice_shoppingcart SET id_pedido_venda=@idpedidovend
 INSERT INTO CI_MIDDLEWAY..ticketoffice_shoppingcart_hist (id,created, id_shoppingcart_old,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, sell_date)
 SELECT newid(),created, id,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, @now FROM CI_MIDDLEWAY..ticketoffice_shoppingcart WHERE id_ticketoffice_user=@id_ticketoffice_user
 
-INSERT INTO CI_MIDDLEWAY.[dbo].[ticketoffice_cashregister_moviment] ([id_ticketoffice_user],[id_ticketoffice_cashregister_closed],[isopen],[amount],[type],[id_base],[codForPagto],[id_evento],[codVenda])
+INSERT INTO CI_MIDDLEWAY.[dbo].[ticketoffice_cashregister_moviment] ([id_ticketoffice_user],[id_ticketoffice_cashregister],[isopen],[amount],[type],[id_base],[codForPagto],[id_evento],[codVenda])
 SELECT tosc.id_ticketoffice_user,NULL,1,tosc.amount_topay,'add',tosc.id_base,tosc.id_payment_type,ap.id_evento,@codVenda
 FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao

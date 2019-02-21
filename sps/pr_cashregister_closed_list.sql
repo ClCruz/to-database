@@ -12,7 +12,7 @@ IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
 
 DECLARE @lastDate DATETIME
 
-SELECT TOP 1 @lastDate=close_date FROM CI_MIDDLEWAY..ticketoffice_cashregister_closed WHERE id_ticketoffice_user=@id_ticketoffice_user AND id_base=@id_base ORDER BY close_date DESC
+SELECT TOP 1 @lastDate=closed FROM CI_MIDDLEWAY..ticketoffice_cashregister WHERE id_ticketoffice_user=@id_ticketoffice_user AND id_base=@id_base ORDER BY close_date DESC
 
 SELECT
 tou.[login]
