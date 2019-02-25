@@ -18,7 +18,7 @@ SELECT @valMin=MIN(a.ValPeca) FROM tabApresentacao a WHERE a.codPeca=@codPeca
 SELECT @valMax=MAX(a.ValPeca) FROM tabApresentacao a WHERE a.codPeca=@codPeca
 
 IF @valMax=@valMin
-    SET @valores = 'Único - R$ ' + CONVERT(VARCHAR(20),@valMin)
+    SET @valores = 'R$ ' + CONVERT(VARCHAR(20),@valMin)
 ELSE 
     SET @valores = 'R$ ' + CONVERT(VARCHAR(20),@valMin) + ' a ' + 'R$ ' + CONVERT(VARCHAR(20),@valMax)
 
