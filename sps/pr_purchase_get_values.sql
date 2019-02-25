@@ -1,14 +1,16 @@
--- SELECT * FROM CI_MIDDLEWAY..mw_reserva
--- EXEC pr_purchase_get_current 'thslkr39i6nhon6qgbgs5bnoc2';
--- pr_purchase_get_values 36
-
--- DECLARE @id_client INT = 30
+-- -- SELECT * FROM CI_MIDDLEWAY..mw_reserva
+-- -- EXEC pr_purchase_get_current 'thslkr39i6nhon6qgbgs5bnoc2';
+-- -- pr_purchase_get_values 36
+-- select * from CI_MIDDLEWAY..mw_reserva
+-- select * from CI_MIDDLEWAY..mw_apresentacao_bilhete where id_apresentacao_bilhete=49122198
+-- select * from bringressos..tabtipbilhete
+-- -- DECLARE @id_client INT = 30
 
 ALTER PROCEDURE dbo.pr_purchase_get_values (@id_client INT)
 
 AS
 
--- DECLARE @id_client INT = 36
+-- DECLARE @id_client INT = 83
 
 DECLARE @id_session VARCHAR(100)
 
@@ -263,7 +265,7 @@ BEGIN
             ,@sumAuxWithService INT
             ,@sumService INT
 
-    SET @service_amountINT = ISNULL(@service_amount,0)*100
+    SET @service_amountINT = ISNULL(ROUND(@service_amount,2),0)*100
     SET @sumAux = ISNULL(@ValPeca,0)*(CASE WHEN ISNULL(@PerDesconto,0)/100 = 0 THEN 1 ELSE ISNULL(@PerDesconto,0)/100 END);
     SET @sumAux = @sumAux*(CASE WHEN ISNULL(@PerDescontoSetor,0)/100 = 0 THEN 1 ELSE ISNULL(@PerDescontoSetor,0)/100 END);
     SET @sumAux = @sumAux*(CASE WHEN ISNULL(@PerDescontoOther,0)/100 = 0 THEN 1 ELSE ISNULL(@PerDescontoOther,0)/100 END);
