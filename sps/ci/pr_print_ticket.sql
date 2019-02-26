@@ -138,8 +138,8 @@ AND (@indice IS NULL OR ls.Indice=@indice)
 SELECT
 [id]
 ,[local]
-,'Rua do funk' [address]
--- ,[address]
+-- ,'Rua do funk' [address]
+,[address]
 ,[name]
 ,[weekday]
 ,[weekdayName]
