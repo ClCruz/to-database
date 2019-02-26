@@ -196,7 +196,7 @@ right('00000'+convert(varchar,h.codapresentacao),5) --5
 +convert(char(1), sd.CodSetor) --6
 +right('0000'+replace(convert(varchar(5),a.HorSessao),':',''),4) --10
 +right('00000'+convert(varchar(10),h.indice),5) --15
-+LEFT(CONVERT(VARCHAR(100),newid()),6) --21
++LEFT(CONVERT(VARCHAR(100),right(cast(rand(checksum(newid())) as decimal(15, 15)), 6)),6) --21
     ,'L'
 FROM #helper h
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id
