@@ -1,6 +1,7 @@
 
 ALTER PROCEDURE dbo.pr_print_ticket(@codVenda VARCHAR(10)
-        ,@indice INT = NULL)
+        ,@indice INT = NULL
+        ,@uniquename VARCHAR(100))
 
 
 AS
@@ -10,6 +11,16 @@ AS
 
 
 SET NOCOUNT ON;
+DECLARE @domain VARCHAR(3000) = NULL
+
+SELECT TOP 1 
+    @domain = p.domain
+FROM CI_MIDDLEWAY..[partner] p 
+WHERE 
+    p.uniquename=@uniquename
+
+IF @domain IS NULL
+    SET @domain = 'www.ticketoffice.com.br'
 
 IF @indice=''
     SET @indice=NULL
@@ -89,12 +100,16 @@ tosch.id
 ,(CASE WHEN c.CPF IS NULL THEN '-' ELSE c.CPF END) buyerDoc
 ,(CASE WHEN eei.insurance_policy IS NULL THEN '' ELSE eei.insurance_policy END) insurance_policy
 ,(CASE WHEN eei.opening_time IS NULL THEN '' ELSE eei.opening_time END) opening_time
-,p.NomResPeca eventResp
+-- ,p.NomResPeca eventResp
 ,(CASE WHEN tou.[login] IS NULL THEN 'web' ELSE tou.[login] END) [user]
 ,ROW_NUMBER() OVER (order by tosch.id) countTicket
 ,CONVERT(VARCHAR(10),l.DatVenda,103) + ' ' + CONVERT(VARCHAR(8),l.DatVenda,114) AS purchase_date
 ,CONVERT(VARCHAR(10),@now,103) + ' ' + CONVERT(VARCHAR(8),@now,114) AS print_date
 ,csv.codbar barcode
+,(CASE WHEN pro.ds_razao_social IS NULL THEN '-' ELSE pro.ds_razao_social END) ds_razao_social
+,(CASE WHEN pro.cd_cpf_cnpj IS NULL THEN '-' ELSE pro.cd_cpf_cnpj END) cd_cpf_cnpj
+,(CASE WHEN pro.ds_endereco IS NULL THEN '-' ELSE pro.ds_endereco END) ds_endereco
+,s.IngressoNumerado
 INTO #result
 FROM tabLugSala ls
 INNER JOIN tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
@@ -105,6 +120,7 @@ INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca AND e.id_base=@id_ba
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND ap.CodApresentacao=a.CodApresentacao
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
 INNER JOIN tabLancamento l ON ls.CodApresentacao=l.CodApresentacao AND ls.Indice=l.Indice AND l.CodTipLancamento=1 AND l.NumLancamento NOT IN (SELECT sub.NumLancamento FROM tablancamento sub WHERE sub.indice=ls.Indice AND sub.CodApresentacao=ls.codapresentacao AND sub.CodTipLancamento=2)
+INNER JOIN CI_MIDDLEWAY..mw_produtor pro ON p.id_produtor=pro.id_produtor
 LEFT JOIN CI_MIDDLEWAY..mw_local_evento le ON e.id_local_evento=le.id_local_evento
 LEFT JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosch ON ls.Indice=tosch.indice AND ap.id_apresentacao=tosch.id_apresentacao
 LEFT JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.Indice=ls.Indice AND ipv.id_apresentacao=ap.id_apresentacao
@@ -122,7 +138,8 @@ AND (@indice IS NULL OR ls.Indice=@indice)
 SELECT
 [id]
 ,[local]
-,[address]
+,'Rua do funk' [address]
+-- ,[address]
 ,[name]
 ,[weekday]
 ,[weekdayName]
@@ -147,11 +164,15 @@ SELECT
 ,[buyerDoc]
 ,[insurance_policy]
 ,[opening_time]
-,[eventResp]
+,[ds_razao_social] productor_name
+,[cd_cpf_cnpj] productor_document
+,[ds_endereco] productor_address
 ,[user]
 ,[countTicket]
 ,[purchase_date]
 ,[print_date]
 ,[barcode]
+,[IngressoNumerado]
+,@domain domain
 ,CONVERT(VARCHAR(10),countTicket) + '/' + CONVERT(VARCHAR(10),(SELECT MAX(countTicket) FROM #result)) [howMany]
 FROM #result
