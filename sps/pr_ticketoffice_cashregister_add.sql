@@ -18,6 +18,8 @@ SET NOCOUNT ON;
 DECLARE @codForPagto INT = 52
         ,@id_evento INT = NULL
         ,@codVenda VARCHAR(10) = NULL
+        ,@id UNIQUEIDENTIFIER = NEWID()
+        ,@created DATETIME = GETDATE()
 
 IF @type = 'cashdepositopen'
 BEGIN
@@ -28,6 +30,8 @@ IF len(@justification)=''
 BEGIN
     SELECT 0 success
             ,'Justificativa é obrigatória.' msg
+            , null id
+            , null created
     RETURN;
 END
 
@@ -35,6 +39,8 @@ IF @amount<0
 BEGIN
     SELECT 0 success
             ,'Valor não pode ser menor que zero.' msg
+            , null id
+            , null created
     RETURN;
 END
 
@@ -55,12 +61,16 @@ BEGIN
     BEGIN
         SELECT 0 success
                 ,'Você não tem saldo suficiente para realizar esse saque.' msg
+                ,null id
+                ,null created
         RETURN;
     END
 END
 
-INSERT INTO CI_MIDDLEWAY..ticketoffice_cashregister_moviment(amount,codForPagto,codVenda,id_base,id_evento,isopen,[type],id_ticketoffice_user, justification)
-SELECT @amount, @codForPagto, @codVenda, @id_base, @id_evento, 1, @type, @id_ticketoffice_user, @justification
+INSERT INTO CI_MIDDLEWAY..ticketoffice_cashregister_moviment(id,created,amount,codForPagto,codVenda,id_base,id_evento,isopen,[type],id_ticketoffice_user, justification)
+SELECT @id,@created, @amount, @codForPagto, @codVenda, @id_base, @id_evento, 1, @type, @id_ticketoffice_user, @justification
 
 SELECT 1 success
         ,'Executado com sucesso' msg
+        ,@id id
+        ,CONVERT(VARCHAR(10),@created,103) + ' ' + CONVERT(VARCHAR(8),@created,114) [created]
