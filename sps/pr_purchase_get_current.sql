@@ -1,9 +1,8 @@
---pr_purchase_get_current 'kafes18uutadrdcclnmblqtb55'
-
 ALTER PROCEDURE dbo.pr_purchase_get_current (@id_session VARCHAR(1000))
 
 AS
--- DECLARE @id_session VARCHAR(1000) = 'kafes18uutadrdcclnmblqtb55'
+
+-- DECLARE @id_session VARCHAR(1000) = 'v4hrv27bkerdjcpufv6h55kvr4'
 
 SET NOCOUNT ON;
 
@@ -25,7 +24,7 @@ CREATE TABLE #data_bases (id UNIQUEIDENTIFIER, id_base INT, base_sql VARCHAR(100
     ,NomObjeto VARCHAR(1000),NomSetor VARCHAR(1000),PerDescontoSetor FLOAT
     ,[Status] VARCHAR(1000),PerDesconto FLOAT,QtdVendaPorLote INT
     ,StaTipBilhMeiaEstudante VARCHAR(1000),StaTipBilhete VARCHAR(1000),TipBilhete VARCHAR(1000), ID_PROMOCAO_CONTROLE INT
-    ,id_evento INT, id_apresentacao INT, id_reserva INT, hoursinadvance INT, in_taxa_por_pedido VARCHAR(1), id_apresentacao_bilhete INT, nr_beneficio VARCHAR(32),QT_INGRESSOS_POR_CPF INT, purchasebythiscpf INT)
+    ,id_evento INT, id_apresentacao INT, id_reserva INT, hoursinadvance INT, in_taxa_por_pedido VARCHAR(1), id_apresentacao_bilhete INT, nr_beneficio VARCHAR(32),QT_INGRESSOS_POR_CPF INT, purchasebythiscpf INT, vl_preco_fixo FLOAT)
 
 SELECT e.id_base, e.id_evento, e.CodPeca, a.CodApresentacao,a.id_apresentacao, r.id_reserva, r.id_cadeira
 INTO #aux
@@ -60,7 +59,7 @@ BEGIN
     SET @toExec = @toExec + ',NomObjeto,NomSetor,PerDescontoSetor '
     SET @toExec = @toExec + ',[Status],PerDesconto,QtdVendaPorLote '
     SET @toExec = @toExec + ',StaTipBilhMeiaEstudante,StaTipBilhete,TipBilhete, ID_PROMOCAO_CONTROLE'
-    SET @toExec = @toExec + ',id_evento, id_apresentacao, id_reserva,hoursinadvance,in_taxa_por_pedido,id_apresentacao_bilhete, nr_beneficio,QT_INGRESSOS_POR_CPF,purchasebythiscpf) '
+    SET @toExec = @toExec + ',id_evento, id_apresentacao, id_reserva,hoursinadvance,in_taxa_por_pedido,id_apresentacao_bilhete, nr_beneficio,QT_INGRESSOS_POR_CPF,purchasebythiscpf, vl_preco_fixo) '
     SET @toExec = @toExec + 'SELECT DISTINCT '
     SET @toExec = @toExec + '        NEWID() '
     SET @toExec = @toExec + '        , ' + CONVERT(VARCHAR(10),@currentBase)
@@ -107,7 +106,7 @@ BEGIN
     SET @toExec = @toExec + '        INNER JOIN '+@db_name+'.dbo.tabApresentacao subA2 ON subA2.DATAPRESENTACAO = subA.DATAPRESENTACAO AND subA2.CODPECA = subA.CODPECA AND subA2.HORSESSAO = subA.HORSESSAO '
     SET @toExec = @toExec + '        WHERE subC.CPF = '''+@cpf+''' AND subA2.CODAPRESENTACAO = a.codApresentacao '
     SET @toExec = @toExec + '        ) AS purchasebythiscpf '
-
+    SET @toExec = @toExec + '        , ISNULL(tb.vl_preco_fixo,0) vl_preco_fixo'
     SET @toExec = @toExec + ' FROM '+@db_name+'.dbo.tabLugSala ls '
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao '
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabPeca p ON a.CodPeca=p.CodPeca '
@@ -139,7 +138,7 @@ SELECT
     ,StaCadeira
     ,DatApresentacao
     ,HorSessao
-    ,ValPeca
+    ,(CASE WHEN vl_preco_fixo > 0 THEN vl_preco_fixo*100 ELSE ValPeca END) ValPeca
     ,CodPeca
     ,NomPeca
     ,qt_parcelas

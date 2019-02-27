@@ -37,6 +37,7 @@ IF @has = 0
 BEGIN
     SELECT 0 success
             ,'Não foi possível fechar o caixa, o mesmo encontra-se fechado.' msg
+            ,NULL id
     RETURN;
 END
 
@@ -60,3 +61,4 @@ WHERE d.id_ticketoffice_user=@id_ticketoffice_user
 
 SELECT 1 success
         ,'Caixa fechado com sucesso.' msg
+        ,@id_cr id

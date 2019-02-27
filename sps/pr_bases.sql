@@ -1,6 +1,3 @@
--- pr_bases '8cc26a74-7e65-411e-b854-f7b281a46e01'
--- select * from ticketoffice_user
-
 ALTER PROCEDURE pr_bases (@id_ticketoffice_user UNIQUEIDENTIFIER = NULL)
 AS
 
