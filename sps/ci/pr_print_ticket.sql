@@ -110,6 +110,7 @@ tosch.id
 ,(CASE WHEN pro.cd_cpf_cnpj IS NULL THEN '-' ELSE pro.cd_cpf_cnpj END) cd_cpf_cnpj
 ,(CASE WHEN pro.ds_endereco IS NULL THEN '-' ELSE pro.ds_endereco END) ds_endereco
 ,s.IngressoNumerado
+,CONVERT(VARCHAR(100),FORMAT(CONVERT(decimal(18,2),tosch.amount_topay)/100, 'C', 'pt-br')) amount_topay
 INTO #result
 FROM tabLugSala ls
 INNER JOIN tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
@@ -173,6 +174,7 @@ SELECT
 ,[print_date]
 ,[barcode]
 ,[IngressoNumerado]
+,amount_topay
 ,@domain domain
 ,CONVERT(VARCHAR(10),countTicket) + '/' + CONVERT(VARCHAR(10),(SELECT MAX(countTicket) FROM #result)) [howMany]
 FROM #result

@@ -7,7 +7,7 @@ AS
 SET NOCOUNT ON;
 
 SELECT tcrm.id
-,'R$ '+(CONVERT(VARCHAR(100),CONVERT(FLOAT,tcrm.amount)/100)) amount
+,CONVERT(VARCHAR(100),FORMAT(CONVERT(decimal(18,2),tcrm.amount)/100, 'C', 'pt-br')) amount
 ,tcrm.[type]
 ,tcrm.id_ticketoffice_user
 ,tcrm.justification

@@ -155,7 +155,7 @@ ORDER BY a.ds_evento, eccr.[desc]
 
 SELECT
     id
-    ,'R$ '+(CONVERT(VARCHAR(100),CONVERT(FLOAT,amount)/100)) amount
+    ,CONVERT(VARCHAR(100),FORMAT(CONVERT(decimal(18,2),amount)/100, 'C', 'pt-br')) amount
     ,qtd
     ,id_base
     ,ds_nome_base_sql
@@ -173,8 +173,8 @@ SELECT
     ,nameClose
     ,loginClose
     ,hasDiff
-    ,'R$ '+CONVERT(VARCHAR(100),(CASE WHEN [type]='withdraw' AND amountbyevent<0 THEN CONVERT(FLOAT,amountbyevent*-1) ELSE CONVERT(FLOAT,amountbyevent) END)/100) amountbyevent
-    ,'R$ '+(CONVERT(VARCHAR(100),CONVERT(FLOAT,amountbybase)/100)) amountbybase
+    ,CONVERT(VARCHAR(100),FORMAT(CONVERT(decimal(18,2),amount)/100, 'C', 'pt-br')) amount
+    ,CONVERT(VARCHAR(100),FORMAT((CASE WHEN [type]='withdraw' AND amountbyevent<0 THEN CONVERT(decimal(18,2),amountbyevent*-1) ELSE CONVERT(decimal(18,2),amountbyevent) END)/100, 'C', 'pt-br')) amountbybase
     ,qtdbyevent
     ,qtdbybase
     ,howmanyevents
