@@ -60,6 +60,7 @@ DECLARE @id_partner UNIQUEIDENTIFIER
         ,@youshallnotpass BIT = 1
         ,@id_genre INT = @CodTipPeca
         ,@genre VARCHAR(1000)
+        ,@syncGenre BIT = 0
 
 SELECT TOP 1 @id_partner=p.id FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
 SELECT TOP 1 @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
@@ -68,6 +69,7 @@ SELECT @youshallnotpass=0 FROM CI_MIDDLEWAY..to_admin_user_base pd WHERE pd.id_b
 SELECT @genre=[name] FROM CI_MIDDLEWAY..genre WHERE id=@id_genre
 
 SELECT @CodTipPeca=tp.CodTipPeca
+        ,@syncGenre=1
 FROM tabTipPeca tp
 WHERE RTRIM(LTRIM(tp.TipPeca))=RTRIM(LTRIM(@genre)) COLLATE SQL_Latin1_General_Cp1251_CI_AS
 
@@ -75,6 +77,13 @@ IF @youshallnotpass=1
 BEGIN
     SELECT 0 success
             ,'not permitted' msg
+    return;
+END
+
+IF @syncGenre=0
+BEGIN
+    SELECT 0 success
+            ,'Gênero não sincronizado' msg
     return;
 END
 

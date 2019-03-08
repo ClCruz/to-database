@@ -1,6 +1,6 @@
 --exec sp_executesql N'EXEC pr_purchase_get_split @P1',N'@P1 nvarchar(4000)',N'30'
 
-CREATE PROCEDURE dbo.pr_purchase_get_split (@id_client INT)
+ALTER PROCEDURE dbo.pr_purchase_get_split (@id_client INT)
 
 AS
 
@@ -28,7 +28,7 @@ INNER JOIN CI_MIDDLEWAY..current_session_client csc ON r.id_session=csc.id_sessi
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON r.id_apresentacao=ap.id_apresentacao
 INNER JOIN CI_MIDDLEWAY..MW_APRESENTACAO_BILHETE AB ON AB.ID_APRESENTACAO = R.ID_APRESENTACAO AND AB.IN_ATIVO = 1 AND AB.ID_APRESENTACAO_BILHETE = R.ID_APRESENTACAO_BILHETE
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento
-INNER JOIN CI_MIDDLEWAY..mw_regra_split rs ON rs.id_evento=e.id_evento
+INNER JOIN CI_MIDDLEWAY..mw_regra_split rs ON rs.id_evento=e.id_evento AND rs.in_ativo=1
 INNER JOIN CI_MIDDLEWAY..mw_produtor p ON p.id_produtor = rs.id_produtor and p.in_ativo=1
 INNER JOIN CI_MIDDLEWAY..mw_recebedor re ON rs.id_recebedor = re.id_recebedor and re.in_ativo=1
 WHERE csc.id_cliente=@id_client

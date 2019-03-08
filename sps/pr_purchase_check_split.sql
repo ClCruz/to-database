@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE dbo.pr_purchase_check_split (@id_client INT)
+ALTER PROCEDURE dbo.pr_purchase_check_split (@id_client INT)
 
 AS
 
@@ -14,23 +14,23 @@ IF OBJECT_ID('tempdb.dbo.#helper', 'U') IS NOT NULL
 SELECT DISTINCT e.id_evento
     ,(SELECT 
         SUM(sub.percentage_boleto_web)
-    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento) percentage_boleto_web
+    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento AND sub.in_ativo=1) percentage_boleto_web
     ,(SELECT 
         SUM(sub.percentage_credit_web)
-    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento) percentage_credit_web
+    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento AND sub.in_ativo=1) percentage_credit_web
     ,(SELECT 
         SUM(sub.percentage_debit_web) 
-    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento) percentage_debit_web
+    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento AND sub.in_ativo=1) percentage_debit_web
     ,(SELECT 
         SUM(sub.percentage_credit_box_office) 
-    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento) percentage_credit_box_office
+    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento AND sub.in_ativo=1) percentage_credit_box_office
     ,(SELECT 
         SUM(sub.percentage_debit_box_office) 
-    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento) percentage_debit_box_office
+    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento AND sub.in_ativo=1) percentage_debit_box_office
     ,ISNULL((SELECT TOP 1 1
-    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento AND sub.charge_processing_fee=1),0) charge_processing_fee
+    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento AND sub.in_ativo=1 AND sub.charge_processing_fee=1),0) charge_processing_fee
     ,ISNULL((SELECT TOP 1 1
-    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento AND sub.liable=1),0) liable
+    FROM CI_MIDDLEWAY..mw_regra_split sub WHERE sub.id_evento=e.id_evento AND sub.in_ativo=1 AND sub.liable=1),0) liable
 INTO #events
 FROM CI_MIDDLEWAY..mw_reserva r
 INNER JOIN CI_MIDDLEWAY..current_session_client csc ON r.id_session=csc.id_session COLLATE SQL_Latin1_General_CP1_CI_AS

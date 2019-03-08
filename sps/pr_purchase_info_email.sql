@@ -5,7 +5,7 @@ ALTER PROCEDURE dbo.pr_purchase_info_email (@id_pedido_venda INT)
 
 AS
 
--- DECLARE @id_pedido_venda INT = 9
+-- DECLARE @id_pedido_venda INT = 114
 
 SET NOCOUNT ON;
 
@@ -35,9 +35,12 @@ SELECT DISTINCT
     ,ipv.vl_taxa_conveniencia voucher_event_service
     ,h.name hostname
     ,h.host hostfull
+    ,pv.vl_total_pedido_venda
+    ,pv.vl_total_taxa_conveniencia
     ,ISNULL((SELECT TOP 1 1 FROM CI_MIDDLEWAY..email_ticket_print subetp WHERE subetp.codVenda=ipv.CodVenda AND subetp.seen = 0),0) printcodehas
     ,ISNULL((SELECT TOP 1 subetp.code FROM CI_MIDDLEWAY..email_ticket_print subetp WHERE subetp.codVenda=ipv.CodVenda AND subetp.seen = 0 ORDER BY subetp.created),'') printcode
     ,'web' [type]
+    ,pv.nr_parcelas_pgto
 INTO #result
 FROM CI_MIDDLEWAY..mw_pedido_venda pv
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON pv.id_pedido_venda=ipv.id_pedido_venda
@@ -78,10 +81,14 @@ SELECT
     ,FORMAT(r.voucher_event_service,'C', 'pt-br') voucher_event_service
     ,r.hostname
     ,r.hostfull
-    ,FORMAT((SELECT SUM(voucher_event_amount) FROM #result),'C', 'pt-br') voucher_event_amount_total
-    ,FORMAT((SELECT SUM(voucher_event_service) FROM #result),'C', 'pt-br') voucher_event_service_total
-    ,FORMAT(((SELECT SUM(voucher_event_amount) FROM #result)+(SELECT SUM(voucher_event_service) FROM #result)),'C', 'pt-br') voucher_event_value_total
+    -- ,FORMAT((SELECT SUM(voucher_event_amount) FROM #result),'C', 'pt-br') voucher_event_amount_total
+    -- ,FORMAT((SELECT SUM(voucher_event_service) FROM #result),'C', 'pt-br') voucher_event_service_total
+    -- ,FORMAT(((SELECT SUM(voucher_event_amount) FROM #result)+(SELECT SUM(voucher_event_service) FROM #result)),'C', 'pt-br') voucher_event_value_total
+    ,FORMAT(r.vl_total_pedido_venda-r.vl_total_taxa_conveniencia,'C', 'pt-br') voucher_event_amount_total
+    ,FORMAT(r.vl_total_taxa_conveniencia,'C', 'pt-br') voucher_event_service_total
+    ,FORMAT(r.vl_total_pedido_venda,'C', 'pt-br') voucher_event_value_total
     ,r.printcode
     ,r.printcodehas
     ,r.[type]
+    ,r.nr_parcelas_pgto
 FROM #result r
