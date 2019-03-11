@@ -79,8 +79,9 @@ BEGIN TRY
 
   IF @hasError = 1
   BEGIN
-    ROLLBACK TRANSACTION sellweb
 
+
+-- select 1;
     SELECT 0 success
         , (SELECT TOP 1 id_base FROM #execsell WHERE success=0) id_base
         , @codVenda codVenda
@@ -91,6 +92,7 @@ BEGIN TRY
         , (SELECT TOP 1 ErrorProcedure FROM #execsell WHERE success=0) AS ErrorProcedure
         , (SELECT TOP 1 ErrorLine FROM #execsell WHERE success=0) AS ErrorLine
         , (SELECT TOP 1 ErrorMessage FROM #execsell WHERE success=0) AS ErrorMessage
+    ROLLBACK TRANSACTION sellweb
   END
   ELSE
   BEGIN
