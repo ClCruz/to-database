@@ -146,6 +146,8 @@ END
 SELECT 1 success
     ,'Cadastro efetuado com sucesso.' msg
     ,@firstname + ' ' + @lastname [name]
+    ,@firstname firstname
+    ,@lastname lastname
     ,@login [login]
     ,@id_cliente id
     ,@token token

@@ -8,7 +8,9 @@ ALTER PROCEDURE dbo.pr_admin_partner_save
     ,@dateStart DATETIME
     ,@dateEnd DATETIME
     ,@type VARCHAR(100)
-    ,@active BIT)
+    ,@active BIT
+    ,@fb_appid VARCHAR(1000) = NULL
+    ,@recaptchaid VARCHAR(1000) = NULL)
 
 AS
 
@@ -84,6 +86,8 @@ BEGIN
             ,isDemo=@isDemo
             ,isTrial=@isTrial
             ,isDev=@isDev
+            ,fb_appid=@fb_appid
+            ,recaptchaid=@recaptchaid
     WHERE
         id=@id
 
@@ -118,8 +122,8 @@ BEGIN
 
     SELECT @key=[key], @key_test=key_test FROM #keypartner
 
-    INSERT INTO CI_MIDDLEWAY..[partner] ([key], key_test, [name], active, dateStart, dateEnd, domain, uniquename)
-     VALUES (@key, @key_test, @name, @active, @dateStart, @dateEnd, @domain, @uniquename)
+    INSERT INTO CI_MIDDLEWAY..[partner] ([key], key_test, [name], active, dateStart, dateEnd, domain, uniquename,fb_appid,recaptchaid)
+     VALUES (@key, @key_test, @name, @active, @dateStart, @dateEnd, @domain, @uniquename,@fb_appid,@recaptchaid)
 
     SELECT 1 success
             ,'Incluido com sucesso.' msg

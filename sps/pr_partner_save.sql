@@ -3,7 +3,9 @@ ALTER PROCEDURE dbo.pr_partner_save (@id UNIQUEIDENTIFIER
                                     ,@active BIT = 1
                                     ,@dateStart DATETIME = NULL
                                     ,@dateEnd DATETIME = NULL
-                                    ,@domain VARCHAR(1000))
+                                    ,@domain VARCHAR(1000) = NULL
+                                    ,@fbid VARCHAR(1000) = NULL
+                                    ,@recaptchaid VARCHAR(1000) = NULL)
 
 AS
 -- DECLARE @id UNIQUEIDENTIFIER = '5A087E34-006D-4279-8F9E-52D6338034BA'
@@ -30,6 +32,8 @@ BEGIN
                                         ,dateStart=@dateStart
                                         ,dateEnd=@dateEnd
                                         ,domain=@domain
+                                        ,fb_appid=@fbid
+                                        ,recaptchaid=@recaptchaid
     WHERE id=@id
 END
 ELSE
@@ -46,8 +50,8 @@ BEGIN
 
     SELECT @key=[key], @key_test=key_test FROM #keypartner
 
-    INSERT INTO CI_MIDDLEWAY..[partner] ([key],key_test,[name],active,dateStart,dateEnd,domain)
-        SELECT @key, @key_test, @name,1, @dateStart,@dateEnd,@domain
+    INSERT INTO CI_MIDDLEWAY..[partner] ([key],key_test,[name],active,dateStart,dateEnd,domain,fb_appid,recaptchaid)
+        SELECT @key, @key_test, @name,1, @dateStart,@dateEnd,@domain,@fbid,@recaptchaid
 END
 
 SELECT 1 success
