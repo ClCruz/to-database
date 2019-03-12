@@ -15,4 +15,4 @@ cli.cd_cpf
 ,0 operator
 FROM CI_MIDDLEWAY..mw_cliente cli
 WHERE lower(cli.cd_email_login)=lower(@email)
-AND (@uniquename IS NULL OR  cli.uniquename_partner=@uniquename)
+--AND (@uniquename IS NULL OR  cli.uniquename_partner=@uniquename)

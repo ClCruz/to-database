@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_clear_timed_seats
+ALTER PROCEDURE dbo.pr_clear_timed_seats
 
 AS
 
@@ -13,6 +13,15 @@ CREATE TABLE #bases (id_base INT, done BIT)
 
 CREATE TABLE #execsell (id_session VARCHAR(100), Indice INT, CodApresentacao INT, hasReservation BIT, hasReservationOnTO BIT, id_base INT);
 
+
+DELETE d
+FROM CI_MIDDLEWAY..current_session_client d
+INNER JOIN CI_MIDDLEWAY..mw_reserva r ON d.id_session=r.id_session COLLATE SQL_Latin1_General_CP1_CI_AS
+WHERE dt_validade <= GETDATE()
+
+DELETE FROM CI_MIDDLEWAY..mw_reserva WHERE dt_validade<=GETDATE();
+
+DELETE FROM CI_MIDDLEWAY..ticketoffice_shoppingcart WHERE DATEADD(MINUTE, 30, created)<=GETDATE()
 
 INSERT INTO #bases (id_base, done)
 SELECT id_base, 0 FROM CI_MIDDLEWAY..mw_base ORDER BY id_base
