@@ -3,7 +3,7 @@ ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@id_produtor INT
     ,@id_to_admin_user UNIQUEIDENTIFIER
     ,@CodPeca INT
-    ,@NomPeca VARCHAR(35)
+    ,@NomPeca VARCHAR(4000)
     ,@CodTipPeca INT
     ,@TemDurPeca int
     ,@CenPeca int
