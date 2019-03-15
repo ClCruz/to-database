@@ -24,10 +24,10 @@ BEGIN
     FROM tabTipBilhete
     WHERE CodTipBilhete=151
 
-    SELECT
-    *
-    FROM CI_MIDDLEWAY..ticketoffice_shoppingcart 
-    WHERE id_ticketoffice_user=@id_ticketoffice_user
+    -- SELECT
+    -- *
+    -- FROM CI_MIDDLEWAY..ticketoffice_shoppingcart 
+    -- WHERE id_ticketoffice_user=@id_ticketoffice_user
 
     UPDATE CI_MIDDLEWAY..ticketoffice_shoppingcart SET id_ticket_type=@id_ticket_type WHERE id_ticketoffice_user=@id_ticketoffice_user AND id_payment_type=@id_payment_type
 END

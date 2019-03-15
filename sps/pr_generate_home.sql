@@ -67,6 +67,7 @@ WHERE
     DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
     AND e.in_ativo=1
     AND b.in_ativo=1
+    AND eei.showonline=1
 GROUP BY 
 e.id_evento
 ,e.ds_evento

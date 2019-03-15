@@ -21,3 +21,4 @@ FROM CI_MIDDLEWAY..mw_base b
 LEFT JOIN CI_MIDDLEWAY..partner_database pdb ON b.id_base=pdb.id_base AND pdb.id_partner=@id_partner
 LEFT JOIN CI_MIDDLEWAY..genre_sync gs ON b.id_base=gs.id_base
 WHERE b.in_ativo=1
+ORDER BY b.ds_nome_teatro

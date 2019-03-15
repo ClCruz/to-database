@@ -36,7 +36,7 @@ SELECT DISTINCT e.id_evento, e.ds_evento, eei.uri, CONVERT(VARCHAR(10),eei.creat
 ,(CASE WHEN ap.dt_apresentacao <= DATEADD(year, -1, GETDATE()) THEN 1 ELSE 0 END) morethanoneyear
 ,(CASE WHEN ap.dt_apresentacao <= DATEADD(year, -2, GETDATE()) THEN 1 ELSE 0 END) morethantwoyear
 FROM CI_MIDDLEWAY..mw_evento e
-INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
+INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento AND eei.showonline=1
 INNER JOIN CI_MIDDLEWAY..partner_database pd ON e.id_base=pd.id_base AND pd.id_partner=@id_partner
 LEFT JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento) as t WHERE t.morethantwoyear=0
 ORDER BY t.morethanoneyear, t.uri
