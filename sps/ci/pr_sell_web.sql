@@ -2,7 +2,7 @@
 -- rollback
 -- select * from ci_localhost..tablugsala where CodApresentacao=24
 -- EXEC [ci_localhost]..pr_sell_web 30, 200, 2, 910
-
+-- select top 1000 * from CI_MIDDLEWAY..purchase_trace where id_purchase='20190315011400-3rnt4hmfs7ibjlaoq07skmo5u6-30' order by created desc
 ALTER PROCEDURE pr_sell_web (@id_cliente INT
         ,@totalAmount INT
         ,@id_pedido_venda INT
@@ -114,6 +114,7 @@ INNER JOIN tabLugSala ls ON ls.CodApresentacao=a.CodApresentacao AND ls.Indice=r
 INNER JOIN CI_MIDDLEWAY..current_session_client csc ON r.id_session=csc.id_session COLLATE SQL_Latin1_General_CP1_CI_AS
 WHERE csc.id_cliente=@id_cliente
 
+
 DECLARE @NumLancamento INT
 SELECT @NumLancamento = (SELECT COALESCE(MAX(NumLancamento),0)+1 FROM tabLancamento)
 
@@ -129,8 +130,8 @@ CodUsuario,CodForPagto,CodCaixa,DatMovimento,QtdBilhete,ValPagto, DatVenda, CodM
         ,@codForPagto
         ,@codCaixa
         ,CONVERT(SMALLDATETIME,CONVERT(VARCHAR(8), @now,112) + ' ' + LEFT(CONVERT(VARCHAR, @now,114),8))
-        ,@quantity
-        ,CONVERT(DECIMAL(18,2),@totalAmount)/100
+        ,1
+        ,CONVERT(DECIMAL(18,2),r.amountcalculated)/100
         ,@now
         ,NULL
     FROM CI_MIDDLEWAY..mw_reserva r
