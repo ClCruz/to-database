@@ -1,11 +1,7 @@
-CREATE PROCEDURE dbo.pr_seats(@id_apresentacao INT, @id VARCHAR(36))
+ALTER PROCEDURE dbo.pr_seats(@id_apresentacao INT, @id VARCHAR(36))
 
 AS
--- DECLARE @id_apresentacao INT, @id VARCHAR(36) = '8CC26A747E65411EB854F7B281A46E01'
--- SET @id_apresentacao=166820--166789
-
--- 84478
--- 84479
+-- DECLARE @id_apresentacao INT = 167818, @id VARCHAR(36) = 'F2177E5E-F727-4906-948D-4EEA9B9BBD0E'
 
 DECLARE @id_session VARCHAR(32) = REPLACE(@id,'-','');
 
@@ -43,6 +39,7 @@ SELECT DISTINCT
     ,CASE WHEN (L.STACADEIRA IS NULL AND R.ID_CADEIRA IS NULL) THEN 'O' 
           WHEN (L.STACADEIRA IN ('T', 'M') AND l.id_session=@id_session) THEN 'S'
           WHEN (L.STACADEIRA IN ('R') AND l.id_session=@id_session) THEN 'R'
+          WHEN (L.STACADEIRA IN ('R') AND l.id_session!=@id_session) THEN 'W'
     ELSE 'C' END [status]
     ,L.id_session
     ,CASE WHEN S.IMGVISAOLUGARFOTO IS NOT NULL THEN 1 ELSE 0 END [imgvisaolugarfoto]
@@ -60,6 +57,5 @@ LEFT JOIN RESULTADO R ON R.ID_CADEIRA = S.INDICE
 LEFT JOIN tabResCliente rc ON s.Indice=rc.Indice AND l.CodReserva=rc.CodReserva
 WHERE ap.id_apresentacao=@id_apresentacao AND S.TIPOBJETO = 'C' AND P.STAPECA = 'A' 
 AND CONVERT(varchar(8), P.DATFINPECA, 112) >= CONVERT(varchar(8), GETDATE(), 112) AND P.IN_VENDE_SITE = 1
--- AND s.Indice in (84478, 84479)
-
--- select * from tabLugSala where Indice in (84478, 84479)
+-- AND s.Indice in (4047, 3017)
+-- AND s.Indice in (4180)

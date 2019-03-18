@@ -4,6 +4,13 @@ ALTER PROCEDURE dbo.pr_ticketoffice_shoppingcart_result (@id UNIQUEIDENTIFIER)
 
 AS
 
+-- DECLARE @id UNIQUEIDENTIFIER = 'F2177E5E-F727-4906-948D-4EEA9B9BBD0E'
+
+SET NOCOUNT ON;
+
+IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
+    DROP TABLE #result; 
+
 SELECT DISTINCT
 tosc.id_apresentacao
 ,tosc.indice
@@ -25,6 +32,8 @@ tosc.id_apresentacao
 ,(CASE WHEN tosc.id_ticket_type IS NULL THEN 0 ELSE 1 END) valid
 ,tpb.TipBilhete
 ,tpb.PerDesconto PerDescontoTipBilhete
+,(CASE WHEN tpb.vl_preco_fixo IS NULL OR tpb.vl_preco_fixo = 0 THEN 0 ELSE 1 END) isFixedAmount
+INTO #result
 FROM CI_MIDDLEWAY.dbo.ticketoffice_shoppingcart tosc
 INNER JOIN CI_MIDDLEWAY.dbo.mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao
 INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
@@ -35,3 +44,27 @@ INNER JOIN tabLugSala ls ON ap.CodApresentacao=ls.CodApresentacao AND tosc.indic
 LEFT JOIN tabTipBilhete tpb ON tosc.id_ticket_type=tpb.CodTipBilhete
 WHERE id_ticketoffice_user=@id
 ORDER BY se.NomSetor, sd.NomObjeto
+
+SELECT
+id_apresentacao
+,indice
+,id_event
+,id_base
+,(CASE WHEN isFixedAmount = 1 THEN amount_topay ELSE amount END) amount
+,amount_discount
+,amount_topay
+,created
+,quantity
+,id_payment_type
+,id_ticket_type
+,NomObjeto
+,NomSetor
+,PerDesconto
+,StaCadeira
+,amountSubTotalSector
+,amountSubTotalTicket
+,valid
+,TipBilhete
+,PerDesconto PerDescontoTipBilhete
+,isFixedAmount
+FROM #result

@@ -1,9 +1,23 @@
 -- --exec sp_executesql N'EXEC pr_seat_reservation @P1, @P2, @P3, @P4, @P5',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int',N'167805',N'1976',N'2A0954C2-D928-4827-BA00-C9D898757810',N'',15
 -- exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000)',N'167818',N'1897',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N''
-
-ALTER PROCEDURE dbo.pr_seat_reservation_multi (@id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL)
+-- exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'167819',N'4147',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N'',N'true'
+--exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'167819',N'4150',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N'',N'1'
+ALTER PROCEDURE dbo.pr_seat_reservation_multi (@id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL, @overwrite BIT = 0)
 
 AS
+
+-- DECLARE @id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL
+--         ,@overwrite BIT = 0
+
+-- SELECT
+--     @id_apresentacao=167819
+--     ,@indice='4152'
+--     ,@id='f2177e5e-f727-4906-948d-4eea9b9bbd0e'
+--     ,@minutesToExpire=15
+--     ,@NIN=''
+--     ,@codCliente=''
+--     ,@codReserva=''
+--     ,@overwrite=1
 
 SET NOCOUNT ON;
 
@@ -13,20 +27,11 @@ IF @codCliente = 0
 IF @codReserva = ''
     SET @codReserva = NULL
 
--- DECLARE @id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL
-
--- SELECT
---     @id_apresentacao=167818
---     ,@indice='1847'
---     ,@id='f2177e5e-f727-4906-948d-4eea9b9bbd0e'
---     ,@minutesToExpire=15
---     ,@NIN=''
---     ,@codCliente=132
---     ,@codReserva='RER'
 
 DECLARE @id_base INT
         ,@id_session VARCHAR(32) = replace(@id,'-','')
         ,@trytodelete BIT = 0
+        ,@deletebecauseoverwrite BIT = 0
 
 SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
 
@@ -36,10 +41,11 @@ IF OBJECT_ID('tempdb.dbo.#indice', 'U') IS NOT NULL
 CREATE TABLE #indice (indice int, seatTaken BIT, seatTakenByPackage BIT, seatTakenTemp BIT
                     , seatTakenReserved BIT, seatTakenBySite BIT, limitedByPurchase BIT
                     , limitedByNIN BIT, hasError BIT, ds_cadeira VARCHAR(1000) NULL
-                    , ds_setor VARCHAR(1000) NULL, codApresentacao INT NULL, isAdd BIT, codPeca INT);
+                    , ds_setor VARCHAR(1000) NULL, codApresentacao INT NULL, isAdd BIT, codPeca INT
+                    , needoverwrite BIT, codReservaSaved VARCHAR(100));
 
-INSERT INTO #indice (indice,seatTaken,seatTakenByPackage,seatTakenTemp,seatTakenReserved,seatTakenBySite,limitedByPurchase,limitedByNIN, hasError, ds_cadeira, ds_setor, codApresentacao, isAdd, codPeca)
-    SELECT Item,0,0,0,0,0,0,0,0,NULL,NULL,NULL,1,0 FROM dbo.splitString(@indice, ',')
+INSERT INTO #indice (indice,seatTaken,seatTakenByPackage,seatTakenTemp,seatTakenReserved,seatTakenBySite,limitedByPurchase,limitedByNIN, hasError, ds_cadeira, ds_setor, codApresentacao, isAdd, codPeca, needoverwrite, codReservaSaved)
+    SELECT Item,0,0,0,0,0,0,0,0,NULL,NULL,NULL,1,0,0,'' FROM dbo.splitString(@indice, ',')
 
 UPDATE i
 SET i.ds_cadeira=sd.NomObjeto
@@ -53,6 +59,11 @@ INNER JOIN tabSala s ON sd.CodSala=s.CodSala
 INNER JOIN #indice i ON sd.Indice=i.indice AND i.hasError=0
 WHERE ap.id_apresentacao=@id_apresentacao
 
+UPDATE i
+SET i.codReservaSaved=ls.CodReserva
+FROM #indice i
+INNER JOIN tabLugSala ls ON i.indice=ls.Indice AND i.codApresentacao=ls.CodApresentacao
+WHERE ls.StaCadeira='R'
 
 UPDATE i
 SET i.isAdd=0
@@ -60,7 +71,42 @@ FROM #indice i
 INNER JOIN tabLugSala ls ON i.indice=ls.Indice AND i.codApresentacao=ls.CodApresentacao
 WHERE ls.id_session=@id_session
 
+UPDATE i
+SET i.needoverwrite=1
+FROM #indice i
+INNER JOIN tabLugSala ls ON i.indice=ls.Indice AND i.codApresentacao=ls.CodApresentacao
+WHERE ls.StaCadeira='R'
+
 SELECT TOP 1 @trytodelete=1 FROM #indice WHERE isAdd=0
+
+IF @overwrite = 1
+BEGIN
+    SELECT TOP 1 @deletebecauseoverwrite=1 FROM #indice WHERE needoverwrite=1
+END
+-- select @trytodelete, @deletebecauseoverwrite
+-- return;
+
+IF @deletebecauseoverwrite = 1
+BEGIN
+    DELETE d
+    FROM CI_MIDDLEWAY..mw_reserva d
+    INNER JOIN #indice i ON d.id_cadeira=i.indice
+    WHERE d.id_apresentacao=@id_apresentacao
+    AND i.needoverwrite=1
+
+    DELETE d
+    FROM tabLugSala d
+    INNER JOIN #indice i ON d.Indice=i.indice
+    WHERE d.CodApresentacao=i.codApresentacao
+    AND d.StaCadeira IN ('R')
+    AND i.needoverwrite=1
+
+    DELETE d
+    FROM tabResCliente d
+    INNER JOIN #indice i ON d.Indice=i.indice
+    WHERE d.CodReserva=i.codReservaSaved COLLATE SQL_Latin1_General_CP1_CI_AS
+    AND i.needoverwrite=1
+END
 
 IF @trytodelete = 1
 BEGIN
@@ -82,7 +128,7 @@ BEGIN
     DELETE d
     FROM tabResCliente d
     INNER JOIN #indice i ON d.Indice=i.indice
-    WHERE d.CodReserva=@codReserva
+    WHERE d.CodReserva=@codReserva 
     AND i.isAdd=0
 
     DELETE d
@@ -91,6 +137,9 @@ BEGIN
     WHERE d.id_apresentacao=@id_apresentacao
     AND d.id_ticketoffice_user=@id
 END
+
+UPDATE #indice SET isAdd = 1;
+
 
 DECLARE @codError_seatTaken INT = 1
         ,@codError_seatTakenByPackage INT = 2
