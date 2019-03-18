@@ -2,8 +2,11 @@
 -- exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000)',N'167818',N'1897',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N''
 -- exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'167819',N'4147',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N'',N'true'
 --exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'167819',N'4150',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N'',N'1'
-ALTER PROCEDURE dbo.pr_seat_reservation_multi (@id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL, @overwrite BIT = 0)
+-- select * from tabLugSala where Indice=4153
+-- rollback
+-- begin tran
 
+ALTER PROCEDURE dbo.pr_seat_reservation_multi (@id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL, @overwrite BIT = 0)
 AS
 
 -- DECLARE @id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL
@@ -11,7 +14,7 @@ AS
 
 -- SELECT
 --     @id_apresentacao=167819
---     ,@indice='4152'
+--     ,@indice='4153'
 --     ,@id='f2177e5e-f727-4906-948d-4eea9b9bbd0e'
 --     ,@minutesToExpire=15
 --     ,@NIN=''
@@ -83,6 +86,7 @@ IF @overwrite = 1
 BEGIN
     SELECT TOP 1 @deletebecauseoverwrite=1 FROM #indice WHERE needoverwrite=1
 END
+
 -- select @trytodelete, @deletebecauseoverwrite
 -- return;
 
