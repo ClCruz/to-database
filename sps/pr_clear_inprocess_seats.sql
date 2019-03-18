@@ -1,8 +1,6 @@
-CREATE PROCEDURE dbo.pr_clear_inprocess_seats
+ALTER PROCEDURE dbo.pr_clear_inprocess_seats
 
 AS
-
--- rollback
 
 IF OBJECT_ID('tempdb.dbo.#bases', 'U') IS NOT NULL
     DROP TABLE #bases; 
@@ -27,8 +25,11 @@ INNER JOIN CI_MIDDLEWAY..mw_apresentacao a ON ipv.id_apresentacao=a.id_apresenta
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON a.id_evento=e.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
 WHERE p.in_situacao='P'
+-- AND p.id_pedido_venda=124--124
 AND DATEADD(day, 4, p.dt_pedido_venda)<=GETDATE();
 
+-- select * from #pedidos
+-- return;
 
 INSERT INTO #bases (id_base, done)
 SELECT DISTINCT id_base, 0 FROM #pedidos ORDER BY id_base
@@ -98,6 +99,8 @@ BEGIN
     
     UPDATE #bases SET done=1 WHERE id_base=@currentBase;
 END
+
+-- select * from #execsell
 
 UPDATE pv
 SET pv.in_situacao = 'E'

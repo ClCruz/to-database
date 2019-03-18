@@ -1,20 +1,21 @@
 
-CREATE PROCEDURE pr_ticketoffice_shoppingcart_tickettype (@id_ticketoffice_user UNIQUEIDENTIFIER, @indice INT, @id_ticket_type INT = NULL)
+-- exec sp_executesql N'EXEC pr_ticketoffice_shoppingcart_tickettype @P1,@P2,@P3',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000)',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'4161',N'7'
+ALTER PROCEDURE pr_ticketoffice_shoppingcart_tickettype (@id_ticketoffice_user UNIQUEIDENTIFIER, @indice INT, @id_ticket_type INT = NULL)
 
 AS
 
--- DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER, @indice INT, @id_ticket_type INT = NULL
-
--- SET @id_ticketoffice_user='8CC26A74-7E65-411E-B854-F7B281A46E01'
--- SET @indice=87248
--- SET @id_ticket_type=151
+-- DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER = 'F2177E5E-F727-4906-948D-4EEA9B9BBD0E'
+--         ,@indice INT = 4161
+--         ,@id_ticket_type INT = 7
 
 SET NOCOUNT ON;
 
 DECLARE @amount DECIMAL(19,2)
         ,@PerDesconto DECIMAL(19,2)
         ,@PerDescontoTB DECIMAL(19,2)
-        , @total INT
+        ,@total INT
+        ,@isFixedAmount BIT = 0
+        ,@fixedAmount DECIMAL(19,2)
 
 SELECT
     @amount=CONVERT(INT,REPLACE(CONVERT(VARCHAR(30),(CONVERT(DECIMAL(19,2),a.ValPeca))),'.',''))
@@ -31,12 +32,21 @@ IF @id_ticket_type IS NOT NULL
 BEGIN
     SELECT
         @PerDescontoTB=(PerDesconto/100)
-    FROM tabTipBilhete
-    WHERE CodTipBilhete=@id_ticket_type
+        ,@isFixedAmount=(CASE WHEN tb.vl_preco_fixo IS NULL OR tb.vl_preco_fixo = 0 THEN 0 ELSE 1 END)
+        ,@fixedAmount=(CASE WHEN tb.vl_preco_fixo IS NULL OR tb.vl_preco_fixo = 0 THEN 0 ELSE (tb.vl_preco_fixo) END)
+    FROM tabTipBilhete tb
+    WHERE tb.CodTipBilhete=@id_ticket_type
 
-    SET @amount=@amount/100
-    SET @amount=@amount-(@amount*@PerDesconto)
-    SET @amount=@amount-(@amount*@PerDescontoTB)
+    IF @isFixedAmount = 1
+    BEGIN
+        SET @amount = @fixedAmount;
+    END
+    ELSE
+    BEGIN
+        SET @amount=@amount/100
+        SET @amount=@amount-(@amount*@PerDesconto)
+        SET @amount=@amount-(@amount*@PerDescontoTB)
+    END
 
     SET @total = CONVERT(INT,REPLACE(CONVERT(VARCHAR(30),(CONVERT(DECIMAL(19,2),@amount))),'.',''))
     UPDATE CI_MIDDLEWAY..ticketoffice_shoppingcart SET id_ticket_type=@id_ticket_type, amount_topay=@total WHERE id_ticketoffice_user=@id_ticketoffice_user AND indice=@indice
@@ -49,3 +59,8 @@ BEGIN
 
     UPDATE CI_MIDDLEWAY..ticketoffice_shoppingcart SET id_ticket_type=NULL, amount_topay=@total WHERE id_ticketoffice_user=@id_ticketoffice_user AND indice=@indice
 END
+-- select @total, @id_ticket_type
+
+-- select * from CI_MIDDLEWAY..ticketoffice_shoppingcart
+
+-- select vl_preco_fixo*100 from tabTipBilhete where CodTipBilhete=7

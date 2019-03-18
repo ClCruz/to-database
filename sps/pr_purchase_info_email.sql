@@ -1,4 +1,4 @@
--- pr_purchase_info_email 9
+-- pr_purchase_info_email 133
 
 
 ALTER PROCEDURE dbo.pr_purchase_info_email (@id_pedido_venda INT)

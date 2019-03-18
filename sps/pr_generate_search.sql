@@ -65,6 +65,7 @@ WHERE
     DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
     AND e.in_ativo=1
     AND b.in_ativo=1
+    AND eei.showonline=1
 ORDER BY (CASE WHEN ds_municipio = @city COLLATE SQL_Latin1_General_Cp1251_CI_AS THEN 1
                 WHEN ds_municipio != @city COLLATE SQL_Latin1_General_Cp1251_CI_AS
                      AND es.sg_estado = @state COLLATE SQL_Latin1_General_Cp1251_CI_AS THEN 2
