@@ -32,3 +32,4 @@ WHERE p.StaPeca='A' AND a.StaAtivoBilheteria='S'
 AND (@id IS NULL OR p.CodPeca=@id)
 AND DATEADD(MINUTE, p.TemDurPeca,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
 --AND (@id IS NOT NULL OR CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')>=GETDATE())
+ORDER BY p.NomPeca
