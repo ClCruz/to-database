@@ -2,4 +2,4 @@ ALTER PROCEDURE dbo.pr_login_successfully(@login VARCHAR(1000), @token VARCHAR(1
 
 AS
 
-UPDATE CI_MIDDLEWAY..ticketoffice_user SET lastLogin=GETDATE(), currentToken=@token, tokenValidUntil=DATEADD(minute,30,GETDATE()) WHERE lower(login)=lower(@login) AND active=1
+UPDATE CI_MIDDLEWAY..ticketoffice_user SET lastLogin=GETDATE(), currentToken=@token, tokenValidUntil=DATEADD(minute,60,GETDATE()) WHERE lower(login)=lower(@login) AND active=1
