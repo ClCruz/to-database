@@ -21,7 +21,8 @@ ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@ticketoffice_askemail BIT = 0
     ,@free_installments INT
     ,@max_installments INT
-    ,@interest_rate INT)
+    ,@interest_rate INT
+    ,@ticketoffice_ticketmodel VARCHAR(1000))
     
 
 
@@ -229,6 +230,7 @@ SET [description]=@description
     ,free_installments=@free_installments
     ,max_installments=@max_installments
     ,interest_rate=@interest_rate
+    ,ticketoffice_ticketmodel=@ticketoffice_ticketmodel
 WHERE id_evento=@id_evento
 
 UPDATE CI_MIDDLEWAY..search
