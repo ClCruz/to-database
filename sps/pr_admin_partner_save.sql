@@ -10,7 +10,9 @@ ALTER PROCEDURE dbo.pr_admin_partner_save
     ,@type VARCHAR(100)
     ,@active BIT
     ,@fb_appid VARCHAR(1000) = NULL
-    ,@recaptchaid VARCHAR(1000) = NULL)
+    ,@recaptchaid VARCHAR(1000) = NULL
+    ,@sell_email VARCHAR(1000) = NULL
+    ,@send_sell_email BIT = 0)
 
 AS
 
@@ -88,6 +90,8 @@ BEGIN
             ,isDev=@isDev
             ,fb_appid=@fb_appid
             ,recaptchaid=@recaptchaid
+            ,send_sell_email=@send_sell_email
+            ,sell_email=@sell_email
     WHERE
         id=@id
 
@@ -122,8 +126,8 @@ BEGIN
 
     SELECT @key=[key], @key_test=key_test FROM #keypartner
 
-    INSERT INTO CI_MIDDLEWAY..[partner] ([key], key_test, [name], active, dateStart, dateEnd, domain, uniquename,fb_appid,recaptchaid)
-     VALUES (@key, @key_test, @name, @active, @dateStart, @dateEnd, @domain, @uniquename,@fb_appid,@recaptchaid)
+    INSERT INTO CI_MIDDLEWAY..[partner] ([key], key_test, [name], active, dateStart, dateEnd, domain, uniquename,fb_appid,recaptchaid,sell_email,send_sell_email)
+     VALUES (@key, @key_test, @name, @active, @dateStart, @dateEnd, @domain, @uniquename,@fb_appid,@recaptchaid,@sell_email,@send_sell_email)
 
     SELECT 1 success
             ,'Incluido com sucesso.' msg

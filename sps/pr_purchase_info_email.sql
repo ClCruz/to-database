@@ -14,6 +14,7 @@ IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
 
 SELECT DISTINCT
     e.id_evento
+    ,ipv.Indice
     ,eei.cardimage
     ,eei.uri
     ,c.ds_nome + ' ' + c.ds_sobrenome [buyer_name]
@@ -61,6 +62,7 @@ WHERE
 SELECT
     r.id_evento
     ,r.cardimage
+    ,r.Indice
     ,r.uri
     ,r.[buyer_name]
     ,r.buyer_email
