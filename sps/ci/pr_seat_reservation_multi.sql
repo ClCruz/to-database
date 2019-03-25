@@ -135,7 +135,7 @@ BEGIN
 END
 
 
-IF @codReserva = ''
+IF @overwrite = 1
 BEGIN
     UPDATE #indice SET isAdd=1;
 END

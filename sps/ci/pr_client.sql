@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE dbo.pr_client (@nin VARCHAR(14), @rg VARCHAR(15),@name VARCHAR(50),@email VARCHAR(150), @cardbin VARCHAR(6),@phoneddd VARCHAR(10),@phonenumber VARCHAR(20),@phoneramal VARCHAR(4),@makeCode BIT,@partner BIT)
+ALTER PROCEDURE dbo.pr_client (@nin VARCHAR(14), @rg VARCHAR(15),@name VARCHAR(50),@email VARCHAR(150), @cardbin VARCHAR(6),@phoneddd VARCHAR(10),@phonenumber VARCHAR(20),@phoneramal VARCHAR(4),@makeCode BIT,@partner BIT)
 
 AS
 
