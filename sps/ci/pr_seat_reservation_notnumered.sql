@@ -1,11 +1,18 @@
-CREATE PROCEDURE dbo.pr_seat_reservation_notnumered (@id_apresentacao INT, @id VARCHAR(100), @qtd INT, @NIN VARCHAR(10), @minutesToExpire INT)
+-- exec sp_executesql N'EXEC pr_seat_reservation_notnumered @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 int,@P2 nvarchar(4000),@P3 int,@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',167779,N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',1,N'',15,N'',N'',N'0'
+--exec sp_executesql N'EXEC pr_seat_reservation_notnumered @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 int,@P2 nvarchar(4000),@P3 int,@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',167779,N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',1,N'',15,N'RY64CCICBD',N'',N'1'
+
+ALTER PROCEDURE dbo.pr_seat_reservation_notnumered (@id_apresentacao INT, @id VARCHAR(100), @qtd INT, @NIN VARCHAR(10), @minutesToExpire INT, @codReserva VARCHAR(100), @codCliente INT = NULL, @sellreservation BIT = 0)
 
 AS
--- select * from CI_MIDDLEWAY..mw_apresentacao where id_apresentacao=166820--166826
--- select * from tabLugSala where CodApresentacao=2191--2197
---select * from CI_MIDDLEWAY..ticketoffice_shoppingcart
 
--- DECLARE @id_apresentacao INT, @id VARCHAR(100), @qtd INT, @NIN VARCHAR(10), @minutesToExpire INT
+-- DECLARE @id_apresentacao INT = 167779
+--         , @id VARCHAR(100) = 'F2177E5E-F727-4906-948D-4EEA9B9BBD0E'
+--         , @qtd INT = 1
+--         , @NIN VARCHAR(10) = ''
+--         , @minutesToExpire INT = 15
+--         , @codReserva VARCHAR(100) = 'RY64CCICBD'
+--         , @codCliente INT = ''
+--         , @sellreservation BIT = 1
 
 -- SELECT @id_apresentacao=166826
 --         ,@id='8cc26a74-7e65-411e-b854-f7b281a46e01'
@@ -23,6 +30,34 @@ SET NOCOUNT ON;
 --     ,@id='teste'
 
 
+DECLARE @seatTaken BIT = 0
+        ,@seatTakenByPackage BIT = 0
+        ,@seatTakenTemp BIT = 0
+        ,@seatTakenReserved BIT = 0
+        ,@seatTakenBySite BIT = 0
+        ,@seatqtdNotOk BIT = 0
+        ,@limitedByPurchase BIT = 0
+        ,@limitedByNIN BIT = 0
+        ,@seatsTotal INT = 0
+        ,@seatsTaken INT = 0
+        ,@available INT = 0
+
+DECLARE @codError_seatTaken INT = 1
+        ,@codError_seatTakenByPackage INT = 2
+        ,@codError_seatTakenByReservation INT = 3
+        ,@codError_seatTakenByTemp INT = 4
+        ,@codError_seatTakenBySite INT = 5
+        ,@codError_limitedByPurchase INT = 6
+        ,@codError_limitedByNIN INT = 7
+        ,@codError_qtdNotOk INT = 8
+        ,@codError_Fail INT = 10
+
+IF @codCliente = 0 
+    SET @codCliente=NULL
+
+IF @codReserva = ''
+    SET @codReserva = NULL
+
 DECLARE @id_base INT
         ,@id_session VARCHAR(32) = replace(@id,'-','')
     
@@ -31,6 +66,70 @@ IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
     DROP TABLE #result; 
 
 CREATE TABLE #result (indice INT, CodApresentacao INT, CodSala INT, ds_setor VARCHAR(100), ds_cadeira VARCHAR(100), codPeca INT)
+
+IF (@sellreservation = 1 AND @codReserva IS NOT NULL)
+BEGIN
+    DECLARE @countavail INT
+
+    SELECT @countavail = COUNT(*)
+    FROM CI_MIDDLEWAY..mw_apresentacao ap
+    INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
+    INNER JOIN tabSala s ON a.CodSala=s.CodSala
+    INNER JOIN tabSalDetalhe sd ON sd.CodSala=a.CodSala
+    INNER JOIN tabSetor se ON a.CodSala=se.CodSala AND sd.CodSetor=se.CodSetor
+    INNER JOIN tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND sd.Indice=ls.Indice
+    WHERE sd.TipObjeto = 'C'
+    AND ls.StaCadeira = 'R'
+    AND ls.CodReserva = @codReserva
+    AND ap.id_apresentacao=@id_apresentacao
+    AND sd.Indice NOT IN (SELECT indice FROM CI_MIDDLEWAY..ticketoffice_indice_waiting sub WHERE sub.id_apresentacao=@id_apresentacao)
+
+    IF (@countavail<@qtd)
+    BEGIN
+        SELECT
+            1 as error
+            ,'limit' info
+            ,@codError_qtdNotOk code
+        RETURN;
+    END
+
+
+    IF OBJECT_ID('tempdb.dbo.#indiceRemove', 'U') IS NOT NULL
+        DROP TABLE #indiceRemove; 
+
+    CREATE TABLE #indiceRemove (indice int, codApresentacao INT NULL);
+
+    INSERT INTO #indiceRemove (indice, codApresentacao)
+    SELECT TOP (@qtd)
+    sd.Indice
+    ,ap.CodApresentacao
+    FROM CI_MIDDLEWAY..mw_apresentacao ap
+    INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
+    INNER JOIN tabSala s ON a.CodSala=s.CodSala
+    INNER JOIN tabSalDetalhe sd ON sd.CodSala=a.CodSala
+    INNER JOIN tabSetor se ON a.CodSala=se.CodSala AND sd.CodSetor=se.CodSetor
+    INNER JOIN tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND sd.Indice=ls.Indice
+    WHERE sd.TipObjeto = 'C'
+    AND ls.StaCadeira = 'R'
+    AND ls.CodReserva = @codReserva
+    AND ap.id_apresentacao=@id_apresentacao
+    AND sd.Indice NOT IN (SELECT indice FROM CI_MIDDLEWAY..ticketoffice_indice_waiting sub WHERE sub.id_apresentacao=@id_apresentacao)
+
+    DELETE d
+    FROM CI_MIDDLEWAY..mw_reserva d
+    INNER JOIN #indiceRemove i ON d.id_cadeira=i.indice
+    WHERE d.id_apresentacao=@id_apresentacao
+
+    DELETE d
+    FROM tabLugSala d
+    INNER JOIN #indiceRemove i ON d.Indice=i.indice AND d.CodApresentacao=i.codApresentacao
+    AND d.StaCadeira IN ('R')
+
+    DELETE d
+    FROM tabResCliente d
+    INNER JOIN #indiceRemove i ON d.Indice=i.indice
+    WHERE d.CodReserva=@codReserva COLLATE SQL_Latin1_General_CP1_CI_AS
+END
 
 INSERT INTO #result (indice, CodApresentacao, CodSala, ds_setor, ds_cadeira, codPeca)
 SELECT TOP (@qtd)
@@ -56,28 +155,6 @@ SELECT r.indice, r.CodApresentacao, @id_apresentacao, @id
 FROM #result r
 
 SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAME()
-
-DECLARE @seatTaken BIT = 0
-        ,@seatTakenByPackage BIT = 0
-        ,@seatTakenTemp BIT = 0
-        ,@seatTakenReserved BIT = 0
-        ,@seatTakenBySite BIT = 0
-        ,@seatqtdNotOk BIT = 0
-        ,@limitedByPurchase BIT = 0
-        ,@limitedByNIN BIT = 0
-        ,@seatsTotal INT = 0
-        ,@seatsTaken INT = 0
-        ,@available INT = 0
-
-DECLARE @codError_seatTaken INT = 1
-        ,@codError_seatTakenByPackage INT = 2
-        ,@codError_seatTakenByReservation INT = 3
-        ,@codError_seatTakenByTemp INT = 4
-        ,@codError_seatTakenBySite INT = 5
-        ,@codError_limitedByPurchase INT = 6
-        ,@codError_limitedByNIN INT = 7
-        ,@codError_qtdNotOk INT = 8
-        ,@codError_Fail INT = 10
 
 SELECT DISTINCT 
 @seatTaken = (SELECT COUNT(*) FROM tabLugSala sub WHERE sub.CodApresentacao=a.CodApresentacao)
@@ -211,6 +288,25 @@ INNER JOIN tabSetor se ON s.CodSala=se.CodSala
 WHERE ap.id_apresentacao=@id_apresentacao
 
 SET @amount_topay=@amount-((@PerDesconto/100)*@amount)
+
+
+IF @codCliente IS NOT NULL
+BEGIN
+    INSERT INTO tabResCliente (codCliente,CodREserva,Indice,TipLancamento)
+        SELECT @CodCliente ,@CodReserva , ls.Indice, 1  
+        FROM tablugsala ls 
+        INNER JOIN #result i ON ls.Indice=i.indice
+        WHERE ls.CodCaixa = @CodCaixa and (ls.stacadeira = 'T' OR ls.stacadeira = 'M')
+
+    UPDATE ls
+    SET	ls.StaCadeira = 'R', 
+        ls.CodUsuario = @CodUsuario ,
+        ls.CodReserva = @CodReserva
+    FROM tabLugSala ls
+    INNER JOIN #result i ON ls.Indice=i.indice
+    WHERE ls.CodCaixa = @CodCaixa and (ls.stacadeira = 'T' OR ls.stacadeira = 'M')
+END
+
 
 INSERT INTO CI_MIDDLEWAY..ticketoffice_shoppingcart (id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay)
 SELECT @id, r.codPeca, @id_base, @id_apresentacao, r.indice, 1, 'step1', NULL, @amount, 0, @amount_topay

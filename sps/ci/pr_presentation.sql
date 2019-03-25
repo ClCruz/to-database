@@ -36,6 +36,8 @@ SELECT
     ,a.ValPeca
     ,a.CodSala
     ,a.HorSessao
+    ,(CASE WHEN CONVERT(VARCHAR(10), a.DatApresentacao, 102) = CONVERT(VARCHAR(10), GETDATE(), 102) THEN 1 ELSE 0 END) istoday
+    ,(CASE WHEN CONVERT(VARCHAR(10), DATEADD(day,1,a.DatApresentacao), 102) = CONVERT(VARCHAR(10), DATEADD(day, 1, GETDATE()), 102) THEN 1 ELSE 0 END) istomorrow
 FROM tabApresentacao a
 INNER JOIN tabPeca p ON a.CodPeca=p.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON e.id_base=@id_base AND e.CodPeca=p.CodPeca

@@ -1,4 +1,4 @@
-ALTER PROCEDURE dbo.pr_reservation_list (@nin VARCHAR(14) = NULL, @codReserva VARCHAR(10) = NULL, @id_apresentacao INT = NULL)
+ALTER PROCEDURE dbo.pr_reservation_list (@nin VARCHAR(14) = NULL, @codReserva VARCHAR(10) = NULL, @id_apresentacao INT = NULL, @name VARCHAR(1000) = NULL)
 
 AS
 
@@ -14,6 +14,9 @@ IF (@nin = '')
     SET @nin=NULL
 ELSE
     SET @nin = REPLACE(REPLACE(@nin,'-',''),'.','')
+
+IF (@name = '')
+    SET @name=NULL
 
 IF (@codReserva = '')
     SET @codReserva=NULL
@@ -71,6 +74,7 @@ INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND ap.C
 WHERE 
 (@nin IS NULL OR c.CPF=@nin)
 AND (@codReserva IS NULL OR ls.CodReserva=@codReserva)
+AND (@name IS NULL OR c.Nome LIKE '%'+@name+'%')
 AND (@id_apresentacao IS NULL OR ap.id_apresentacao=@id_apresentacao)
 AND ls.StaCadeira='R'
 ORDER BY c.Nome, p.NomPeca, s.NomSala, sd.NomObjeto

@@ -1,11 +1,4 @@
--- --exec sp_executesql N'EXEC pr_seat_reservation @P1, @P2, @P3, @P4, @P5',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int',N'167805',N'1976',N'2A0954C2-D928-4827-BA00-C9D898757810',N'',15
--- exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000)',N'167818',N'1897',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N''
--- exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'167819',N'4147',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N'',N'true'
---exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'167819',N'4150',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N'',N'1'
--- select * from tabLugSala where Indice=1797 and codapresentacao=81
--- select * from ci_middleway..mw_apresentacao where id_apresentacao=16 7856
--- rollback
--- begin tran
+-- exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'167857',N'4097,4098,4147,4148',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'19318',N'RX6DGGICAH',N'0'
 
 ALTER PROCEDURE dbo.pr_seat_reservation_multi (@id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL, @overwrite BIT = 0)
 AS
@@ -138,9 +131,23 @@ BEGIN
     INNER JOIN #indice i ON d.indice=i.indice
     WHERE d.id_apresentacao=@id_apresentacao
     AND d.id_ticketoffice_user=@id
+
 END
 
-UPDATE #indice SET isAdd = 1 WHERE isme=0;
+
+IF @codReserva = ''
+BEGIN
+    UPDATE #indice SET isAdd=1;
+END
+
+-- UPDATE #indice SET isAdd=1;
+
+-- UPDATE i
+-- SET i.isAdd=0
+--     ,i.isme=1
+-- FROM #indice i
+-- INNER JOIN tabLugSala ls ON i.indice=ls.Indice AND i.codApresentacao=ls.CodApresentacao
+-- WHERE ls.id_session=@id_session
 
 
 DECLARE @codError_seatTaken INT = 1
@@ -287,6 +294,11 @@ BEGIN
     AND i.hasError=0
     AND i.isAdd=1
 END
+
+
+INSERT INTO CI_MIDDLEWAY.[dbo].[ticketoffice_reservation] ([id_apresentacao],[indice],[id_ticketoffice_user], codReserva)
+SELECT @id_apresentacao, i.indice, @id, @codReserva
+FROM #indice i
 
 
 DECLARE @amount INT = NULL, @amount_discount INT = NULL, @amount_topay INT = NULL

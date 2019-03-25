@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE dbo.pr_client (@nin VARCHAR(14), @rg VARCHAR(15),@name VARCHAR(50),@email VARCHAR(150), @cardbin VARCHAR(6),@phoneddd VARCHAR(10),@phonenumber VARCHAR(20),@phoneramal VARCHAR(4),@makeCode BIT)
+CREATE PROCEDURE dbo.pr_client (@nin VARCHAR(14), @rg VARCHAR(15),@name VARCHAR(50),@email VARCHAR(150), @cardbin VARCHAR(6),@phoneddd VARCHAR(10),@phonenumber VARCHAR(20),@phoneramal VARCHAR(4),@makeCode BIT,@partner BIT)
 
 AS
 
@@ -14,10 +14,22 @@ DECLARE @Codigo INT
 
 SET @cpfAux=REPLACE(REPLACE(@nin, '-', ''), '.', '')
 
-SELECT
-    @Codigo=c.Codigo
-FROM tabCliente c
-WHERE c.CPF=@cpfAux
+IF @partner = 1
+BEGIN
+    SELECT
+        @Codigo=c.Codigo
+    FROM tabCliente c
+    WHERE lower(c.Nome)=lower(@name) COLLATE SQL_Latin1_General_CP1_CI_AS
+END
+ELSE
+BEGIN
+    SELECT
+        @Codigo=c.Codigo
+    FROM tabCliente c
+    WHERE c.CPF=@cpfAux
+END
+
+
 
 IF @Codigo IS NULL
 BEGIN
