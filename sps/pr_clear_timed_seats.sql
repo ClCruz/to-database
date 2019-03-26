@@ -24,7 +24,9 @@ DELETE FROM CI_MIDDLEWAY..mw_reserva WHERE dt_validade<=GETDATE();
 DELETE FROM CI_MIDDLEWAY..ticketoffice_shoppingcart WHERE DATEADD(MINUTE, 30, created)<=GETDATE()
 
 INSERT INTO #bases (id_base, done)
-SELECT id_base, 0 FROM CI_MIDDLEWAY..mw_base ORDER BY id_base
+SELECT id_base, 0 FROM CI_MIDDLEWAY..mw_base 
+WHERE ds_nome_base_sql='tambemvou'
+ORDER BY id_base
 
 DECLARE @currentBase INT = 0
         ,@db_name VARCHAR(1000)
@@ -39,7 +41,7 @@ BEGIN
     SELECT TOP 1 @currentBase=id_base FROM #bases WHERE done=0 ORDER BY id_base
     SELECT TOP 1 @db_name=b.ds_nome_base_sql FROM CI_MIDDLEWAY..mw_base b WHERE b.id_base=@currentBase;
 
-
+    print @db_name
     SET @toExec=''
     SET @toExec = 'INSERT INTO #execsell (id_session, Indice, CodApresentacao, hasReservation, hasReservationOnTO, id_base) '
     SET @toExec = @toExec+' SELECT DISTINCT '
@@ -47,16 +49,20 @@ BEGIN
     SET @toExec = @toExec+' ,ls.Indice '
     SET @toExec = @toExec+' ,ls.CodApresentacao '
     SET @toExec = @toExec+' ,ISNULL((SELECT TOP 1 1 FROM CI_MIDDLEWAY..mw_reserva sub WHERE sub.id_cadeira=ls.indice AND sub.id_session=ls.id_session COLLATE SQL_Latin1_General_CP1_CI_AS AND sub.dt_validade>GETDATE()),0) hasReservation '
-    SET @toExec = @toExec+' ,ISNULL((SELECT TOP 1 1 FROM CI_MIDDLEWAY..ticketoffice_shoppingcart sub WHERE sub.indice=ls.indice AND sub.id_ticketoffice_user=ls.id_session COLLATE SQL_Latin1_General_CP1_CI_AS AND DATEADD(minute, 25, sub.created)>GETDATE()),0) hasReservationOnTO '
+    SET @toExec = @toExec+' ,ISNULL((SELECT TOP 1 1 FROM CI_MIDDLEWAY..ticketoffice_shoppingcart sub WHERE sub.indice=ls.indice AND CONVERT(VARCHAR(1000),sub.id_ticketoffice_user)=ls.id_session COLLATE SQL_Latin1_General_CP1_CI_AS AND DATEADD(minute, 25, sub.created)>GETDATE()),0) hasReservationOnTO '
     SET @toExec = @toExec+' ,(SELECT TOP 1 id_base FROM CI_MIDDLEWAY..mw_base WHERE ds_nome_base_sql='''+@db_name+''') id_base '
     SET @toExec = @toExec+' FROM ['+@db_name+']..tabLugSala ls '
     SET @toExec = @toExec+' WHERE StaCadeira=''T'' '
 
+    print @toExec
     exec sp_executesql @toExec
     
     UPDATE #bases SET done=1 WHERE id_base=@currentBase;
 END
 
+-- SELECT * FROM #execsell;
+
+-- return;
 
 DELETE FROM #execsell WHERE hasReservation!=0 OR hasReservationOnTO!=0
 

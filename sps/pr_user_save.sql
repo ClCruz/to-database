@@ -6,7 +6,7 @@ ALTER PROCEDURE dbo.pr_user_save (@firstname VARCHAR(50), @lastname VARCHAR(50),
         , @address_more VARCHAR(50), @login VARCHAR(100), @pass VARCHAR(32)
         , @newsletter BIT, @agree BIT, @fb VARCHAR(50)
         , @isforeign BIT, @uniquename VARCHAR(1000), @isadd BIT
-        , @token VARCHAR(1000))
+        , @token VARCHAR(1000), @loggedtoken VARCHAR(1000) = NULL)
 
 AS
 
@@ -24,6 +24,11 @@ SET @document=REPLACE(@document,'.', '')
 SET @document=REPLACE(@document,'-', '')
 SET @zipcode=REPLACE(@zipcode,'-', '')
 
+IF (@loggedtoken = '')
+    SET @loggedtoken = NULL;
+ELSE
+    SET @token = @loggedtoken;
+
 
 IF @isforeign=1
 BEGIN
@@ -38,7 +43,7 @@ BEGIN
     SELECT @has = 1, @id_cliente=c.id_cliente FROM CI_MIDDLEWAY..mw_cliente c WHERE c.uniquename_partner=@uniquename AND c.cd_cpf=@document
 END
 
-IF @isadd = 1 AND @has = 1
+IF @isadd = 1 AND @has = 1 AND @loggedtoken IS NULL
 BEGIN
     SELECT 0 success
             ,'Já existe cadastro para esse documento.' msg
@@ -52,7 +57,7 @@ END
 SELECT @hasEmail = 1 FROM CI_MIDDLEWAY..mw_cliente c WHERE c.uniquename_partner=@uniquename AND c.cd_email_login=@login
 
 
-IF @isadd = 1 AND @hasEmail = 1
+IF @isadd = 1 AND @hasEmail = 1 AND @loggedtoken IS NULL
 BEGIN
     SELECT 0 success
             ,'Já existe cadastro para esse e-mail.' msg
@@ -64,13 +69,14 @@ BEGIN
 END
 
 
-
 SELECT @id_estado=id_estado FROM CI_MIDDLEWAY..mw_estado WHERE lower(sg_estado)=lower(@city_state)
 
 DECLARE @in_recebe_info VARCHAR(1) = 'N'
 
 IF @newsletter = 1
     SET @in_recebe_info='S'
+
+DECLARE @isnew BIT = 1
 
 IF @has = 1
 BEGIN
@@ -90,7 +96,7 @@ BEGIN
         ,d.ds_cidade=@city
         ,d.cd_cep=@zipcode
         ,d.cd_email_login=@login
-        ,d.cd_password=@pass
+        ,d.cd_password=(CASE WHEN @pass = '' OR @pass IS NULL THEN d.cd_password ELSE @pass END)
         ,d.in_recebe_info=@in_recebe_info
         ,d.id_estado=@id_estado
         ,d.in_sexo=@gender
@@ -99,9 +105,12 @@ BEGIN
         ,d.token_fb=@fb
     FROM CI_MIDDLEWAY..mw_cliente d
     WHERE d.id_cliente=@id_cliente
+
+    SET @isnew = 0;
 END
 ELSE
 BEGIN
+    SET @isnew = 1;
     SELECT @id_cliente=max(id_cliente)+1 FROM CI_MIDDLEWAY..mw_cliente;
 
     IF @isforeign=1
@@ -151,3 +160,4 @@ SELECT 1 success
     ,@login [login]
     ,@id_cliente id
     ,@token token
+    ,@isnew isnew

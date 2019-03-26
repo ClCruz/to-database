@@ -1,5 +1,5 @@
-CREATE PROCEDURE dbo.pr_purchase_renew (@id_session VARCHAR(100), @minutes INT)
+ALTER PROCEDURE dbo.pr_purchase_renew (@id_session VARCHAR(100), @id_user INT)
 
 AS
 
-UPDATE CI_MIDDLEWAY..mw_reserva SET dt_validade=DATEADD(minute,@minutes, GETDATE()) WHERE id_session=@id_session
+UPDATE CI_MIDDLEWAY..mw_reserva SET dt_validade=DATEADD(minute,20, GETDATE()) WHERE id_session=@id_session

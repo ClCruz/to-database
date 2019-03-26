@@ -53,3 +53,4 @@ LEFT JOIN tabCliente c ON hc.Codigo=c.Codigo
 WHERE (@codVenda IS NULL OR ls.CodVenda=@codVenda)
 AND (@cpf IS NULL OR c.CPF=@cpf)
 AND (@id_apresentacao IS NULL OR ap.id_apresentacao=@id_apresentacao)
+AND ls.StaCadeira='V'
