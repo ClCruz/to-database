@@ -23,4 +23,5 @@ sp.id
 FROM CI_MIDDLEWAY..static_page sp
 INNER JOIN CI_MIDDLEWAY..partner_static_page psp ON sp.id=psp.id_static_page 
 WHERE psp.id_partner=@id_partner
+AND psp.id_static_page=@id_static_page
 ORDER BY sp.id
