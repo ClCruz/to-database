@@ -30,7 +30,21 @@ AND ls.StaCadeira='V'
 --ORDER BY ipv.id_pedido_venda, ls.CodVenda, sd.NomObjeto, ls.Indice
 -- AND
 
--- 504 / ZC4GCGEODO
--- 507 / ZM4GBOEOGO
+-- 504 / ZC4GCGEODO / 2019-03-26 11:03:46.690
+-- 507 / ZM4GBOEOGO / 2019-03-26 12:13:53.670
 
 -- COLLATE SQL_Latin1_General_CP1_CI_AS
+
+-- SELECT p.id_pedido_venda, p.dt_pedido_venda
+-- FROM CI_MIDDLEWAY..mw_pedido_venda p
+-- INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON p.id_pedido_venda=ipv.id_pedido_venda
+-- INNER JOIN CI_MIDDLEWAY..mw_apresentacao a ON ipv.id_apresentacao=a.id_apresentacao
+-- INNER JOIN CI_MIDDLEWAY..mw_evento e ON a.id_evento=e.id_evento
+-- INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
+-- WHERE p.in_situacao='P' AND p.id_pedido_venda in (504, 507)
+/*
+update CI_MIDDLEWAY..mw_pedido_venda set dt_pedido_venda=DATEADD(DAY,-5,GETDATE()) where id_pedido_venda in (504,507)
+*/
+-- select DATEADD(DAY,-5,GETDATE()), id_pedido_venda FROM CI_MIDDLEWAY..mw_pedido_venda where id_pedido_venda in (504,507)
+-- AND p.id_pedido_venda=124--124
+-- AND DATEADD(day, 4, p.dt_pedido_venda)<=GETDATE();
