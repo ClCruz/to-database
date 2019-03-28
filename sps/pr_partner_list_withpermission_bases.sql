@@ -1,4 +1,4 @@
-ALTER PROCEDURE dbo.pr_partner_list_withpermission (@id_to_admin_user UNIQUEIDENTIFIER)
+CREATE PROCEDURE dbo.pr_partner_list_withpermission_bases (@id_to_admin_user UNIQUEIDENTIFIER)
 
 AS
 
@@ -7,7 +7,6 @@ AS
 
 SELECT
 p.[key]
-,p.id
 ,p.name
 ,p.uniquename
 FROM CI_MIDDLEWAY..[partner] p
