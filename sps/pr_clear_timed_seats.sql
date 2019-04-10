@@ -25,7 +25,7 @@ DELETE FROM CI_MIDDLEWAY..ticketoffice_shoppingcart WHERE DATEADD(MINUTE, 30, cr
 
 INSERT INTO #bases (id_base, done)
 SELECT id_base, 0 FROM CI_MIDDLEWAY..mw_base 
-WHERE ds_nome_base_sql='tambemvou'
+-- WHERE ds_nome_base_sql='tambemvou'
 ORDER BY id_base
 
 DECLARE @currentBase INT = 0
@@ -59,10 +59,6 @@ BEGIN
     
     UPDATE #bases SET done=1 WHERE id_base=@currentBase;
 END
-
--- SELECT * FROM #execsell;
-
--- return;
 
 DELETE FROM #execsell WHERE hasReservation!=0 OR hasReservationOnTO!=0
 

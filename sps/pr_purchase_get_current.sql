@@ -117,7 +117,7 @@ BEGIN
     SET @toExec = @toExec + ' INNER JOIN CI_MIDDLEWAY..MW_EVENTO e ON e.codPeca=p.codPeca AND e.id_base='+CONVERT(VARCHAR(10),@currentBase) + ' '
     SET @toExec = @toExec + ' INNER JOIN CI_MIDDLEWAY..MW_APRESENTACAO AP ON AP.ID_EVENTO = E.ID_EVENTO AND a.codApresentacao=ap.CodApresentacao '
     SET @toExec = @toExec + ' INNER JOIN CI_MIDDLEWAY..MW_RESERVA R ON r.id_session=ls.id_session COLLATE SQL_Latin1_General_CP1_CI_AS AND R.id_apresentacao = ap.id_apresentacao AND r.id_cadeira=ls.indice '
-    SET @toExec = @toExec + ' INNER JOIN CI_MIDDLEWAY..MW_APRESENTACAO_BILHETE APB ON APB.id_apresentacao=ap.id_apresentacao AND apb.codTipBilhete=ls.codTipBilhete AND r.id_apresentacao_bilhete=apb.id_apresentacao_bilhete '
+    SET @toExec = @toExec + ' INNER JOIN CI_MIDDLEWAY..MW_APRESENTACAO_BILHETE APB ON APB.id_apresentacao=ap.id_apresentacao AND apb.codTipBilhete=ls.codTipBilhete AND r.id_apresentacao_bilhete=apb.id_apresentacao_bilhete AND APB.IN_ATIVO = 1 '
 
     SET @toExec = @toExec + 'WHERE ls.id_session='''+@id_session+''''
 

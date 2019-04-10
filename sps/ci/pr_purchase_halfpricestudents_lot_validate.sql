@@ -65,7 +65,7 @@ r.id_reserva
 ,(SELECT COALESCE(COUNT(subtls.Indice),0) AS TOTAL FROM tabLugSala subtls
                                                     INNER JOIN CI_MIDDLEWAY..mw_apresentacao suba ON suba.CodApresentacao=subtls.CodApresentacao
                                                     INNER JOIN CI_MIDDLEWAY..mw_evento sube ON suba.id_evento=sube.id_evento AND id_base=@id_base
-                                                    INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete subab ON subab.id_apresentacao = suba.id_apresentacao AND subtls.CodTipBilhete = subab.CodTipBilhete
+                                                    INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete subab ON subab.id_apresentacao = suba.id_apresentacao AND subtls.CodTipBilhete = subab.CodTipBilhete AND subab.IN_ATIVO = 1
                                                     INNER JOIN tabTipBilhete subtb ON subtb.CodTipBilhete = subab.CodTipBilhete
                 WHERE subtls.CodApresentacao=a.codApresentacao
                 AND subtls.CodTipBilhete=tb.CodTipBilhete
@@ -88,7 +88,7 @@ INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca AND e.id_base=@id_ba
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND a.CodApresentacao=ap.CodApresentacao
 INNER JOIN CI_MIDDLEWAY..mw_reserva r ON ls.id_session=r.id_session COLLATE SQL_Latin1_General_CP1_CI_AS AND ls.Indice=r.id_cadeira AND r.id_apresentacao=ap.id_apresentacao
 INNER JOIN tabTipBilhete tb ON tb.CodTipBilhete=ls.CodTipBilhete
-INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete apb ON ls.CodTipBilhete=apb.CodTipBilhete AND ap.id_apresentacao=apb.id_apresentacao
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete apb ON ls.CodTipBilhete=apb.CodTipBilhete AND ap.id_apresentacao=apb.id_apresentacao AND apb.IN_ATIVO = 1
 WHERE ls.id_session=@id_session
 AND ((tb.StaTipBilhMeiaEstudante='S' AND tb.QtdVendaPorLote = 0 AND StaTipBilhete='A') OR (tb.StaTipBilhMeiaEstudante='N' AND tb.QtdVendaPorLote>0 AND StaTipBilhete='A'))
 

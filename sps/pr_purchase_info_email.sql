@@ -45,7 +45,7 @@ SELECT DISTINCT
 INTO #result
 FROM CI_MIDDLEWAY..mw_pedido_venda pv
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON pv.id_pedido_venda=ipv.id_pedido_venda
-INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete ab ON ipv.id_apresentacao_bilhete=ab.id_apresentacao_bilhete
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete ab ON ipv.id_apresentacao_bilhete=ab.id_apresentacao_bilhete AND ab.IN_ATIVO = 1
 INNER JOIN CI_MIDDLEWAY..order_host oh ON pv.id_pedido_venda=oh.id_pedido_venda AND ipv.Indice=oh.indice
 INNER JOIN CI_MIDDLEWAY..host h ON oh.id_host=h.id
 INNER JOIN CI_MIDDLEWAY..mw_cliente c ON pv.id_cliente=c.id_cliente
