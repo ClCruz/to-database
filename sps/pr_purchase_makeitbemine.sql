@@ -28,7 +28,7 @@ BEGIN
     
     IF @has = 1
     BEGIN
-        UPDATE CI_MIDDLEWAY..current_session_client SET created=GETDATE(),id_session=@newid
+        UPDATE CI_MIDDLEWAY..current_session_client SET created=GETDATE(),id_session=@newid WHERE id_cliente=@id_client
     END
     ELSE
     BEGIN
