@@ -2,7 +2,11 @@ CREATE PROCEDURE dbo.pr_ad_home_list (@apikey VARCHAR(100))
 
 AS
 
--- DECLARE @apikey VARCHAR(100) = 'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5'
+-- DECLARE @api VARCHAR(100) = 'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5'
+
+DECLARE @id_partner UNIQUEIDENTIFIER
+
+SELECT TOP 1 @id_partner=p.id FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@apikey OR p.key_test=@apikey
 
 SELECT [id]
   ,[name]
@@ -23,4 +27,6 @@ FROM [dbo].[ad]
 WHERE startdate<=GETDATE()
 AND (enddate IS NULL OR enddate>=GETDATE())
 AND isactive=1
+AND id_partner = @id_partner
 ORDER BY (CASE WHEN priority = 0 THEN 99999 ELSE priority END), NEWID()
+GO
