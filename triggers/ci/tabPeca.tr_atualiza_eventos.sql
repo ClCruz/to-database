@@ -60,7 +60,7 @@ BEGIN
 
 							SELECT @id_genre=g.id
 							FROM tabPeca p 
-							INNER JOIN CI_RAPOSO..tabTipPeca tp ON p.CodTipPeca=tp.CodTipPeca 
+							INNER JOIN tabTipPeca tp ON p.CodTipPeca=tp.CodTipPeca 
 							INNER JOIN CI_MIDDLEWAY..genre g ON RTRIM(LTRIM(tp.TipPeca))=RTRIM(LTRIM(g.name)) COLLATE SQL_Latin1_General_Cp1251_CI_AS 
 							WHERE p.codPeca=@codPeca
 
