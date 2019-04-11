@@ -35,6 +35,8 @@ SELECT
     ,eei.opening_time
     ,eei.insurance_policy
     ,eei.uri
+    ,eei.showonline
+    ,(CASE WHEN EXISTS(SELECT 1 FROM CI_MIDDLEWAY..mw_apresentacao sub WHERE sub.id_evento=e.id_evento AND sub.dt_apresentacao>=GETDATE()) THEN 1 ELSE 0 END) hasshowyet
     ,p.QtIngrPorPedido
     ,p.qt_ingressos_por_cpf
     ,p.in_obriga_cpf
