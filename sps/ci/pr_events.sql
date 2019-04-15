@@ -1,3 +1,5 @@
+-- EXEC pr_events
+
 ALTER PROCEDURE dbo.pr_events (@id INT = NULL)
 
 AS
@@ -23,6 +25,7 @@ SELECT DISTINCT
     ,eei.ticketoffice_askemail
     ,eei.cardimage
     ,e.id_evento
+    ,CI_MIDDLEWAY.dbo.fnc_splitok(e.id_evento) splitok
 FROM tabPeca p
 INNER JOIN tabApresentacao a ON p.CodPeca=a.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca AND e.id_base=@id_base

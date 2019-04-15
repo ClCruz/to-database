@@ -28,7 +28,7 @@ BEGIN
     
     IF @has = 1
     BEGIN
-        UPDATE CI_MIDDLEWAY..current_session_client SET created=GETDATE(),id_session=@newid WHERE id_cliente=@id_client
+        UPDATE CI_MIDDLEWAY..current_session_client SET created=GETDATE() WHERE id_cliente=@id_client
     END
     ELSE
     BEGIN
@@ -37,24 +37,24 @@ BEGIN
     END
 -- select * from #bases
 
-    UPDATE CI_MIDDLEWAY..mw_reserva SET id_session=@newid WHERE id_session=@session;
+    -- UPDATE CI_MIDDLEWAY..mw_reserva SET id_session=@newid WHERE id_session=@session;
     
-    WHILE (EXISTS (SELECT 1 FROM #bases WHERE done=0 ))
-    BEGIN
-        DECLARE @currentBase INT = 0
-                ,@db_name VARCHAR(1000)
-                ,@toExec NVARCHAR(MAX)
+    -- WHILE (EXISTS (SELECT 1 FROM #bases WHERE done=0 ))
+    -- BEGIN
+    --     DECLARE @currentBase INT = 0
+    --             ,@db_name VARCHAR(1000)
+    --             ,@toExec NVARCHAR(MAX)
 
-        SELECT TOP 1 @currentBase=id_base FROM #bases WHERE done=0 ORDER BY id_base
-        SELECT TOP 1 @db_name=b.ds_nome_base_sql FROM CI_MIDDLEWAY..mw_base b WHERE b.id_base=@currentBase;
+    --     SELECT TOP 1 @currentBase=id_base FROM #bases WHERE done=0 ORDER BY id_base
+    --     SELECT TOP 1 @db_name=b.ds_nome_base_sql FROM CI_MIDDLEWAY..mw_base b WHERE b.id_base=@currentBase;
 
-        SET @toExec=''
-        SET @toExec = @toExec + 'UPDATE '+@db_name+'.dbo.tabLugSala SET id_session='''+@newid+''' WHERE id_session='''+@session+''''
+    --     SET @toExec=''
+    --     SET @toExec = @toExec + 'UPDATE '+@db_name+'.dbo.tabLugSala SET id_session='''+@newid+''' WHERE id_session='''+@session+''''
         
-        exec sp_executesql @toExec
+    --     exec sp_executesql @toExec
 
-        UPDATE #bases SET done=1 WHERE id_base=@currentBase;
-    END
+    --     UPDATE #bases SET done=1 WHERE id_base=@currentBase;
+    -- END
 
     SELECT 1 success
             ,'' msg

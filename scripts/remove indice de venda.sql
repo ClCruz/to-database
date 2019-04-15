@@ -11,10 +11,10 @@ ls.Indice
 ,ls.StaCadeira
 ,sd.NomObjeto 
 ,ls.CodReserva
-,759 numLancamento
-,19876 CodCliente
-,'IN4FGCIHAO' codVenda
-,49123258 id_apresentacao_bilhete
+,895 numLancamento
+,19929 CodCliente
+,'LF4BOCAOGC' codVenda
+,49123257 id_apresentacao_bilhete
 ,1 codTipBilhete
 ,ls.CodApresentacao
 ,s.NomSala
@@ -26,14 +26,14 @@ ls.Indice
 ,se.NomSetor
 ,212 id_base
 ,a.CodSala
-,460 valor
+,238.6 valor
 ,ROW_NUMBER() OVER (order by ls.indice) [number]
-,981 id_pedido_venda
+,1073 id_pedido_venda
 ,12297829 id_reserva
 ,ap.id_apresentacao
 ,'INTEIRA' ds_nome_site
-,50.0 VL_UNITARIO
-,7.50 VL_TAXA_CONVENIENCIA
+,140.0 VL_UNITARIO
+,21.0 VL_TAXA_CONVENIENCIA
 INTO #helper
 from ciadeingressos..tabLugSala ls
 INNER JOIN ciadeingressos..tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
@@ -43,9 +43,11 @@ INNER JOIN ciadeingressos..tabSetor se ON se.CodSala=sd.CodSala AND se.CodSetor=
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON a.CodPeca=e.CodPeca AND e.id_base=212
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND a.CodApresentacao=ap.CodApresentacao
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete apb ON ap.id_apresentacao=apb.id_apresentacao AND apb.in_ativo=1 AND apb.CodTipBilhete=1
-where ls.CodApresentacao=4 and ls.StaCadeira='V'-- and ls.Indice in (select Indice from ciadeingressos..tabResCliente where CodCliente=19888)
-AND ls.CodVenda='IN4FGCIHAO'
-AND ls.Indice=26115
+where-- ls.CodApresentacao=4 
+--and 
+ls.StaCadeira='V'-- and ls.Indice in (select Indice from ciadeingressos..tabResCliente where CodCliente=19888)
+AND ls.CodVenda='LF4BOCAOGC'
+AND ls.Indice=19021
 
 DELETE d
 FROM  tabLugSala d
