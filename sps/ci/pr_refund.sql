@@ -101,6 +101,13 @@ SELECT @CodCliente=c.CodCliente FROM tabComprovante c WHERE c.CodVenda=@codVenda
 
 IF @total>0
 BEGIN
+    DECLARE @transactionKey VARCHAR(MAX)
+    SELECT TOP 1
+        @transactionKey=togr.transactionKey
+    FROM CI_MIDDLEWAY..ticketoffice_gateway_result togr
+    INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON togr.id_ticketoffice_shoppingcart=tosc.id
+    WHERE tosc.codVenda=@codVenda
+
 
     INSERT INTO CI_MIDDLEWAY.[dbo].[ticketoffice_cashregister_moviment] ([id_ticketoffice_user],[id_ticketoffice_cashregister],[isopen],[amount],[type],[id_base],[codForPagto],[id_evento],[codVenda])
     SELECT tosc.id_ticketoffice_user,NULL,1,tosc.amount_topay,'refund',tosc.id_base,tosc.id_payment_type,ap.id_evento,@codVenda
@@ -174,13 +181,6 @@ BEGIN
             WHERE l.NumLancamento in (SELECT NumLancamento FROM #helper)
             AND l.NumLancamento NOT IN (SELECT sub.NumLancamento FROM tabHisCliente sub WHERE sub.NumLancamento=l.NumLancamento AND sub.Indice=l.Indice AND sub.CodApresentacao=l.CodApresentacao )
     -- VALUES (@CodCliente, @NumLancamento, @CodTipBilhete, 2, @CodApresentacao, @Indice)
-
-    DECLARE @transactionKey VARCHAR(MAX)
-    SELECT TOP 1
-        @transactionKey=togr.transactionKey
-    FROM CI_MIDDLEWAY..ticketoffice_gateway_result togr
-    INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON togr.id_ticketoffice_shoppingcart=tosc.id
-    WHERE tosc.codVenda=@codVenda
 
     SELECT
         1 success
