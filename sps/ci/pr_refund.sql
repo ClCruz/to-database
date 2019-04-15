@@ -2,7 +2,8 @@
 --exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01',N'OH4OBOBBFO',N'0',N'518'
 -- O9SOGOBGAC
 -- exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'OM4DBCBGAB',N'0',N'29'
---exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'O9SOGOBGAC',N'0',N'14'
+--exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'OA4OFOBGAH',N'0',N'24'
+
 ALTER PROCEDURE dbo.pr_refund (
     @id_ticketoffice_user UNIQUEIDENTIFIER
     ,@codVenda VARCHAR(10)
@@ -68,16 +69,17 @@ DECLARE @total INT
 SELECT @total = COUNT(*) FROM #indice
 
 INSERT INTO #helper (id_apresentacao, id_event, CodApresentacao, CodPeca, CodSala, id_evento, id_payment_type, id_ticket_type, amount, NumLancamento, Indice)
-SELECT tosch.id_apresentacao, tosch.id_event, a.CodApresentacao, a.CodPeca, a.CodSala, e.id_evento, tosch.id_payment_type, tosch.id_ticket_type, tosch.amount_topay, l.NumLancamento, tosch.indice
+SELECT tosch.id_apresentacao, tosch.id_event, a.CodApresentacao, a.CodPeca, a.CodSala, e.id_evento, tosch.id_payment_type, tosch.id_ticket_type
+, tosch.amount_topay, (SELECT TOP 1 NumLancamento FROM tabLancamento sub WHERE sub.CodApresentacao = ls.CodApresentacao AND sub.Indice = ls.Indice and codtiplancamento NOT IN (4,2) ORDER BY NumLancamento DESC), tosch.indice
 FROM tabLugSala ls
 INNER JOIN tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
 INNER JOIN tabPeca p ON a.CodPeca=p.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca AND e.id_base=@id_base
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND a.CodApresentacao=ap.CodApresentacao
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosch ON ls.Indice=tosch.indice AND ap.id_apresentacao=tosch.id_apresentacao AND p.CodPeca=tosch.id_event AND tosch.id_base=@id_base
-LEFT JOIN tabLancamento l ON l.CodApresentacao = ls.CodApresentacao AND l.Indice = ls.Indice and codtiplancamento NOT IN (4,2)
 WHERE
     ls.Indice IN (SELECT indice FROM #indice)
+    AND ls.CodVenda=@codVenda
 
 SELECT @amount=SUM(h.amount) FROM #helper h
 
