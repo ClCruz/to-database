@@ -111,6 +111,7 @@ tosch.id
 ,(CASE WHEN pro.ds_endereco IS NULL THEN '-' ELSE pro.ds_endereco END) ds_endereco
 ,s.IngressoNumerado
 ,CONVERT(VARCHAR(100),FORMAT(CONVERT(decimal(18,2),tosch.amount_topay)/100, 'C', 'pt-br')) amount_topay
+,ISNULL((SELECT TOP 1 COUNT(1) FROM CI_MIDDLEWAY..print_ticket sub WHERE sub.codVenda=@codVenda AND sub.id_base=@id_base),0) reprint
 INTO #result
 FROM tabLugSala ls
 INNER JOIN tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
@@ -177,4 +178,5 @@ SELECT
 ,amount_topay
 ,@domain domain
 ,CONVERT(VARCHAR(10),countTicket) + '/' + CONVERT(VARCHAR(10),(SELECT MAX(countTicket) FROM #result)) [howMany]
+,reprint
 FROM #result

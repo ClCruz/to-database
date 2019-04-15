@@ -1,150 +1,211 @@
-DECLARE @fullobj VARCHAR(MAX)
+-- exec sp_executesql N'EXEC pr_admin_presentation_add @P1',N'@P1 nvarchar(4000)',N'<?xml version="1.0"?>
+-- <root><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quarta" weekday="3" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quinta" weekday="4" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
+-- '
 
-SET @fullobj = '22695#1#2019-01-24#20:00#123#1#0|22695#1#2019-01-24#21:00#423#1#1|22695#1#2019-01-24#22:00#223#0#1|22695#1#2019-01-15#16:00#22#1#1'
+-- exec sp_executesql N'EXEC pr_admin_presentation_add @P1',N'@P1 nvarchar(4000)',N'<?xml version="1.0"?>
+-- <root><item codSala="2" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="02:00" dateStart="2019-04-16" dateEnd="2019-04-16" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
+-- '
+
+
+-- exec sp_executesql N'EXEC pr_admin_presentation_add @P1',N'@P1 nvarchar(4000)',N'<?xml version="1.0"?>
+-- <root><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="10:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quarta" weekday="3" ValPeca="1.05" amount="105" HorSessao="10:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quinta" weekday="4" ValPeca="1.05" amount="105" HorSessao="10:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
+-- '
+
+-- SELECT TOP (300) n = ROW_NUMBER()OVER (ORDER BY [n]) 
+--   FROM CI_MIDDLEWAY..loop_numbers ORDER BY n;
+
+
+  
+
+
+
+-- ALTER PROCEDURE dbo.pr_admin_presentation_add (@data XML)
+
+-- AS
+
+
+DECLARE @data XML = N'<?xml version="1.0"?>
+<root><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quarta" weekday="3" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quinta" weekday="4" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
+'
 
 SET NOCOUNT ON;
 
-IF OBJECT_ID('tempdb.dbo.#final', 'U') IS NOT NULL
-    DROP TABLE #final; 
-IF OBJECT_ID('tempdb.dbo.#aux', 'U') IS NOT NULL
-    DROP TABLE #aux; 
-IF OBJECT_ID('tempdb.dbo.#deeper', 'U') IS NOT NULL
-    DROP TABLE #deeper; 
-IF OBJECT_ID('tempdb.dbo.#deeper2', 'U') IS NOT NULL
-    DROP TABLE #deeper2; 
+SET DATEFIRST 1;
 
-CREATE TABLE #aux (id UNIQUEIDENTIFIER, id_evento INT, codPeca INT, codSala INT, presentationDate DATETIME, presentationTime VARCHAR(5), amount INT, allowweb BIT, allowticketoffice BIT, hasAnother BIT, numBordero INT, codApresentacaoInsert INT);
---CREATE TABLE #final (codApresentacao INT,DatApresentacao DATETIME,CodPeca INT,CodSala INT,HorSessao VARCHAR(5),ValPeca MONEY NULL,NumBordero INT NULL,StaAtivoWeb CHAR(1),StaAtivoBilheteria CHAR(1))
+IF OBJECT_ID('tempdb.dbo.#request', 'U') IS NOT NULL
+	DROP TABLE #request; 
+
+IF OBJECT_ID('tempdb.dbo.#toadd', 'U') IS NOT NULL
+	DROP TABLE #toadd; 
+
+CREATE TABLE #request (codSala int
+	,codApresentacao int
+	,id_evento int
+	,id_base int
+	,weekdayName varchar(1000)
+	,[weekday] int
+	,ValPeca decimal(18,3)
+	,amount int
+	,HorSessao varchar(1000)
+	,dateStart varchar(1000)
+	,dateEnd varchar(1000)
+	,allowweb varchar(100)
+	,allowwebBIT bit
+	,allowticketoffice varchar(100)
+	,allowticketofficeBIT bit
+	,hasAnother BIT
+	,codPeca INT);
+
+CREATE TABLE #toadd (codSala int
+	,id_evento int
+	,id_base int
+	,amount int
+	,HorSessao varchar(1000)
+	,[date] datetime
+	,allowweb bit
+	,allowticketoffice bit
+	,hasAnother BIT
+	,isSelected BIT
+	,codPeca INT
+	,numBordero INT
+	,id UNIQUEIDENTIFIER);
 
 
-CREATE TABLE #deeper (id UNIQUEIDENTIFIER, obj VARCHAR(MAX));
-CREATE TABLE #deeper2 (id INT, obj VARCHAR(MAX));
+INSERT INTO #request (codSala, codApresentacao, id_evento, id_base, weekdayName, [weekday], ValPeca, amount, HorSessao, dateStart, dateEnd, allowweb, allowwebBIT, allowticketoffice, allowticketofficeBIT, hasAnother, codPeca)
+SELECT
+	c.value('@codSala','int') codSala
+	,c.value('@codApresentacao','int') codApresentacao
+	,c.value('@id_evento','int') id_evento
+	,c.value('@id_base','int') id_base
+	,c.value('@weekdayName','varchar(1000)') weekdayName
+	,c.value('@weekday','int') weekday
+	,c.value('@ValPeca','decimal(18,3)') ValPeca
+	,c.value('@amount','int') amount
+	,c.value('@HorSessao','varchar(1000)') HorSessao
+	,c.value('@dateStart','varchar(1000)') dateStart
+	,c.value('@dateEnd','varchar(1000)') dateEnd
+	,c.value('@allowweb','varchar(100)') allowweb
+	,c.value('@allowwebBIT','bit') allowwebBIT
+	,c.value('@allowticketoffice','varchar(100)') allowticketoffice
+	,c.value('@allowticketofficeBIT','bit') allowticketofficeBIT
+	,0
+	,0
+FROM @data.nodes('root/item/.') T(c)
 
-INSERT #deeper(id, obj)
-	SELECT
-		NEWID()
-		,Item
-	FROM dbo.splitString(@fullobj, '|');
-
-WHILE (exists (SELECT 1 FROM #deeper))
-BEGIN
-	DECLARE @id UNIQUEIDENTIFIER
-			,@obj VARCHAR(MAX)
-	SELECT @id=id
-			,@obj=obj
-	FROM #deeper
-
-	INSERT INTO #deeper2 (id, obj)
-		SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS RowNumber,* FROM dbo.splitString(@obj, '#') ;
-
-			--1                --2              --3                            --4                              --5             --6               --7
-	DECLARE @id_evento_loop INT,@codSala_loop INT,@presentationDate_loop DATETIME,@presentationTime_loop VARCHAR(5),@amount_loop INT,@allowweb_loop BIT,@allowticketoffice_loop BIT;
-
-	SELECT @id_evento_loop = obj FROM #deeper2 WHERE id=1
-	SELECT @codSala_loop = obj FROM #deeper2 WHERE id=2
-	SELECT @presentationDate_loop = obj FROM #deeper2 WHERE id=3
-	SELECT @presentationTime_loop = obj FROM #deeper2 WHERE id=4
-	SELECT @amount_loop = obj FROM #deeper2 WHERE id=5
-	SELECT @allowweb_loop = obj FROM #deeper2 WHERE id=6
-	SELECT @allowticketoffice_loop = obj FROM #deeper2 WHERE id=7
-	INSERT INTO #aux (id,id_evento,codPeca,codSala,presentationDate,presentationTime,amount,allowweb,allowticketoffice, hasAnother,numBordero,codApresentacaoInsert)
-		SELECT 	NEWID()
-				,@id_evento_loop
-				,0
-				,@codSala_loop
-				,@presentationDate_loop
-				,@presentationTime_loop
-				,@amount_loop
-				,@allowweb_loop
-				,@allowticketoffice_loop
-				,0
-				,NULL
-				,0
-
-	DELETE FROM #deeper WHERE id=@id
-END
 
 DECLARE @codPeca INT
-SELECT TOP 1 @codPeca=codPeca FROM CI_MIDDLEWAY..mw_evento WHERE id_evento=(SELECT TOP 1 id_evento FROM #aux)
+SELECT TOP 1 @codPeca=codPeca FROM CI_MIDDLEWAY..mw_evento WHERE id_evento=(SELECT TOP 1 id_evento FROM #request)
 
-UPDATE #aux SET codPeca=@codPeca
+UPDATE #request SET codPeca=@codPeca
+
+DECLARE @dateStart DATETIME
+		,@dateEnd DATETIME
+		,@howmany INT = 0
+
+SELECT TOP 1 @dateStart = datestart, @dateEnd = dateEnd FROM #request
+
+SET @howmany = DATEDIFF(DAY, @dateStart, @dateEnd)+1
+
+
+INSERT INTO #toadd (codSala
+	,id_evento
+	,id_base
+	,amount
+	,HorSessao
+	,[date]
+	,allowweb
+	,allowticketoffice
+	,hasAnother
+	,isSelected
+	,codPeca
+	,id)
+SELECT r.codSala, r.id_evento, r.id_base, r.amount, r.HorSessao, t.[date], r.allowwebBIT, r.allowticketofficeBIT, r.hasAnother, 0, r.codPeca, NEWID()
+FROM (SELECT TOP (@howmany) DATEADD(day, n-1, CONVERT(DATETIME,@dateStart)) [date],DATEPART(weekday,DATEADD(day, n-1, CONVERT(DATETIME,@dateStart))) [weekday]
+FROM CI_MIDDLEWAY..loop_numbers 
+ORDER BY n) as t
+LEFT JOIN #request r ON t.weekday=r.weekday
+WHERE r.codSala IS NOT NULL
+
 
 UPDATE d
 SET 
 	d.hasAnother = 1
-FROM #aux d
-INNER JOIN tabApresentacao a ON d.codSala=a.CodSala AND d.presentationTime=a.HorSessao COLLATE SQL_Latin1_General_CP1_CI_AS AND d.presentationDate=a.DatApresentacao
+FROM #toadd d
+INNER JOIN tabApresentacao a ON d.codSala=a.CodSala AND d.HorSessao=a.HorSessao COLLATE SQL_Latin1_General_CP1_CI_AS AND d.[date]=a.DatApresentacao
 WHERE a.DatApresentacao>=GETDATE();
+
+
 
 DECLARE @hasError BIT = 0
 		,@msg VARCHAR(MAX);
 
-SELECT @hasError=1 FROM #aux WHERE hasAnother=1
+SELECT @hasError=1 FROM #toadd WHERE hasAnother=1
 
 IF @hasError = 1
 BEGIN
-	DECLARE @evento VARCHAR(8000)
-			,@data VARCHAR(100)
+	DECLARE @evento_error VARCHAR(8000)
+			,@data_error VARCHAR(100)
 
 	SELECT TOP 1 
-		@evento=p.NomPeca
-		,@data=CONVERT(VARCHAR(10), DatApresentacao, 103) + ' as ' + HorSessao
-	FROM #aux aux
-	INNER JOIN tabApresentacao a ON aux.codSala=a.CodSala AND aux.presentationTime=a.HorSessao COLLATE SQL_Latin1_General_CP1_CI_AS AND aux.presentationDate=a.DatApresentacao
+		@evento_error=p.NomPeca
+		,@data_error=CONVERT(VARCHAR(10), DatApresentacao, 103) + ' as ' + HorSessao
+	FROM #toadd aux
+	INNER JOIN tabApresentacao a ON aux.codSala=a.CodSala AND aux.HorSessao=a.HorSessao COLLATE SQL_Latin1_General_CP1_CI_AS AND aux.[date]=a.DatApresentacao
 	INNER JOIN tabPeca p ON a.CodPeca=p.CodPeca
 	WHERE 
 		aux.hasAnother=1
 
 	SELECT 0 success
-			,'Já existe apresentação ('+@evento+') na data de '+@data
+			,'Já existe apresentação ('+@evento_error+') na data de '+@data_error
 	RETURN;
 END
 
 UPDATE d
 SET d.numBordero = RowNumber
-FROM #aux d
+FROM #toadd d
 INNER JOIN 
 (SELECT 
-	ROW_NUMBER() OVER (ORDER BY aux.presentationDate, aux.presentationTime) AS RowNumber
+	ROW_NUMBER() OVER (ORDER BY aux.date, aux.HorSessao) AS RowNumber
 	,aux.id
-FROM #aux aux) t ON d.id=t.id
+FROM #toadd aux) t ON d.id=t.id
+
 
 DECLARE @maxNumBordero INT = 0
 
-SELECT @maxNumBordero = MAX(NumBordero)+1 FROM tabApresentacao WHERE CodSala=(SELECT TOP 1 codSala FROM #aux)
+SELECT @maxNumBordero = MAX(NumBordero)+1 FROM tabApresentacao WHERE CodSala=(SELECT TOP 1 codSala FROM #toadd)
 
-UPDATE #aux SET numBordero=numBordero+@maxNumBordero
+UPDATE #toadd SET numBordero=numBordero+@maxNumBordero
 
 DECLARE @lastcodApresetancao INT
 
 SELECT @lastcodapresetancao=MAX(codApresentacao) FROM tabApresentacao
 
--- INSERT INTO tabApresentacao (codApresentacao,DatApresentacao,CodPeca,CodSala,HorSessao,ValPeca,NumBordero,StaAtivoWeb,StaAtivoBilheteria)
+-- -- INSERT INTO tabApresentacao (codApresentacao,DatApresentacao,CodPeca,CodSala,HorSessao,ValPeca,NumBordero,StaAtivoWeb,StaAtivoBilheteria)
 
-SELECT 
-	@lastcodapresetancao+ROW_NUMBER() OVER (ORDER BY a.presentationDate, a.presentationTime) AS RowNumber
-	,a.presentationDate
-	,a.codPeca
-	,a.codSala
-	,a.presentationTime
-	,(CONVERT(MONEY,a.amount)/CONVERT(MONEY,100)) amount
-	,a.numBordero
-	,(CASE WHEN a.allowweb = 1 THEN 'S' ELSE 'N' END) allowweb
-	,(CASE WHEN a.allowticketoffice = 1 THEN 'S' ELSE 'N' END) allowticketoffice
+-- SELECT 
+-- 	@lastcodapresetancao+ROW_NUMBER() OVER (ORDER BY a.presentationDate, a.presentationTime) AS RowNumber
+-- 	,a.presentationDate
+-- 	,a.codPeca
+-- 	,a.codSala
+-- 	,a.presentationTime
+-- 	,(CONVERT(MONEY,a.amount)/CONVERT(MONEY,100)) amount
+-- 	,a.numBordero
+-- 	,(CASE WHEN a.allowweb = 1 THEN 'S' ELSE 'N' END) allowweb
+-- 	,(CASE WHEN a.allowticketoffice = 1 THEN 'S' ELSE 'N' END) allowticketoffice
 	
-INTO #final
-FROM #aux a
+-- INTO #final
+-- FROM #aux a
 
 
-SELECT *, 0 FROM #final
-UNION ALL 
-SELECT *, 1 FROM #final
-UNION ALL 
-SELECT *, 2 FROM #final
-UNION ALL 
-SELECT *, 3 FROM #final
-UNION ALL 
-SELECT *, 4 FROM #final
-UNION ALL 
-SELECT *, 5 FROM #final
+-- SELECT *, 0 FROM #final
+-- UNION ALL 
+-- SELECT *, 1 FROM #final
+-- UNION ALL 
+-- SELECT *, 2 FROM #final
+-- UNION ALL 
+-- SELECT *, 3 FROM #final
+-- UNION ALL 
+-- SELECT *, 4 FROM #final
+-- UNION ALL 
+-- SELECT *, 5 FROM #final
 
