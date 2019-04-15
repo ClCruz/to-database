@@ -1,6 +1,8 @@
 --exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01',N'',N'0',N'543'
 --exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'8CC26A74-7E65-411E-B854-F7B281A46E01',N'OH4OBOBBFO',N'0',N'518'
-
+-- O9SOGOBGAC
+-- exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'OM4DBCBGAB',N'0',N'29'
+--exec sp_executesql N'EXEC pr_refund @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'O9SOGOBGAC',N'0',N'14'
 ALTER PROCEDURE dbo.pr_refund (
     @id_ticketoffice_user UNIQUEIDENTIFIER
     ,@codVenda VARCHAR(10)
@@ -8,6 +10,8 @@ ALTER PROCEDURE dbo.pr_refund (
     ,@indiceList VARCHAR(MAX) = NULL)
 
 AS
+
+-- RETURN;
 
 -- DECLARE    @id_ticketoffice_user UNIQUEIDENTIFIER = '8CC26A74-7E65-411E-B854-F7B281A46E01'
 --     ,@all BIT = 0
@@ -101,13 +105,9 @@ SELECT @CodCliente=c.CodCliente FROM tabComprovante c WHERE c.CodVenda=@codVenda
 
 IF @total>0
 BEGIN
-    DECLARE @transactionKey VARCHAR(MAX)
-    SELECT TOP 1
-        @transactionKey=togr.transactionKey
-    FROM CI_MIDDLEWAY..ticketoffice_gateway_result togr
-    INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON togr.id_ticketoffice_shoppingcart=tosc.id
-    WHERE tosc.codVenda=@codVenda
+    DECLARE @transactionKey VARCHAR(1000)
 
+    SELECT @transactionKey = pinpad_transactionId FROM CI_MIDDLEWAY..ticketoffice_pinpad WHERE codVenda=@codVenda
 
     INSERT INTO CI_MIDDLEWAY.[dbo].[ticketoffice_cashregister_moviment] ([id_ticketoffice_user],[id_ticketoffice_cashregister],[isopen],[amount],[type],[id_base],[codForPagto],[id_evento],[codVenda])
     SELECT tosc.id_ticketoffice_user,NULL,1,tosc.amount_topay,'refund',tosc.id_base,tosc.id_payment_type,ap.id_evento,@codVenda
@@ -151,8 +151,6 @@ BEGIN
     FROM tabLugSala d
     INNER JOIN #helper h ON d.CodApresentacao=h.CodApresentacao AND d.Indice=h.Indice
     WHERE d.CodVenda=@codVenda
-
-
 
     IF @all = 1
     BEGIN
