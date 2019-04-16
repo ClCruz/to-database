@@ -1,32 +1,17 @@
--- exec sp_executesql N'EXEC pr_admin_presentation_add @P1',N'@P1 nvarchar(4000)',N'<?xml version="1.0"?>
+/*
+exec sp_executesql N'EXEC pr_admin_presentation_add @P1',N'@P1 nvarchar(4000)',N'<?xml version="1.0"?>
+<root><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="22:00" dateStart="2019-04-22" dateEnd="2019-04-26" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quarta" weekday="3" ValPeca="1.05" amount="105" HorSessao="22:00" dateStart="2019-04-22" dateEnd="2019-04-26" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quinta" weekday="4" ValPeca="1.05" amount="105" HorSessao="22:00" dateStart="2019-04-22" dateEnd="2019-04-26" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
+'
+*/
+
+ALTER PROCEDURE dbo.pr_admin_presentation_add (@data XML)
+
+AS
+
+
+-- DECLARE @data XML = N'<?xml version="1.0"?>
 -- <root><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quarta" weekday="3" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quinta" weekday="4" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
 -- '
-
--- exec sp_executesql N'EXEC pr_admin_presentation_add @P1',N'@P1 nvarchar(4000)',N'<?xml version="1.0"?>
--- <root><item codSala="2" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="02:00" dateStart="2019-04-16" dateEnd="2019-04-16" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
--- '
-
-
--- exec sp_executesql N'EXEC pr_admin_presentation_add @P1',N'@P1 nvarchar(4000)',N'<?xml version="1.0"?>
--- <root><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="10:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quarta" weekday="3" ValPeca="1.05" amount="105" HorSessao="10:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quinta" weekday="4" ValPeca="1.05" amount="105" HorSessao="10:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
--- '
-
--- SELECT TOP (300) n = ROW_NUMBER()OVER (ORDER BY [n]) 
---   FROM CI_MIDDLEWAY..loop_numbers ORDER BY n;
-
-
-  
-
-
-
--- ALTER PROCEDURE dbo.pr_admin_presentation_add (@data XML)
-
--- AS
-
-
-DECLARE @data XML = N'<?xml version="1.0"?>
-<root><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quarta" weekday="3" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quinta" weekday="4" ValPeca="1.05" amount="105" HorSessao="07:00" dateStart="2019-04-16" dateEnd="2019-04-19" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
-'
 
 SET NOCOUNT ON;
 
@@ -68,7 +53,8 @@ CREATE TABLE #toadd (codSala int
 	,isSelected BIT
 	,codPeca INT
 	,numBordero INT
-	,id UNIQUEIDENTIFIER);
+	,id UNIQUEIDENTIFIER
+	,idint INT);
 
 
 INSERT INTO #request (codSala, codApresentacao, id_evento, id_base, weekdayName, [weekday], ValPeca, amount, HorSessao, dateStart, dateEnd, allowweb, allowwebBIT, allowticketoffice, allowticketofficeBIT, hasAnother, codPeca)
@@ -94,6 +80,7 @@ FROM @data.nodes('root/item/.') T(c)
 
 
 DECLARE @codPeca INT
+		,@uniqueValPeca DECIMAL(12,2)
 SELECT TOP 1 @codPeca=codPeca FROM CI_MIDDLEWAY..mw_evento WHERE id_evento=(SELECT TOP 1 id_evento FROM #request)
 
 UPDATE #request SET codPeca=@codPeca
@@ -118,8 +105,9 @@ INSERT INTO #toadd (codSala
 	,hasAnother
 	,isSelected
 	,codPeca
-	,id)
-SELECT r.codSala, r.id_evento, r.id_base, r.amount, r.HorSessao, t.[date], r.allowwebBIT, r.allowticketofficeBIT, r.hasAnother, 0, r.codPeca, NEWID()
+	,id
+	,idint)
+SELECT r.codSala, r.id_evento, r.id_base, r.amount, r.HorSessao, t.[date], r.allowwebBIT, r.allowticketofficeBIT, r.hasAnother, 0, r.codPeca, NEWID(), ROW_NUMBER() OVER(ORDER BY (Select 0))
 FROM (SELECT TOP (@howmany) DATEADD(day, n-1, CONVERT(DATETIME,@dateStart)) [date],DATEPART(weekday,DATEADD(day, n-1, CONVERT(DATETIME,@dateStart))) [weekday]
 FROM CI_MIDDLEWAY..loop_numbers 
 ORDER BY n) as t
@@ -148,7 +136,7 @@ BEGIN
 
 	SELECT TOP 1 
 		@evento_error=p.NomPeca
-		,@data_error=CONVERT(VARCHAR(10), DatApresentacao, 103) + ' as ' + HorSessao
+		,@data_error=CONVERT(VARCHAR(10), DatApresentacao, 103) + ' as ' + a.HorSessao
 	FROM #toadd aux
 	INNER JOIN tabApresentacao a ON aux.codSala=a.CodSala AND aux.HorSessao=a.HorSessao COLLATE SQL_Latin1_General_CP1_CI_AS AND aux.[date]=a.DatApresentacao
 	INNER JOIN tabPeca p ON a.CodPeca=p.CodPeca
@@ -172,40 +160,48 @@ FROM #toadd aux) t ON d.id=t.id
 
 DECLARE @maxNumBordero INT = 0
 
-SELECT @maxNumBordero = MAX(NumBordero)+1 FROM tabApresentacao WHERE CodSala=(SELECT TOP 1 codSala FROM #toadd)
+SELECT @maxNumBordero = MAX(a.NumBordero)+1 
+FROM tabApresentacao a
+INNER JOIN tabPeca p ON a.CodPeca=p.CodPeca
+INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
+INNER JOIN #toadd ta ON ta.id_base=e.id_base AND e.id_evento=ta.id_evento AND a.CodSala=ta.codSala
+-- WHERE CodSala=(SELECT TOP 1 codSala FROM #toadd)
+
+IF @maxNumBordero IS NULL
+	SET @maxNumBordero = 0
 
 UPDATE #toadd SET numBordero=numBordero+@maxNumBordero
 
-DECLARE @lastcodApresetancao INT
 
-SELECT @lastcodapresetancao=MAX(codApresentacao) FROM tabApresentacao
+DECLARE @codApresentacaoCurrent INT
 
--- -- INSERT INTO tabApresentacao (codApresentacao,DatApresentacao,CodPeca,CodSala,HorSessao,ValPeca,NumBordero,StaAtivoWeb,StaAtivoBilheteria)
+SELECT @codApresentacaoCurrent=MAX(codApresentacao) FROM tabApresentacao
 
--- SELECT 
--- 	@lastcodapresetancao+ROW_NUMBER() OVER (ORDER BY a.presentationDate, a.presentationTime) AS RowNumber
--- 	,a.presentationDate
--- 	,a.codPeca
--- 	,a.codSala
--- 	,a.presentationTime
--- 	,(CONVERT(MONEY,a.amount)/CONVERT(MONEY,100)) amount
--- 	,a.numBordero
--- 	,(CASE WHEN a.allowweb = 1 THEN 'S' ELSE 'N' END) allowweb
--- 	,(CASE WHEN a.allowticketoffice = 1 THEN 'S' ELSE 'N' END) allowticketoffice
-	
--- INTO #final
--- FROM #aux a
+INSERT INTO tabApresentacao (codApresentacao,DatApresentacao,CodPeca,CodSala,HorSessao,ValPeca,NumBordero,StaAtivoWeb,StaAtivoBilheteria)
+SELECT 
+	@codApresentacaoCurrent+idint
+	,a.[date]
+	,a.codPeca
+	,a.codSala
+	,a.HorSessao
+	,(CONVERT(MONEY,a.amount)/CONVERT(MONEY,100)) amount
+	,a.numBordero
+	,(CASE WHEN a.allowweb = 1 THEN 'S' ELSE 'N' END) allowweb
+	,(CASE WHEN a.allowticketoffice = 1 THEN 'S' ELSE 'N' END) allowticketoffice
+FROM #toadd a
 
+SELECT @dateStart = MIN(a.DatApresentacao)
+FROM tabApresentacao a
+WHERE a.CodPeca=@codPeca
+SELECT @dateEnd = MAX(a.DatApresentacao)
+FROM tabApresentacao a
+WHERE a.CodPeca=@codPeca
 
--- SELECT *, 0 FROM #final
--- UNION ALL 
--- SELECT *, 1 FROM #final
--- UNION ALL 
--- SELECT *, 2 FROM #final
--- UNION ALL 
--- SELECT *, 3 FROM #final
--- UNION ALL 
--- SELECT *, 4 FROM #final
--- UNION ALL 
--- SELECT *, 5 FROM #final
+SELECT @uniqueValPeca = MIN(a.ValPeca)
+FROM tabApresentacao a
+WHERE a.CodPeca=@codPeca
 
+UPDATE tabPeca SET DatIniPeca = @dateStart, DatFinPeca=@dateEnd,ValIngresso=@uniqueValPeca WHERE CodPeca=@codPeca
+
+SELECT 1 success
+		,'Cadastrado com sucesso.' msg

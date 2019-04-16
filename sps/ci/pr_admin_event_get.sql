@@ -21,6 +21,8 @@ SELECT
     ,le.id_municipio
     ,m.id_estado
     ,p.ValIngresso
+    ,(SELECT MAX(sub.ValPeca)*100 FROM tabApresentacao sub WHERE sub.CodPeca=p.CodPeca) amountMax
+    ,(SELECT min(sub.ValPeca)*100 FROM tabApresentacao sub WHERE sub.CodPeca=p.CodPeca) amountMin
     ,eei.[description]
     ,eei.meta_description
     ,eei.meta_keyword

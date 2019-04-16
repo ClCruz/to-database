@@ -1,8 +1,10 @@
+--pr_admin_presentation_list 33016
+
 ALTER PROCEDURE dbo.pr_admin_presentation_list (@id_evento INT)
 
 AS
 
--- DECLARE @id_evento INT
+-- DECLARE @id_evento INT = 33016
 
 -- SET @id_evento=22723
 -- SET @id_evento=22696
@@ -33,6 +35,7 @@ SELECT
     ,CONVERT(VARCHAR(10),a.DatApresentacao,103) DatApresentacao
     ,a.HorSessao
     ,a.ValPeca
+    ,CAST((a.ValPeca*100) AS INT) amount
     ,a.StaAtivoWeb
     ,a.StaAtivoBilheteria
     ,a.CodSala
