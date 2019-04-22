@@ -23,6 +23,7 @@ SELECT
             WHEN p.isDev = 1 THEN 'dev'
             WHEN p.isDemo = 0 AND p.isTrial = 0 AND p.isDev = 0 THEN 'prod' END) [type]
     ,ISNULL(p.fb_appid,'') fb_appid
+    ,ISNULL(p.ga_id,'') ga_id
     ,ISNULL(p.recaptchaid,'') recaptchaid
     ,ISNULL(p.sell_email,'') sell_email
     ,p.send_sell_email

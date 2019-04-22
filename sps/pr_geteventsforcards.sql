@@ -4,6 +4,9 @@ ALTER PROCEDURE dbo.pr_geteventsforcards (@city VARCHAR(100) = NULL,@state VARCH
 
 AS
 
+-- update CI_MIDDLEWAY..mw_evento_extrainfo set minAmount=1000 where id_evento=32947
+--  update CI_MIDDLEWAY..mw_evento_extrainfo set minAmount=1000, maxAmount=3000 where id_evento=32947
+
 -- DECLARE @city VARCHAR(100) = NULL,@state VARCHAR(100) = NULL, @date DATETIME ='', @api VARCHAR(100) = 'live_578abaf329f84119bb7c1e55dfdc7e0f4f20e693cd2c4bc7a5bc0a0965fae322'
 
 IF @date = '1900-01-01 00:00:00.000'
@@ -40,6 +43,9 @@ h.id_evento
 ,h.[promotion]
 ,eei.id_genre
 ,g.name genreName
+,(CASE WHEN eei.maxAmount IS NULL AND eei.minAmount IS NOT NULL THEN FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100,'C', 'pt-br') ELSE FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100,'C', 'pt-br')+' a '+FORMAT(CONVERT(DECIMAL(16,2),eei.maxAmount)/100,'C', 'pt-br') END) valores
+,FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100,'C', 'pt-br') minAmount
+,FORMAT(CONVERT(DECIMAL(16,2),eei.maxAmount)/100,'C', 'pt-br') maxAmount
 FROM home h
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON h.id_evento=e.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
@@ -69,6 +75,8 @@ h.id_evento
 ,h.promotion
 ,eei.id_genre
 ,g.name
+,eei.minAmount
+,eei.maxAmount
 
 ORDER BY (CASE WHEN h.ds_municipio = @city COLLATE Latin1_general_CI_AI THEN 1
                 WHEN h.ds_municipio != @city COLLATE Latin1_general_CI_AI
