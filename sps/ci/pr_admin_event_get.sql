@@ -44,6 +44,8 @@ SELECT
     ,p.in_obriga_cpf
     ,eei.ticketoffice_askemail
     ,eei.ticketoffice_ticketmodel
+    ,eei.minAmount
+    ,eei.maxAmount
     ,CONVERT(VARCHAR(10),p.DatIniPeca,103) DatIniPeca
     ,CONVERT(VARCHAR(10),p.DatFinPeca,103) DatFinPeca
     ,ISNULL((SELECT TOP 1 1 FROM tabApresentacao sub WHERE sub.CodPeca=p.CodPeca),0) hasPresentantion

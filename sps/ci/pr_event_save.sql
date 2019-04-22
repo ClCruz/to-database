@@ -23,7 +23,9 @@ ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@max_installments INT
     ,@interest_rate INT
     ,@ticketoffice_ticketmodel VARCHAR(1000)
-    ,@showonline BIT = 1)
+    ,@showonline BIT = 1
+    ,@minAmount INT = 0
+    ,@maxAmount INT = 0)
     
 
 
@@ -233,6 +235,8 @@ SET [description]=@description
     ,interest_rate=@interest_rate
     ,ticketoffice_ticketmodel=@ticketoffice_ticketmodel
     ,showonline=@showonline
+    ,minAmount=@minAmount
+    ,maxAmount=@maxAmount
 WHERE id_evento=@id_evento
 
 UPDATE CI_MIDDLEWAY..search
