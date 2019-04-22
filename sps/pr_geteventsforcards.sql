@@ -5,7 +5,7 @@ ALTER PROCEDURE dbo.pr_geteventsforcards (@city VARCHAR(100) = NULL,@state VARCH
 AS
 
 -- update CI_MIDDLEWAY..mw_evento_extrainfo set minAmount=1000 where id_evento=32947
---  update CI_MIDDLEWAY..mw_evento_extrainfo set minAmount=1000, maxAmount=3000 where id_evento=32947
+--  update CI_MIDDLEWAY..mw_evento_extrainfo set minAmount=1000, maxAmount=3000 where id_evento=33016
 
 -- DECLARE @city VARCHAR(100) = NULL,@state VARCHAR(100) = NULL, @date DATETIME ='', @api VARCHAR(100) = 'live_578abaf329f84119bb7c1e55dfdc7e0f4f20e693cd2c4bc7a5bc0a0965fae322'
 

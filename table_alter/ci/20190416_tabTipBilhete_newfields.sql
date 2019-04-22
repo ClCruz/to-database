@@ -6,6 +6,8 @@ ALTER TABLE dbo.tabTipBilhete ADD
 	isDiscount bit NULL,
 	isPlus bit NULL,
 	isAllotment bit NULL,
+	isNoValue bit NULL,
+	isPOS bit NULL,
 	hasImage bit NULL,
 	allowweb bit NULL,
 	allowticketoffice bit NULL,
@@ -32,6 +34,12 @@ ALTER TABLE dbo.tabTipBilhete ADD CONSTRAINT
 	DF_tabTipBilhete_isPlus DEFAULT 0 FOR isPlus
 GO
 ALTER TABLE dbo.tabTipBilhete ADD CONSTRAINT
+	DF_tabTipBilhete_isPOS DEFAULT 0 FOR isPOS
+GO
+ALTER TABLE dbo.tabTipBilhete ADD CONSTRAINT
+	DF_tabTipBilhete_isNoValue DEFAULT 0 FOR isNoValue
+GO
+ALTER TABLE dbo.tabTipBilhete ADD CONSTRAINT
 	DF_tabTipBilhete_hasImage DEFAULT 0 FOR hasImage
 GO
 ALTER TABLE dbo.tabTipBilhete ADD CONSTRAINT
@@ -41,7 +49,7 @@ ALTER TABLE dbo.tabTipBilhete ADD CONSTRAINT
 	DF_tabTipBilhete_allowticketoffice DEFAULT 1 FOR allowticketoffice
 GO
 
-UPDATE tabTipBilhete SET isFixed=0,isPrincipal=0,isOld=0,isHalf=0,isDiscount=0,isPlus=0,isAllotment=0,hasImage=0,allowticketoffice=1,allowweb=1;
+UPDATE tabTipBilhete SET isPOS=0,isNoValue=0,isFixed=0,isPrincipal=0,isOld=0,isHalf=0,isDiscount=0,isPlus=0,isAllotment=0,hasImage=0,allowticketoffice=1,allowweb=1;
 
 UPDATE tabTipBilhete SET nameWeb=TipBilhete, nameTicketOffice=TipBilhete;
 

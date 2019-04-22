@@ -1,8 +1,9 @@
-ALTER PROCEDURE dbo.pr_tickettype_select (@showto VARCHAR(100), @principal BIT = 0, @fixed BIT = 0, @discount BIT = 0, @half BIT = 0, @plus BIT = 0, @allotment BIT = 0)
+-- ALTER PROCEDURE dbo.pr_tickettype_select (@showto VARCHAR(100), @principal BIT = 0, @fixed BIT = 0, @discount BIT = 0, @half BIT = 0, @plus BIT = 0, @allotment BIT = 0)
 
-AS
+-- AS
 
--- DECLARE @showto VARCHAR(100) = 'web', @principal BIT = 0, @fixed BIT = 0, @half BIT = 0, @plus BIT = 0, @allotment BIT = 0
+DECLARE @showto VARCHAR(100) = 'all', @principal BIT = 0, @fixed BIT = 0, @half BIT = 0, @plus BIT = 0, @allotment BIT = 0, @discount BIT = 0
+
 SET NOCOUNT ON;
 
 DECLARE @allowweb BIT = 0, @allowticketoffice BIT = 0
