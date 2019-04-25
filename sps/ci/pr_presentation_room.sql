@@ -20,6 +20,7 @@ INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND ap.C
 INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSetor se ON a.CodSala=se.codSala
 WHERE a.CodPeca=@codPeca
+AND ap.in_ativo=1
 AND DATEADD(MINUTE, p.TemDurPeca,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
 AND a.StaAtivoWeb='S'
 GROUP BY (CASE WHEN s.nameonsite IS NULL THEN s.NomSala ELSE s.nameonsite END), se.NomSetor,a.CodSala
