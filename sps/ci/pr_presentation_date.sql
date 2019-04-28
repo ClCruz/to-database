@@ -23,7 +23,7 @@ INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSetor se ON a.CodSala=se.codSala
 WHERE a.CodPeca=@codPeca
 AND a.StaAtivoWeb='S'
-AND DATEADD(MINUTE, p.TemDurPeca,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
+AND DATEADD(MINUTE, 100,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
 GROUP BY a.DatApresentacao
 ORDER BY a.DatApresentacao
 
