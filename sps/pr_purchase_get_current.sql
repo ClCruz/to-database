@@ -2,7 +2,7 @@ ALTER PROCEDURE dbo.pr_purchase_get_current (@id_session VARCHAR(1000))
 
 AS
 
--- DECLARE @id_session VARCHAR(1000) = 'v4hrv27bkerdjcpufv6h55kvr4'
+-- DECLARE @id_session VARCHAR(1000) = 'fo2i7fs6n7j42psst3e107dr55'
 
 SET NOCOUNT ON;
 
@@ -127,7 +127,6 @@ BEGIN
     UPDATE #bases SET done=1 WHERE id_base=@currentBase;
 END
 
-
 SELECT 
     id
     ,id_base
@@ -138,7 +137,7 @@ SELECT
     ,StaCadeira
     ,DatApresentacao
     ,HorSessao
-    ,(CASE WHEN vl_preco_fixo > 0 THEN vl_preco_fixo*100 ELSE ValPeca END) ValPeca
+    ,(CASE WHEN vl_preco_fixo > 0 THEN CONVERT(INT,CONVERT(DECIMAL(18,2),vl_preco_fixo)*100) ELSE ValPeca END) ValPeca
     ,CodPeca
     ,NomPeca
     ,qt_parcelas

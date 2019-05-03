@@ -31,5 +31,5 @@ INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSetor se ON s.CodSala=se.CodSala
 WHERE p.CodPeca=@codPeca
 AND CONVERT(VARCHAR(10),a.DatApresentacao,103)=@datePresentation
-AND DATEADD(MINUTE, p.TemDurPeca,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
+AND DATEADD(MINUTE, 100,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
 ORDER BY a.HorSessao

@@ -10,5 +10,5 @@ SELECT DISTINCT
 FROM tabPeca p
 INNER JOIN tabApresentacao a ON p.CodPeca=a.CodPeca
 WHERE p.CodPeca=@codPeca
-AND DATEADD(MINUTE, p.TemDurPeca,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
+AND DATEADD(MINUTE, 100,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
 ORDER BY [date] --DESC
