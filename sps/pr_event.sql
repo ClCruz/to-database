@@ -21,6 +21,7 @@ eei.id_evento
 ,eei.[description] COLLATE SQL_Latin1_General_CP1_CI_AS AS [description]
 ,eei.ticketsPerPurchase
 ,eei.minuteBefore
+,eei.created
 ,e.CodPeca
 ,e.ds_evento
 ,e.id_base
