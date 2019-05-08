@@ -53,5 +53,5 @@ LEFT JOIN CI_MIDDLEWAY..mw_estado est ON m.id_estado=est.id_estado
 WHERE a.CodPeca=@codPeca
 AND a.StaAtivoWeb='S'
 AND ap.in_ativo=1
-AND DATEADD(MINUTE, p.TemDurPeca,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
+AND DATEADD(MINUTE, 100,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
 ORDER BY a.DatApresentacao, a.HorSessao, a.ValPeca

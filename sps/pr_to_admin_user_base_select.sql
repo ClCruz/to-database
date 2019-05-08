@@ -9,3 +9,4 @@ b.id_base
 FROM CI_MIDDLEWAY..mw_base b
 INNER JOIN CI_MIDDLEWAY..to_admin_user_base taub ON b.id_base=taub.id_base AND taub.active=1
 WHERE id_to_admin_user=@id_user
+ORDER BY b.ds_nome_teatro

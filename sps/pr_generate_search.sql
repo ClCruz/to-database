@@ -62,7 +62,7 @@ INNER JOIN CI_MIDDLEWAY..mw_estado es ON mu.id_estado=es.id_estado
 LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
 LEFT JOIN CI_MIDDLEWAY..mw_regiao_geografica regi ON es.id_regiao_geografica=regi.id_regiao_geografica
 WHERE 
-    DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
+    DATEADD(minute, (100), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
     AND e.in_ativo=1
     AND b.in_ativo=1
     AND eei.showonline=1
