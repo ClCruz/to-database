@@ -30,7 +30,8 @@ tosc.id_apresentacao
 ,0 amountSubTotalSector
 ,0 amountSubTotalTicket
 ,(CASE WHEN tosc.id_ticket_type IS NULL THEN 0 ELSE 1 END) valid
-,tpb.TipBilhete
+,(CASE WHEN tpb.ds_nome_site IS NULL THEN tpb.TipBilhete ELSE tpb.ds_nome_site END) TipBilhete
+--,tpb.TipBilhete
 ,tpb.PerDesconto PerDescontoTipBilhete
 ,(CASE WHEN tpb.vl_preco_fixo IS NULL OR tpb.vl_preco_fixo = 0 THEN 0 ELSE 1 END) isFixedAmount
 INTO #result

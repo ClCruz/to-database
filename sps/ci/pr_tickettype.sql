@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_tickettype (@CodPeca   INT, @id_apresentacao INT) 
+ALTER PROCEDURE dbo.pr_tickettype (@CodPeca   INT, @id_apresentacao INT) 
 
 AS
 
@@ -16,7 +16,7 @@ WHERE ap.id_apresentacao=@id_apresentacao
 
 SELECT
 	a.CodTipBilhete, 
-	a.TipBilhete, 
+	(CASE WHEN a.ds_nome_site IS NULL THEN a.TipBilhete ELSE a.ds_nome_site END) TipBilhete, 
 	a.PerDesconto,
 	acrdscperc = isnull((Select sum(case cx.icDebCre when 'D' then isnull(c.valor,0) else isnull(c.valor,0)*-1 end)
 			From	tabTipBilhTipLcto	c
