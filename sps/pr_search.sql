@@ -13,7 +13,7 @@ IF @startAt IS NULL
     SET @startAt=0
 
 IF @howMany IS NULL
-    SET @howMany=10
+    SET @howMany=99999
 
 
 DECLARE @searchText VARCHAR(100)

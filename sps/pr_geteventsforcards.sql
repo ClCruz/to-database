@@ -84,7 +84,7 @@ h.id_evento
 
 ORDER BY 
 (CASE WHEN @filter = 'created' THEN eei.created END) DESC,
-(CASE WHEN @filter = 'next' THEN min(ap.dt_apresentacao) END) DESC,
+(CASE WHEN @filter = 'next' THEN min(ap.dt_apresentacao) END),
 (CASE WHEN h.ds_municipio = @city COLLATE Latin1_general_CI_AI THEN 1
                 WHEN h.ds_municipio != @city COLLATE Latin1_general_CI_AI
                      AND h.sg_estado = @state COLLATE Latin1_general_CI_AI THEN 2
