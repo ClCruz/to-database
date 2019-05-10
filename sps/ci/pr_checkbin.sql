@@ -2,8 +2,8 @@ ALTER PROCEDURE dbo.pr_checkbin (@key VARCHAR(100)
         ,@bin VARCHAR(10))
 
 AS
--- DECLARE @id_ticketoffice_user UNIQUEIDENTIFIER
---         ,@bin VARCHAR(10)
+-- DECLARE @key VARCHAR(100) = '5BD365E50BAA476FA56ED5AD4133E7BF'
+--         ,@bin VARCHAR(10) = '550209'
 
 SET NOCOUNT ON;
 
