@@ -1,9 +1,7 @@
 ALTER PROCEDURE dbo.pr_accounting_debits (@id VARCHAR(100))
 
 AS
--- DECLARE @id VARCHAR(100) = 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
-
-
+-- DECLARE @id VARCHAR(100) = '7da54974-c01e-4d05-be44-fed39970ed66'
 
 SET NOCOUNT ON;
 

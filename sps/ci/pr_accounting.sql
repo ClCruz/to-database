@@ -4,7 +4,8 @@
 ALTER PROCEDURE dbo.pr_accounting (@id VARCHAR(100))
 
 AS
--- DECLARE @id VARCHAR(100) = 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
+-- DECLARE @id VARCHAR(100) = '7da54974-c01e-4d05-be44-fed39970ed66'
+-- SET NOCOUNT OFF;
 
 SET NOCOUNT ON;
 
@@ -256,7 +257,7 @@ SELECT @result_all = @seats
 , @result_free = (@seats_taken_ticketoffice_free+@seats_taken_web_free)
 , @result_paid = (@seats_taken_ticketoffice_paid+@seats_taken_web_paid)
 , @result_paid_and_free = (@seats_taken_ticketoffice_free+@seats_taken_web_free)+(@seats_taken_ticketoffice_paid+@seats_taken_web_paid)
-, @result_occupancyrate = ROUND(CONVERT(DECIMAL(18,2),@result_paid_and_free)/CONVERT(DECIMAL(18,2),@result_all)*100,2)
+, @result_occupancyrate = 0-- ROUND(CONVERT(DECIMAL(18,2),@result_paid_and_free)/CONVERT(DECIMAL(18,2),@result_all)*100,2)
 
 SELECT DISTINCT
         l.Indice
@@ -270,6 +271,7 @@ SELECT DISTINCT
         ,CONVERT(BIGINT,ABS(l.ValPagto)*100) ValPagto
         ,(CASE WHEN pv.id_pedido_venda IS NOT NULL AND pv.in_situacao='P' THEN 1 ELSE 0 END) inprocess
         ,(CASE WHEN ls.Indice IS NOT NULL AND ls.StaCadeira='V' THEN 1 ELSE 0 END) isok
+        ,ISNULL((SELECT TOP 1 1 FROM tabLancamento sub WHERE sub.NumLancamento=l.NumLancamento AND sub.Indice=l.Indice AND sub.CodTipBilhete=l.CodTipBilhete AND sub.CodApresentacao=l.CodApresentacao AND sub.CodTipLancamento=2),0) hasRefund
 INTO #resultAux
 FROM tabLancamento l
 INNER JOIN tabTipBilhete tb ON l.CodTipBilhete=tb.CodTipBilhete
@@ -283,7 +285,13 @@ INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND ap.C
 LEFT JOIN tabLugSala ls ON ls.INDICE = l.indice AND ls.CODAPRESENTACAO = l.CODAPRESENTACAO AND ls.CodTipBilhete=l.CodTipBilhete
 LEFT JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=l.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 LEFT JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND sd.TipObjeto='C'
+WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND sd.TipObjeto='C' AND l.CodTipLancamento=1
+
+-- select id from #ids
+
+-- select distinct indice from #resultAux where TipBilhete='MEIA' and CodTipLancamento=1 and isok=1 order by Indice
+-- select Indice, isok, ValPagto from #resultAux where TipBilhete='MEIA' and isok=1 and CodTipLancamento=1
+-- select Indice, isok, ValPagto from #resultAux where TipBilhete='MEIA' and CodTipLancamento=1
 
 SELECT 
         ra.CodSala
@@ -293,10 +301,10 @@ SELECT
         ,ra.CodTipBilhete
         ,ra.TipBilhete
         ,ra.ValPagto
-        ,ISNULL((SELECT COUNT(*) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=1 AND sub.ValPagto=ra.ValPagto AND sub.isok=1),0) sold
-        ,ISNULL((SELECT SUM(sub.ValPagto) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=1 AND sub.ValPagto=ra.ValPagto AND sub.isok=1),0) soldamount
-        ,ISNULL((SELECT SUM(sub.ValPagto) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=2 AND sub.ValPagto=ra.ValPagto),0) refundamount
-        ,ISNULL((SELECT COUNT(*) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=2 AND sub.ValPagto=ra.ValPagto),0) refund
+        ,ISNULL((SELECT COUNT(*) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.ValPagto=ra.ValPagto AND sub.isok=1 AND sub.hasRefund=0),0) sold
+        ,ISNULL((SELECT SUM(sub.ValPagto) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.ValPagto=ra.ValPagto AND sub.isok=1 AND sub.hasRefund=0),0) soldamount
+        ,ISNULL((SELECT SUM(sub.ValPagto) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.ValPagto=ra.ValPagto AND sub.hasRefund=1),0) refundamount
+        ,ISNULL((SELECT COUNT(*) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.ValPagto=ra.ValPagto AND sub.hasRefund=1),0) refund
 INTO #resultToCount
 FROM #resultAux ra
 GROUP BY ra.CodSala, ra.NomSala,ra.CodSetor,ra.NomSetor,ra.CodTipBilhete,ra.TipBilhete,ra.ValPagto
