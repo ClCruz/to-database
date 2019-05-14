@@ -27,6 +27,7 @@ SELECT
     ,ISNULL(p.recaptchaid,'') recaptchaid
     ,ISNULL(p.sell_email,'') sell_email
     ,p.send_sell_email
+    ,(CASE WHEN p.show_partner_info IS NULL THEN 0 ELSE p.show_partner_info END) show_partner_info
 FROM CI_MIDDLEWAY..[partner] p
 WHERE 
 p.id=@id
