@@ -82,6 +82,15 @@ END
 IF @show_partner_info IS NULL
     SET @show_partner_info = 0
 
+
+DECLARE @hasdb BIT = 0
+
+SELECT TOP 1 @hasdb = 1 FROM CI_MIDDLEWAY..mw_base b WHERE b.ds_nome_base_sql=@uniquename;
+IF @hasdb = 1
+BEGIN
+    UPDATE CI_MIDDLEWAY..mw_base SET name_site=@name WHERE ds_nome_base_sql=@uniquename
+END
+
 IF @has = 1
 BEGIN
     

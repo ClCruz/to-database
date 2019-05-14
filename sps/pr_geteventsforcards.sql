@@ -8,7 +8,7 @@ AS
 -- update CI_MIDDLEWAY..mw_evento_extrainfo set minAmount=1000 where id_evento=32947
 --  update CI_MIDDLEWAY..mw_evento_extrainfo set minAmount=1000, maxAmount=3000 where id_evento=33016
 
--- DECLARE @city VARCHAR(100) = NULL,@state VARCHAR(100) = NULL, @date DATETIME ='', @api VARCHAR(100) = 'live_665495f829b74054b8bbfa1b482b40587c7a1781718c44a591b254d862b2b02d' ,@filter VARCHAR(1000) = 'created'
+-- DECLARE @city VARCHAR(100) = NULL,@state VARCHAR(100) = NULL, @date DATETIME ='', @api VARCHAR(100) = 'live_dd310c796ff04199b5680a5cad098930c2ae8da63b974b43abb21d92ec5123b2' ,@filter VARCHAR(1000) = 'created'
 
 IF @date = '1900-01-01 00:00:00.000'
     SET @date = NULL
@@ -18,8 +18,9 @@ SET NOCOUNT ON;
 DECLARE @nowOrder DATETIME = DATEADD(day,15, GETDATE())
         ,@top INT = 500
         ,@id_partner UNIQUEIDENTIFIER
+        ,@show_partner_info BIT
 
-SELECT TOP 1 @id_partner=p.id FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
+SELECT TOP 1 @id_partner=p.id,@show_partner_info=p.show_partner_info FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
 
 SELECT top (@top)
 h.id_evento
@@ -49,11 +50,14 @@ h.id_evento
 ,(CASE WHEN eei.maxAmount IS NULL AND eei.minAmount IS NOT NULL THEN FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100,'C', 'pt-br') ELSE FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100,'C', 'pt-br')+' a '+FORMAT(CONVERT(DECIMAL(16,2),eei.maxAmount)/100,'C', 'pt-br') END) valores
 ,FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100,'C', 'pt-br') minAmount
 ,FORMAT(CONVERT(DECIMAL(16,2),eei.maxAmount)/100,'C', 'pt-br') maxAmount
+,@show_partner_info show_partner_info
+,b.name_site [partner]
 FROM home h
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON h.id_evento=e.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento
 INNER JOIN CI_MIDDLEWAY..partner_database pd ON e.id_base=pd.id_base AND pd.id_partner=@id_partner
+INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
 LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
 WHERE 
     DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
@@ -81,6 +85,7 @@ h.id_evento
 ,g.name
 ,eei.minAmount
 ,eei.maxAmount
+,b.name_site
 
 ORDER BY 
 (CASE WHEN @filter = 'created' THEN eei.created END) DESC,
