@@ -1,16 +1,14 @@
-CREATE PROCEDURE dbo.pr_show_partner_info_bypedido (@api VARCHAR(1000)
+ALTER PROCEDURE dbo.pr_show_partner_info_bypedido (@api VARCHAR(1000)
         ,@id_pedido_venda INT)
 
 AS
-
--- DECLARE @api VARCHAR(1000)
---         ,@id_pedido_venda INT
 
 SET NOCOUNT ON;
 
 DECLARE @show_partner_info BIT
 
-SELECT TOP 1 @show_partner_info=p.show_partner_info FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
+SELECT TOP 1 @show_partner_info=ISNULL(p.show_partner_info,0) FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
+
 
 SELECT TOP 1
 b.ds_nome_base_sql
