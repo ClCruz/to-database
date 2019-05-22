@@ -1,5 +1,6 @@
 -- exec sp_executesql N'EXEC pr_report_partnersale @P1,@P2,@P3,@P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'7.89',N'2019-04-01',N'2019-05-20',N'sazarte'
 
+
 ALTER PROCEDURE dbo.pr_report_partnersale (@comission FLOAT
         ,@dtinit VARCHAR(10)
         ,@dtend VARCHAR(10)

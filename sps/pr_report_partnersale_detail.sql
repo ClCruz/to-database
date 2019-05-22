@@ -3,6 +3,7 @@ ALTER PROCEDURE dbo.pr_report_partnersale_detail (@comission FLOAT
 
 AS
 
+
 -- DECLARE @comission FLOAT = 7.89
 --         ,@id_pedido_venda INT = 1593
 
