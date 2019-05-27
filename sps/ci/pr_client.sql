@@ -1,5 +1,5 @@
 
-ALTER PROCEDURE dbo.pr_client (@nin VARCHAR(14), @rg VARCHAR(15),@name VARCHAR(50),@email VARCHAR(150), @cardbin VARCHAR(6),@phoneddd VARCHAR(10),@phonenumber VARCHAR(20),@phoneramal VARCHAR(4),@makeCode BIT,@partner BIT)
+ALTER PROCEDURE dbo.pr_client (@nin VARCHAR(14), @rg VARCHAR(15),@name VARCHAR(50),@email VARCHAR(150), @cardbin VARCHAR(6),@phoneddd VARCHAR(10),@phonenumber VARCHAR(20),@phoneramal VARCHAR(4),@makeCode BIT,@partner BIT, @id_quotapartner UNIQUEIDENTIFIER = NULL)
 
 AS
 
@@ -16,10 +16,20 @@ SET @cpfAux=REPLACE(REPLACE(@nin, '-', ''), '.', '')
 
 IF @partner = 1
 BEGIN
-    SELECT
-        @Codigo=c.Codigo
-    FROM tabCliente c
-    WHERE lower(c.Nome)=lower(@name) COLLATE SQL_Latin1_General_CP1_CI_AS
+    IF @id_quotapartner IS NOT NULL AND @id_quotapartner != '00000000-0000-0000-0000-000000000000'
+    BEGIN
+        SELECT
+            @Codigo=c.Codigo
+        FROM tabCliente c
+        WHERE c.id_quotapartner=@id_quotapartner
+    END
+    ELSE
+    BEGIN
+        SELECT
+            @Codigo=c.Codigo
+        FROM tabCliente c
+        WHERE lower(c.Nome)=lower(@name) COLLATE SQL_Latin1_General_CP1_CI_AS
+    END
 END
 ELSE
 BEGIN
@@ -28,8 +38,6 @@ BEGIN
     FROM tabCliente c
     WHERE c.CPF=@cpfAux
 END
-
-
 
 IF @Codigo IS NULL
 BEGIN
@@ -40,19 +48,22 @@ BEGIN
                             ,Complemento,Bairro,Cidade,UF
                             ,CEP,DDD,Telefone,Ramal
                             ,DDDCelular,Celular,DDDComercial,TelComercial
-                            ,RamComercial,MalDireta,EMail,StaCliente,Assinatura,CardBin)
+                            ,RamComercial,MalDireta,EMail,StaCliente,Assinatura,CardBin
+                            ,id_quotapartner)
     VALUES (@name, NULL, NULL
             , @rg, @cpfAux, NULL, NULL
             , NULL, NULL, NULL, NULL
             , NULL,@phoneddd, @phonenumber, @phoneramal
             , NULL, NULL, NULL, NULL
-            , NULL, NULL, @email, 'A', NULL, @cardbin)
+            , NULL, NULL, @email, 'A', NULL, @cardbin
+            , @id_quotapartner)
     SET @Codigo = SCOPE_IDENTITY()
 END
 ELSE
 BEGIN
     SET @added = 0;
-    UPDATE tabCliente SET Nome=@name, RG=@rg, DDD=@phoneddd, Telefone=@phonenumber, CardBin=@cardbin, Ramal=@phoneramal, EMail=@email, StaCliente='A' WHERE Codigo=@Codigo
+    UPDATE tabCliente SET Nome=@name, RG=@rg, DDD=@phoneddd, Telefone=@phonenumber, CardBin=@cardbin, Ramal=@phoneramal, EMail=@email
+    , StaCliente='A', id_quotapartner=@id_quotapartner WHERE Codigo=@Codigo
 END
 
 IF @makeCode = 1
