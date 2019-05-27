@@ -39,10 +39,11 @@ CREATE TABLE #indice (indice int, seatTaken BIT, seatTakenByPackage BIT, seatTak
                     , seatTakenReserved BIT, seatTakenBySite BIT, limitedByPurchase BIT
                     , limitedByNIN BIT, hasError BIT, ds_cadeira VARCHAR(1000) NULL
                     , ds_setor VARCHAR(1000) NULL, codApresentacao INT NULL, isAdd BIT, codPeca INT
-                    , needoverwrite BIT, codReservaSaved VARCHAR(100), isme BIT);
+                    , needoverwrite BIT, codReservaSaved VARCHAR(100), isme BIT
+                    , deletefromquota BIT);
 
-INSERT INTO #indice (indice,seatTaken,seatTakenByPackage,seatTakenTemp,seatTakenReserved,seatTakenBySite,limitedByPurchase,limitedByNIN, hasError, ds_cadeira, ds_setor, codApresentacao, isAdd, codPeca, needoverwrite, codReservaSaved, isme)
-    SELECT Item,0,0,0,0,0,0,0,0,NULL,NULL,NULL,1,0,0,'',0 FROM dbo.splitString(@indice, ',')
+INSERT INTO #indice (indice,seatTaken,seatTakenByPackage,seatTakenTemp,seatTakenReserved,seatTakenBySite,limitedByPurchase,limitedByNIN, hasError, ds_cadeira, ds_setor, codApresentacao, isAdd, codPeca, needoverwrite, codReservaSaved, isme,deletefromquota)
+    SELECT Item,0,0,0,0,0,0,0,0,NULL,NULL,NULL,1,0,0,'',0,0 FROM dbo.splitString(@indice, ',')
 
 UPDATE i
 SET i.ds_cadeira=sd.NomObjeto
@@ -75,7 +76,17 @@ FROM #indice i
 INNER JOIN tabLugSala ls ON i.indice=ls.Indice AND i.codApresentacao=ls.CodApresentacao
 WHERE ls.StaCadeira='R'
 
+UPDATE i
+SET i.deletefromquota=1
+FROM #indice i
+INNER JOIN CI_MIDDLEWAY..quota_partner_reservation qpp ON i.indice=qpp.indice AND qpp.id_apresentacao=@id_apresentacao
+
 SELECT TOP 1 @trytodelete=1 FROM #indice WHERE isAdd=0
+
+DELETE d
+FROM CI_MIDDLEWAY..quota_partner_reservation d
+INNER JOIN #indice i ON d.Indice=i.indice AND d.id_apresentacao=@id_apresentacao
+AND i.deletefromquota=1
 
 IF @overwrite = 1
 BEGIN
@@ -276,6 +287,17 @@ INSERT INTO TABLUGSALA (CODAPRESENTACAO,INDICE,CODTIPBILHETE,CODCAIXA,CODVENDA,S
 
 IF @codCliente IS NOT NULL
 BEGIN
+    DECLARE @id_quotapartner UNIQUEIDENTIFIER = NULL
+    SELECT @id_quotapartner = id_quotapartner FROM tabCliente WHERE Codigo=@codCliente
+
+    IF @id_quotapartner IS NOT NULL
+    BEGIN
+        INSERT INTO CI_MIDDLEWAY.[dbo].[quota_partner_reservation] (id_apresentacao, indice, id_quotapartner, codReserva)
+        SELECT @id_apresentacao, i.indice, @id_quotapartner, @codReserva
+        FROM #indice i
+        WHERE i.deletefromquota=0
+    END
+
     INSERT INTO tabResCliente (codCliente,CodREserva,Indice,TipLancamento)
         SELECT @CodCliente ,@CodReserva , ls.Indice, 1  
         FROM tablugsala ls 
@@ -299,7 +321,6 @@ END
 INSERT INTO CI_MIDDLEWAY.[dbo].[ticketoffice_reservation] ([id_apresentacao],[indice],[id_ticketoffice_user], codReserva)
 SELECT @id_apresentacao, i.indice, @id, @codReserva
 FROM #indice i
-
 
 DECLARE @amount INT = NULL, @amount_discount INT = NULL, @amount_topay INT = NULL
         ,@PerDesconto DECIMAL(19,2) = 0
