@@ -5,7 +5,7 @@ ALTER PROCEDURE dbo.pr_purchase_info_email (@id_pedido_venda INT)
 
 AS
 
--- DECLARE @id_pedido_venda INT = 114
+-- DECLARE @id_pedido_venda INT = 1736
 
 SET NOCOUNT ON;
 
@@ -42,6 +42,7 @@ SELECT DISTINCT
     ,ISNULL((SELECT TOP 1 subetp.code FROM CI_MIDDLEWAY..email_ticket_print subetp WHERE subetp.codVenda=ipv.CodVenda AND subetp.seen = 0 ORDER BY subetp.created),'') printcode
     ,'web' [type]
     ,pv.nr_parcelas_pgto
+    ,(CASE WHEN e.in_entrega_ingresso = 1 THEN 'physical-ticket' ELSE 'e-ticket' END) delivery_method
 INTO #result
 FROM CI_MIDDLEWAY..mw_pedido_venda pv
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON pv.id_pedido_venda=ipv.id_pedido_venda
@@ -93,4 +94,5 @@ SELECT
     ,r.printcodehas
     ,r.[type]
     ,r.nr_parcelas_pgto
+    ,delivery_method
 FROM #result r
