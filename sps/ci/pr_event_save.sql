@@ -25,7 +25,8 @@ ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@ticketoffice_ticketmodel VARCHAR(1000)
     ,@showonline BIT = 1
     ,@minAmount INT = 0
-    ,@maxAmount INT = 0)
+    ,@maxAmount INT = 0
+    ,@in_entrega_ingresso BIT = 0)
     
 
 
@@ -219,6 +220,8 @@ SELECT @id_local_evento=id_local_evento FROM CI_MIDDLEWAY..mw_evento where id_ev
 SELECT @id_genre=g.id
 FROM CI_MIDDLEWAY..genre g
 WHERE RTRIM(LTRIM(g.name))=RTRIM(LTRIM(@genre)) COLLATE SQL_Latin1_General_Cp1251_CI_AS
+
+UPDATE CI_MIDDLEWAY..mw_evento SET in_entrega_ingresso=@in_entrega_ingresso WHERE id_evento=@id_evento
 
 UPDATE CI_MIDDLEWAY..mw_evento_extrainfo
 SET [description]=@description
