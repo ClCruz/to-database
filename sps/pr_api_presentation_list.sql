@@ -63,7 +63,7 @@ h.id_evento
 ,e.id_base
 
 SELECT 
-ev.[id] event_id
+ev.[id] id_event
 ,ap.id_apresentacao id_presentantion
 ,CONVERT(VARCHAR(10), ap.dt_apresentacao, 103) dt_presentation
 ,ap.hr_apresentacao hour_presentation

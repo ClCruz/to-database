@@ -3,7 +3,7 @@ ALTER PROCEDURE dbo.pr_api_seats_list (@key VARCHAR(1000), @date DATETIME = NULL
 
 AS
 
--- DECLARE @key VARCHAR(1000) = 'qp_625b2ce3dcc14c1bba8058a436c9a36ac3e7dfcabcfd4a7f8fc391c8488c16f4'
+-- DECLARE @key VARCHAR(1000) = 'qp_ab8665e1345545bcb8c53afaaf83d257cf574ed6b0724526aa9f1d156d730fd3'
 
 SET NOCOUNT ON;
 
@@ -16,13 +16,14 @@ IF OBJECT_ID('tempdb.dbo.#bases', 'U') IS NOT NULL
 IF OBJECT_ID('tempdb.dbo.#data_bases', 'U') IS NOT NULL
     DROP TABLE #data_bases; 
 
-CREATE TABLE #data_bases (event_id INT
+CREATE TABLE #data_bases (id_event INT
                             ,base INT
                             ,id_presentantion INT
                             ,sectorName VARCHAR(1000)
                             ,sectorDiscount DECIMAL(16,4)
                             ,seatName VARCHAR(1000)
-                            ,seatId INT
+                            ,id_seat INT
+                            ,numered BIT
                             ,price DECIMAL(16,4))
 
 SELECT
@@ -89,15 +90,16 @@ BEGIN
     SELECT TOP 1 @db_name=b.ds_nome_base_sql FROM CI_MIDDLEWAY..mw_base b WHERE b.id_base=@currentBase;
 
     SET @toExec=''
-    SET @toExec = @toExec + 'INSERT INTO #data_bases (event_id,base,id_presentantion,sectorName,sectorDiscount,seatName,seatId,price) '
+    SET @toExec = @toExec + 'INSERT INTO #data_bases (id_event,base,id_presentantion,sectorName,sectorDiscount,seatName,id_seat,numered,price) '
     SET @toExec = @toExec + ' SELECT  '
-    SET @toExec = @toExec + ' ev.[id] event_id '
+    SET @toExec = @toExec + ' ev.[id] id_event '
     SET @toExec = @toExec + ' ,ev.base '
     SET @toExec = @toExec + ' ,ap.id_apresentacao id_presentantion '
     SET @toExec = @toExec + ' ,se.NomSetor sectorName '
     SET @toExec = @toExec + ' ,se.PerDesconto sectorDiscount '
     SET @toExec = @toExec + ' ,sd.NomObjeto seatName '
     SET @toExec = @toExec + ' ,sd.Indice '
+    SET @toExec = @toExec + ' ,s.IngressoNumerado '
     SET @toExec = @toExec + ' ,(CASE WHEN se.PerDesconto = 0 THEN CONVERT(DECIMAL(16,2),a.ValPeca) ELSE (CONVERT(DECIMAL(16,2),a.ValPeca)*CONVERT(DECIMAL(16,2),se.PerDesconto)) END) price '
     SET @toExec = @toExec + ' FROM CI_MIDDLEWAY..mw_apresentacao ap '
     SET @toExec = @toExec + ' INNER JOIN #events ev ON ap.id_evento=ev.id '
@@ -118,13 +120,14 @@ BEGIN
 END
 
 SELECT
-event_id
+id_event
 ,base
 ,id_presentantion
 ,sectorName
 ,sectorDiscount
 ,seatName
-,seatId
+,id_seat
+,numered
 ,price
 FROM #data_bases
 

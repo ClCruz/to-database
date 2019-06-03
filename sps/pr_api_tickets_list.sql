@@ -1,9 +1,9 @@
 
-CREATE PROCEDURE dbo.pr_api_tickets_list (@key VARCHAR(1000), @date DATETIME = NULL)
+ALTER PROCEDURE dbo.pr_api_tickets_list (@key VARCHAR(1000), @date DATETIME = NULL)
 
 AS
 
--- DECLARE @key VARCHAR(1000) = 'qp_625b2ce3dcc14c1bba8058a436c9a36ac3e7dfcabcfd4a7f8fc391c8488c16f4'
+-- DECLARE @key VARCHAR(1000) = 'qp_ab8665e1345545bcb8c53afaaf83d257cf574ed6b0724526aa9f1d156d730fd3'
 
 SET NOCOUNT ON;
 
@@ -17,13 +17,13 @@ IF OBJECT_ID('tempdb.dbo.#data_bases', 'U') IS NOT NULL
     DROP TABLE #data_bases; 
 
 
-CREATE TABLE #data_bases (event_id INT
+CREATE TABLE #data_bases (id_event INT
                             ,base INT
                             ,id_presentantion INT
                             ,sectorName VARCHAR(1000)
                             ,sectorDiscount DECIMAL(16,4)
                             ,seatName VARCHAR(1000)
-                            ,seatId INT
+                            ,id_seat INT
                             ,price DECIMAL(16,4)
                             ,allowticketoffice BIT
                             ,allowweb BIT
@@ -38,6 +38,7 @@ CREATE TABLE #data_bases (event_id INT
                             ,in_venda_site BIT
                             ,PerDesconto DECIMAL(16,4)
                             ,TipBilhete VARCHAR(1000)
+                            ,CodTipBilhete INT
                             ,vl_preco_fixo DECIMAL(16,4))
 
 SELECT
@@ -104,9 +105,9 @@ BEGIN
     SELECT TOP 1 @db_name=b.ds_nome_base_sql FROM CI_MIDDLEWAY..mw_base b WHERE b.id_base=@currentBase;
 
     SET @toExec=''
-    SET @toExec = @toExec + 'INSERT INTO #data_bases (event_id,base,id_presentantion,sectorName,sectorDiscount,seatName,seatId,price,allowticketoffice,allowweb,ds_nome_site,in_dom,in_qua,in_qui,in_sab,in_seg,in_sex,in_ter,in_venda_site,PerDesconto,TipBilhete,vl_preco_fixo) '
+    SET @toExec = @toExec + 'INSERT INTO #data_bases (id_event,base,id_presentantion,sectorName,sectorDiscount,seatName,id_seat,price,allowticketoffice,allowweb,ds_nome_site,in_dom,in_qua,in_qui,in_sab,in_seg,in_sex,in_ter,in_venda_site,PerDesconto,TipBilhete,CodTipBilhete,vl_preco_fixo) '
     SET @toExec = @toExec + ' SELECT  '
-    SET @toExec = @toExec + ' ev.[id] event_id '
+    SET @toExec = @toExec + ' ev.[id] id_event '
     SET @toExec = @toExec + ' ,ev.base '
     SET @toExec = @toExec + ' ,ap.id_apresentacao id_presentantion '
     SET @toExec = @toExec + ' ,se.NomSetor sectorName '
@@ -127,6 +128,7 @@ BEGIN
     SET @toExec = @toExec + ' ,tb.in_venda_site '
     SET @toExec = @toExec + ' ,tb.PerDesconto '
     SET @toExec = @toExec + ' ,tb.TipBilhete '
+    SET @toExec = @toExec + ' ,tb.CodTipBilhete '
     SET @toExec = @toExec + ' ,tb.vl_preco_fixo '
     SET @toExec = @toExec + ' FROM CI_MIDDLEWAY..mw_apresentacao ap '
     SET @toExec = @toExec + ' INNER JOIN #events ev ON ap.id_evento=ev.id '
@@ -141,6 +143,7 @@ BEGIN
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabSalDetalhe sd ON sd.CodSala=a.CodSala AND sd.Indice=qpr.indice '
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabSetor se ON a.CodSala=se.CodSala AND sd.CodSetor=se.CodSetor '
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND sd.Indice=ls.Indice '
+    SET @toExec = @toExec + ' WHERE tb.in_venda_site = 1 '
 
     -- select @toExec
     exec sp_executesql @toExec
@@ -149,13 +152,14 @@ BEGIN
 END
 
 SELECT
-event_id
+id_event
 ,base
 ,id_presentantion
+,CodTipBilhete id_ticket
 ,sectorName
 ,sectorDiscount
 ,seatName
-,seatId
+,id_seat
 ,(CASE WHEN PerDesconto = 0 AND (vl_preco_fixo = 0 OR vl_preco_fixo IS NULL ) THEN price
         WHEN PerDesconto <> 0 THEN price-(price*(PerDesconto/100))
         WHEN PerDesconto = 0 AND vl_preco_fixo IS NOT NULL AND vl_preco_fixo <> 0 THEN vl_preco_fixo END) price
