@@ -121,6 +121,11 @@ BEGIN
     WHERE d.id_apresentacao=@id_apresentacao
 
     DELETE d
+    FROM CI_MIDDLEWAY..quota_partner_reservation d
+    INNER JOIN #indiceRemove i ON d.indice=i.indice
+    WHERE d.id_apresentacao=@id_apresentacao
+
+    DELETE d
     FROM tabLugSala d
     INNER JOIN #indiceRemove i ON d.Indice=i.indice AND d.CodApresentacao=i.codApresentacao
     AND d.StaCadeira IN ('R')
@@ -292,6 +297,17 @@ SET @amount_topay=@amount-((@PerDesconto/100)*@amount)
 
 IF @codCliente IS NOT NULL
 BEGIN
+    DECLARE @id_quotapartner UNIQUEIDENTIFIER = NULL
+    SELECT @id_quotapartner = id_quotapartner FROM tabCliente WHERE Codigo=@codCliente
+
+    IF @id_quotapartner IS NOT NULL
+    BEGIN
+        INSERT INTO CI_MIDDLEWAY.[dbo].[quota_partner_reservation] (id_apresentacao, indice, id_quotapartner, codReserva)
+        SELECT @id_apresentacao, i.indice, @id_quotapartner, @codReserva
+        FROM #result i
+    END
+
+
     INSERT INTO tabResCliente (codCliente,CodREserva,Indice,TipLancamento)
         SELECT @CodCliente ,@CodReserva , ls.Indice, 1  
         FROM tablugsala ls 

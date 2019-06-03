@@ -13,7 +13,8 @@ ALTER PROCEDURE dbo.pr_admin_partner_save
     ,@recaptchaid VARCHAR(1000) = NULL
     ,@sell_email VARCHAR(1000) = NULL
     ,@send_sell_email BIT = 0
-    ,@ga_id VARCHAR(1000) = NULL)
+    ,@ga_id VARCHAR(1000) = NULL
+    ,@show_partner_info BIT = NULL)
 
 AS
 
@@ -78,6 +79,18 @@ BEGIN
             ,@isDev=1
 END
 
+IF @show_partner_info IS NULL
+    SET @show_partner_info = 0
+
+
+DECLARE @hasdb BIT = 0
+
+SELECT TOP 1 @hasdb = 1 FROM CI_MIDDLEWAY..mw_base b WHERE b.ds_nome_base_sql=@uniquename;
+IF @hasdb = 1
+BEGIN
+    UPDATE CI_MIDDLEWAY..mw_base SET name_site=@name WHERE ds_nome_base_sql=@uniquename
+END
+
 IF @has = 1
 BEGIN
     
@@ -94,6 +107,7 @@ BEGIN
             ,send_sell_email=@send_sell_email
             ,sell_email=@sell_email
             ,ga_id=@ga_id
+            ,show_partner_info=@show_partner_info
     WHERE
         id=@id
 
@@ -128,8 +142,8 @@ BEGIN
 
     SELECT @key=[key], @key_test=key_test FROM #keypartner
 
-    INSERT INTO CI_MIDDLEWAY..[partner] ([key], key_test, [name], active, dateStart, dateEnd, domain, uniquename,fb_appid,recaptchaid,sell_email,send_sell_email,ga_id)
-     VALUES (@key, @key_test, @name, @active, @dateStart, @dateEnd, @domain, @uniquename,@fb_appid,@recaptchaid,@sell_email,@send_sell_email,@ga_id)
+    INSERT INTO CI_MIDDLEWAY..[partner] ([key], key_test, [name], active, dateStart, dateEnd, domain, uniquename,fb_appid,recaptchaid,sell_email,send_sell_email,ga_id,show_partner_info)
+     VALUES (@key, @key_test, @name, @active, @dateStart, @dateEnd, @domain, @uniquename,@fb_appid,@recaptchaid,@sell_email,@send_sell_email,@ga_id,@show_partner_info)
 
     SELECT 1 success
             ,'Incluido com sucesso.' msg

@@ -1,4 +1,4 @@
-ALTER PROCEDURE dbo.pr_reservation_list (@nin VARCHAR(14) = NULL, @codReserva VARCHAR(10) = NULL, @id_apresentacao INT = NULL, @name VARCHAR(1000) = NULL)
+ALTER PROCEDURE dbo.pr_reservation_list (@nin VARCHAR(14) = NULL, @codReserva VARCHAR(10) = NULL, @id_apresentacao INT = NULL, @name VARCHAR(1000) = NULL, @id_quotapartner UNIQUEIDENTIFIER = NULL)
 
 AS
 
@@ -76,5 +76,6 @@ WHERE
 AND (@codReserva IS NULL OR ls.CodReserva=@codReserva)
 AND (@name IS NULL OR c.Nome LIKE '%'+@name+'%')
 AND (@id_apresentacao IS NULL OR ap.id_apresentacao=@id_apresentacao)
+AND (@id_quotapartner IS NULL OR c.id_quotapartner=@id_quotapartner)
 AND ls.StaCadeira='R'
 ORDER BY c.Nome, p.NomPeca, s.NomSala, sd.NomObjeto

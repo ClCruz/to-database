@@ -53,4 +53,8 @@ DELETE d
 FROM tabLugSala d
 INNER JOIN #helper h ON d.CodApresentacao=h.CodApresentacao AND d.CodReserva=h.CodReserva COLLATE SQL_Latin1_General_Cp1251_CI_AS AND d.Indice=h.Indice AND d.StaCadeira='R'
 
+DELETE d
+FROM CI_MIDDLEWAY..quota_partner_reservation d
+INNER JOIN #helper h ON d.id_apresentacao=h.id_apresentacao AND d.indice=h.Indice
+
 SELECT 1 success

@@ -43,6 +43,7 @@ SELECT DISTINCT
     ,'web' [type]
     ,pv.nr_parcelas_pgto
     ,(CASE WHEN e.in_entrega_ingresso = 1 THEN 'physical-ticket' ELSE 'e-ticket' END) delivery_method
+    ,b.name_site
 INTO #result
 FROM CI_MIDDLEWAY..mw_pedido_venda pv
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON pv.id_pedido_venda=ipv.id_pedido_venda
@@ -52,6 +53,7 @@ INNER JOIN CI_MIDDLEWAY..host h ON oh.id_host=h.id
 INNER JOIN CI_MIDDLEWAY..mw_cliente c ON pv.id_cliente=c.id_cliente
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON ipv.id_apresentacao=ap.id_apresentacao
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento
+INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_local_evento le ON e.id_local_evento=le.id_local_evento
 INNER JOIN CI_MIDDLEWAY..mw_municipio mu ON le.id_municipio=mu.id_municipio
@@ -95,4 +97,5 @@ SELECT
     ,r.[type]
     ,r.nr_parcelas_pgto
     ,delivery_method
+    ,r.name_site
 FROM #result r
