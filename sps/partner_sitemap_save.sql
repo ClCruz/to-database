@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.partner_sitemap_save (@id_partner UNIQUEIDENTIFIER
+ALTER PROCEDURE dbo.partner_sitemap_save (@id_partner UNIQUEIDENTIFIER
                                         ,@success BIT
                                         ,@msg VARCHAR(100)) 
 

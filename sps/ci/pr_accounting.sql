@@ -1,10 +1,10 @@
--- exec pr_accounting 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
--- exec pr_accounting_debits 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
+-- -- exec pr_accounting 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
+-- -- exec pr_accounting_debits 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
 
 ALTER PROCEDURE dbo.pr_accounting (@id VARCHAR(100))
 
 AS
--- DECLARE @id VARCHAR(100) = 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
+-- DECLARE @id VARCHAR(100) = '78F4934C-1B8F-4A74-BE39-83CB7601A7FC'
 
 SET NOCOUNT ON;
 
@@ -144,17 +144,17 @@ INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODA
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON tosc.id_apresentacao=ap.id_apresentacao AND tosc.Indice=s.Indice AND tosc.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND ls.StaCadeira='V'
 
--- SELECT @seats_inprocess=COUNT(*)
--- FROM tabSalDetalhe S
--- INNER JOIN tabSetor SE ON SE.CODSALA = S.CODSALA AND SE.CODSETOR = S.CODSETOR
--- INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
--- INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
--- INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
--- INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
--- INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
--- INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
--- INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
--- WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND pv.in_situacao='P' AND ls.StaCadeira='V'
+SELECT @seats_inprocess=COUNT(*)
+FROM tabSalDetalhe S
+INNER JOIN tabSetor SE ON SE.CODSALA = S.CODSALA AND SE.CODSETOR = S.CODSETOR
+INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
+INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
+INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
+INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
+INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
+WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND pv.in_situacao='P' AND ls.StaCadeira='V'
 
 
 SELECT @seats_reserved=COUNT(*)
@@ -252,7 +252,7 @@ DECLARE @result_all INT
         
 
 SELECT @result_all = @seats
-, @result_notsold = (@seats_available+@seats_reserved+@seats_inprocess)
+, @result_notsold = (@seats-(@seats_taken_web+@seats_taken_ticketoffice))
 , @result_free = (@seats_taken_ticketoffice_free+@seats_taken_web_free)
 , @result_paid = (@seats_taken_ticketoffice_paid+@seats_taken_web_paid)
 , @result_paid_and_free = (@seats_taken_ticketoffice_free+@seats_taken_web_free)+(@seats_taken_ticketoffice_paid+@seats_taken_web_paid)
@@ -302,11 +302,11 @@ FROM #resultAux ra
 GROUP BY ra.CodSala, ra.NomSala,ra.CodSetor,ra.NomSetor,ra.CodTipBilhete,ra.TipBilhete,ra.ValPagto
 ORDER BY ra.TipBilhete, ra.NomSetor
 
-SELECT @result_all = @seats
-, @result_notsold = (@seats_available+@seats_reserved+@seats_inprocess)
-, @result_free = (@seats_taken_ticketoffice_free+@seats_taken_web_free)
-, @result_paid = (@seats_taken_ticketoffice_paid+@seats_taken_web_paid)
-, @result_paid_and_free = (@seats_taken_ticketoffice_free+@seats_taken_web_free)+(@seats_taken_ticketoffice_paid+@seats_taken_web_paid)
+-- SELECT @result_all = @seats
+-- , @result_notsold = (@seats_available+@seats_reserved+@seats_inprocess)
+-- , @result_free = (@seats_taken_ticketoffice_free+@seats_taken_web_free)
+-- , @result_paid = (@seats_taken_ticketoffice_paid+@seats_taken_web_paid)
+-- , @result_paid_and_free = (@seats_taken_ticketoffice_free+@seats_taken_web_free)+(@seats_taken_ticketoffice_paid+@seats_taken_web_paid)
 
 SELECT
         @local [local]
