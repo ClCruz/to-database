@@ -8,11 +8,13 @@ SET NOCOUNT ON;
 DECLARE @id UNIQUEIDENTIFIER
         ,@codVenda VARCHAR(100)
         ,@id_base INT
+        ,@id_pedido_venda INT
 
 SELECT TOP 1
     @id=etp.id
     ,@codVenda=etp.codVenda
     ,@id_base=etp.id_base
+    ,@id_pedido_venda=etp.id_pedido_venda
 FROM CI_MIDDLEWAY..email_ticket_print etp
 WHERE 
     etp.code=@code
@@ -28,3 +30,4 @@ WHERE d.id=@id
 SELECT @id id
         ,@codVenda codVenda
         ,@id_base id_base
+        ,@id_pedido_venda id_pedido_venda

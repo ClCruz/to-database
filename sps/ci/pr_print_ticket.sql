@@ -88,6 +88,7 @@ tosch.id
 ,s.NomSala [roomName]
 ,s.NomRedSala roomNameOther
 ,sd.NomObjeto seatNameFull
+,se.NomSetor sectorName
 ,SUBSTRING(sd.NomObjeto, 0,CHARINDEX('-', sd.NomObjeto)) [seatRow]
 ,SUBSTRING(sd.NomObjeto, CHARINDEX('-', sd.NomObjeto) + 1, LEN(sd.NomObjeto)) [seatName]
 ,ls.CodVenda purchaseCode
@@ -96,8 +97,8 @@ tosch.id
 ,fp.ForPagto payment
 ,tfp.TipForPagto paymentType
 ,@transaction AS [transaction]
-,(CASE WHEN c.Nome IS NULL THEN '-' ELSE c.Nome END) buyer
-,(CASE WHEN c.CPF IS NULL THEN '-' ELSE c.CPF END) buyerDoc
+,(CASE WHEN pv.id_pedido_venda IS NULL THEN c.Nome ELSE CONCAT(cli.ds_nome,' ',cli.ds_sobrenome) END) buyer
+,(CASE WHEN pv.id_pedido_venda IS NULL THEN c.CPF ELSE cli.cd_cpf END) buyerDoc
 ,(CASE WHEN eei.insurance_policy IS NULL THEN '' ELSE eei.insurance_policy END) insurance_policy
 ,(CASE WHEN eei.opening_time IS NULL THEN '' ELSE eei.opening_time END) opening_time
 -- ,p.NomResPeca eventResp
@@ -118,6 +119,7 @@ INNER JOIN tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
 INNER JOIN tabPeca p ON a.CodPeca=p.CodPeca
 INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSalDetalhe sd ON ls.Indice=sd.Indice AND a.CodSala=sd.CodSala
+INNER JOIN tabSetor se ON sd.CodSetor=se.CodSetor AND s.CodSala=se.CodSala
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca AND e.id_base=@id_base
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND ap.CodApresentacao=a.CodApresentacao
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
@@ -127,6 +129,7 @@ LEFT JOIN CI_MIDDLEWAY..mw_local_evento le ON e.id_local_evento=le.id_local_even
 LEFT JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosch ON ls.Indice=tosch.indice AND ap.id_apresentacao=tosch.id_apresentacao
 LEFT JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.Indice=ls.Indice AND ipv.id_apresentacao=ap.id_apresentacao
 LEFT JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
+LEFT JOIN CI_MIDDLEWAY..mw_cliente cli ON pv.id_cliente=cli.id_cliente
 LEFT JOIN tabTipBilhete tb ON l.CodTipBilhete=tb.CodTipBilhete
 LEFT JOIN tabForPagamento fp ON l.CodForPagto=fp.CodForPagto
 LEFT JOIN tabTipForPagamento tfp ON fp.CodTipForPagto=tfp.CodTipForPagto
@@ -153,6 +156,7 @@ SELECT
 ,[roomName]
 ,[roomNameOther]
 ,[seatNameFull]
+,[sectorName]
 ,[seatRow]
 ,[seatName]
 ,[seatIndice]
@@ -162,8 +166,8 @@ SELECT
 ,[payment]
 ,[paymentType]
 ,[transaction]
-,[buyer]
-,[buyerDoc]
+,(CASE WHEN [buyer] = '' OR [buyer] = ' ' THEN '-' ELSE [buyer] END) [buyer]
+,(CASE WHEN [buyerDoc] = '' THEN '-' ELSE [buyerDoc] END) [buyerDoc]
 ,[insurance_policy]
 ,[opening_time]
 ,[ds_razao_social] productor_name
