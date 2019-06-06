@@ -221,12 +221,12 @@ BEGIN
     LEFT JOIN CI_MIDDLEWAY..MW_PROMOCAO_CONTROLE PC ON PC.ID_PROMOCAO_CONTROLE = @ID_PROMOCAO_CONTROLE AND PC.IN_ATIVO = 1
     WHERE AB.IN_ATIVO = 1 AND AB.ID_APRESENTACAO_BILHETE =@id_apresentacao_bilhete
 
-    IF @IN_TAXA_POR_PEDIDO = 'S'
-    BEGIN
-        SELECT 0 success
-                ,'Falha para recuperar a taxa. ERR-1'
-        RETURN;
-    END
+    -- IF @IN_TAXA_POR_PEDIDO = 'S'
+    -- BEGIN
+    --     SELECT 0 success
+    --             ,'Falha para recuperar a taxa. ERR-1'
+    --     RETURN;
+    -- END
     
     IF @onlyOneTicket = 1
     BEGIN

@@ -10,8 +10,9 @@ AS
 
 DECLARE @keyHelper VARCHAR(100) = '/evento/' + @key
         ,@id_partner UNIQUEIDENTIFIER
+        ,@show_partner_info BIT
 
-SELECT TOP 1 @id_partner=p.id FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
+SELECT TOP 1 @id_partner=p.id,@show_partner_info=p.show_partner_info FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
 
 SELECT TOP 1
 eei.id_evento
@@ -25,6 +26,9 @@ eei.id_evento
 ,e.CodPeca
 ,e.ds_evento
 ,e.id_base
+,b.name_site
+,@show_partner_info show_partner_info
+
 FROM CI_MIDDLEWAY..mw_evento_extrainfo eei
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON eei.id_evento=e.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base

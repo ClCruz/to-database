@@ -25,4 +25,5 @@ INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSetor se ON s.CodSala=se.CodSala
 WHERE ap.id_evento=@id_evento
 AND CONVERT(VARCHAR(10),a.DatApresentacao,103)=@datePresentation
+AND ap.in_ativo=1
 ORDER BY ap.hr_apresentacao

@@ -105,6 +105,7 @@ BEGIN
 							UPDATE eei
 							SET eei.id_genre = @id_genre
 								,eei.minuteBefore=(@QT_HR_ANTECED*60)
+								,eei.changed=GETDATE()
 							FROM CI_MIDDLEWAY..mw_evento_extrainfo eei
 							INNER JOIN CI_MIDDLEWAY..mw_evento e ON eei.id_evento=e.id_evento
 							INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base

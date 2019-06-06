@@ -2,7 +2,7 @@ ALTER PROCEDURE dbo.pr_purchase_get_current (@id_session VARCHAR(1000))
 
 AS
 
--- DECLARE @id_session VARCHAR(1000) = 'fo2i7fs6n7j42psst3e107dr55'
+-- DECLARE @id_session VARCHAR(1000) = '41ctd23ea9irb46e80ndn6ghp5'
 
 SET NOCOUNT ON;
 
@@ -33,14 +33,18 @@ INNER JOIN CI_MIDDLEWAY..MW_APRESENTACAO A ON A.ID_EVENTO = E.ID_EVENTO
 INNER JOIN CI_MIDDLEWAY..MW_RESERVA R ON R.ID_APRESENTACAO = A.ID_APRESENTACAO
 WHERE R.id_session = @id_session
 
-DECLARE @cpf VARCHAR(100)
-SELECT @cpf=c.cd_cpf FROM CI_MIDDLEWAY..current_session_client csc
+DECLARE @cpf VARCHAR(100) = ''
+SELECT @cpf=ISNULL(c.cd_cpf,'') FROM CI_MIDDLEWAY..current_session_client csc
 INNER JOIN CI_MIDDLEWAY..mw_cliente c ON csc.id_cliente=c.id_cliente
 WHERE csc.id_session=@id_session
 
 INSERT INTO #bases (id_base, done)
 SELECT DISTINCT id_base,0
 FROM #aux
+
+-- select * from #bases
+-- select * from #aux
+-- RETURN;
 WHILE (EXISTS (SELECT 1 FROM #bases WHERE done=0 ))
 BEGIN
     DECLARE @currentBase INT = 0
@@ -98,14 +102,14 @@ BEGIN
     SET @toExec = @toExec + '        ,r.nr_beneficio '
     SET @toExec = @toExec + '        ,p.QT_INGRESSOS_POR_CPF '
 
-    SET @toExec = @toExec + '        ,( '
+    SET @toExec = @toExec + '        ,(CASE WHEN '''+@cpf+''' IS NULL THEN 0 ELSE ( '
     SET @toExec = @toExec + '        SELECT SUM(CASE subH.CODTIPLANCAMENTO WHEN 1 THEN 1 ELSE -1 END)  '
     SET @toExec = @toExec + '        FROM '+@db_name+'.dbo.tabCliente subC '
     SET @toExec = @toExec + '        INNER JOIN '+@db_name+'.dbo.tabHisCliente subH ON subH.CODIGO = subC.CODIGO '
     SET @toExec = @toExec + '        INNER JOIN '+@db_name+'.dbo.tabApresentacao subA ON subA.CODAPRESENTACAO = subH.CODAPRESENTACAO '
     SET @toExec = @toExec + '        INNER JOIN '+@db_name+'.dbo.tabApresentacao subA2 ON subA2.DATAPRESENTACAO = subA.DATAPRESENTACAO AND subA2.CODPECA = subA.CODPECA AND subA2.HORSESSAO = subA.HORSESSAO '
     SET @toExec = @toExec + '        WHERE subC.CPF = '''+@cpf+''' AND subA2.CODAPRESENTACAO = a.codApresentacao '
-    SET @toExec = @toExec + '        ) AS purchasebythiscpf '
+    SET @toExec = @toExec + '        ) END) AS purchasebythiscpf '
     SET @toExec = @toExec + '        , ISNULL(tb.vl_preco_fixo,0) vl_preco_fixo'
     SET @toExec = @toExec + ' FROM '+@db_name+'.dbo.tabLugSala ls '
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao '

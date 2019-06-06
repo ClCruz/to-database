@@ -109,6 +109,8 @@ BEGIN
                     FROM CI_MIDDLEWAY..home s
                     WHERE s.id_evento=@id_evento
 					
+					UPDATE CI_MIDDLEWAY..mw_evento_extrainfo SET changed=GETDATE() WHERE id_evento=@id_evento
+					
 					-- #3 Adicionado CURSOR p/ correção de erro quando alterado as apresentações no VB.
 					DECLARE C2 CURSOR FOR
 					
@@ -167,6 +169,8 @@ BEGIN
                     SET s.outofdate=1
                     FROM CI_MIDDLEWAY..home s
                     WHERE s.id_evento=@id_evento
+
+					UPDATE CI_MIDDLEWAY..mw_evento_extrainfo SET changed=GETDATE() WHERE id_evento=@id_evento
 				END
 
 				INSERT INTO ci_middleway..mw_apresentacao_bilhete (

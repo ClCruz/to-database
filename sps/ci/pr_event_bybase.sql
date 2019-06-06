@@ -27,7 +27,7 @@ p.CodPeca
 ,p.NomPeca
 ,e.ds_evento
 ,p.CodTipPeca
-,tp.TipPeca
+,LOWER(tp.TipPeca) TipPeca
 ,p.CenPeca
 ,le.ds_local_evento
 ,le.ds_googlemaps [address]
@@ -62,7 +62,7 @@ p.CodPeca
 ,eei.meta_keyword
 ,m.ds_municipio
 ,es.sg_estado
-,(m.ds_municipio + '/' + es.sg_estado) badge_city_text
+,(LOWER(m.ds_municipio) + '/' + es.sg_estado) badge_city_text
 FROM tabPeca p
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca AND e.id_base=@id_base
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
