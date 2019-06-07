@@ -1,3 +1,7 @@
+-- exec sp_executesql N'EXEC pr_geteventsforcards @P1, @P2, @P3, @P4, @P5',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000)',N'Barueri',N'',N'live_dd310c796ff04199b5680a5cad098930c2ae8da63b974b43abb21d92ec5123b2',N'',N''
+
+-- exec sp_executesql N'EXEC pr_geteventsforcards @P1, @P2, @P3, @P4, @P5',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000)',N'',N'',N'live_6bfa0de8c52f4dd0bbb53d5a61945bbddb2aaa5545644e61873f1d1cd78f6bae',N'',N''
+
 -- EXEC pr_geteventsforcards @api='live_578abaf329f84119bb7c1e55dfdc7e0f4f20e693cd2c4bc7a5bc0a0965fae322'
 -- exec sp_executesql N'EXEC pr_geteventsforcards @P1, @P2, @P3, @P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'',N'',N'live_279e0f576f1547faa1ac5600d7802778f3754aa3f6d44f9aabbdbb709b2ed442',N'created'
 
@@ -5,10 +9,8 @@ ALTER PROCEDURE dbo.pr_geteventsforcards (@city VARCHAR(100) = NULL,@state VARCH
 
 AS
 
--- update CI_MIDDLEWAY..mw_evento_extrainfo set minAmount=1000 where id_evento=32947
---  update CI_MIDDLEWAY..mw_evento_extrainfo set minAmount=1000, maxAmount=3000 where id_evento=33016
 
--- DECLARE @city VARCHAR(100) = NULL,@state VARCHAR(100) = NULL, @date DATETIME ='', @api VARCHAR(100) = 'live_dd310c796ff04199b5680a5cad098930c2ae8da63b974b43abb21d92ec5123b2' ,@filter VARCHAR(1000) = 'created'
+-- DECLARE @city VARCHAR(100) = '',@state VARCHAR(100) = NULL, @date DATETIME ='', @api VARCHAR(100) = 'live_dd310c796ff04199b5680a5cad098930c2ae8da63b974b43abb21d92ec5123b2' ,@filter VARCHAR(1000) = '' --'created'
 
 IF @date = '1900-01-01 00:00:00.000'
     SET @date = NULL
@@ -86,12 +88,11 @@ h.id_evento
 ,eei.minAmount
 ,eei.maxAmount
 ,b.name_site
-
 ORDER BY 
-(CASE WHEN @filter = 'created' THEN eei.created END) DESC,
-(CASE WHEN @filter = 'next' THEN min(ap.dt_apresentacao) END),
 (CASE WHEN h.ds_municipio = @city COLLATE Latin1_general_CI_AI THEN 1
                 WHEN h.ds_municipio != @city COLLATE Latin1_general_CI_AI
                      AND h.sg_estado = @state COLLATE Latin1_general_CI_AI THEN 2
-                WHEN min(ap.dt_apresentacao)<=@nowOrder THEN 3
-                ELSE 4 END)
+                ELSE 4 END),
+(CASE WHEN @filter IS NULL OR @filter = '' THEN min(ap.dt_apresentacao) END),
+(CASE WHEN @filter = 'created' THEN eei.created END) DESC,
+(CASE WHEN @filter = 'next' THEN min(ap.dt_apresentacao) END)

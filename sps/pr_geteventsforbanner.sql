@@ -7,7 +7,7 @@ AS
 SET NOCOUNT ON;
 
 DECLARE @nowOrder DATETIME = DATEADD(day,15, GETDATE())
-        ,@top INT = 10
+        ,@top INT = 100
         ,@id_partner UNIQUEIDENTIFIER
 
 SELECT TOP 1 @id_partner=p.id FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api OR p.key_test=@api
