@@ -2,7 +2,7 @@ ALTER PROCEDURE dbo.pr_event_bybase (@codPeca INT)
 
 AS
 
--- DECLARE @codPeca INT = 3244
+-- DECLARE @codPeca INT = 41
 
 SET NOCOUNT ON;
 
@@ -63,6 +63,7 @@ p.CodPeca
 ,m.ds_municipio
 ,es.sg_estado
 ,(LOWER(m.ds_municipio) + '/' + es.sg_estado) badge_city_text
+,CI_MIDDLEWAY.dbo.fnc_eventonpartner(e.id_evento, 'tixsme') ontixsme
 FROM tabPeca p
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca AND e.id_base=@id_base
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
