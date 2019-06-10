@@ -1,3 +1,5 @@
+-- exec sp_executesql N'EXEC pr_reservation_list @P1, @P2, @P3, @P4, @P5',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000)',N'',N'R1T4EBICAD',N'',N'',N'00000000-0000-0000-0000-000000000000'
+
 ALTER PROCEDURE dbo.pr_reservation_list (@nin VARCHAR(14) = NULL, @codReserva VARCHAR(10) = NULL, @id_apresentacao INT = NULL, @name VARCHAR(1000) = NULL, @id_quotapartner UNIQUEIDENTIFIER = NULL)
 
 AS
@@ -23,6 +25,9 @@ IF (@codReserva = '')
 
 IF (@id_apresentacao = '')
     SET @id_apresentacao=NULL
+
+IF (@id_quotapartner = '00000000-0000-0000-0000-000000000000')
+    SET @id_quotapartner = NULL
 
 DECLARE @weekday TABLE (id INT, [name] VARCHAR(100));
 
