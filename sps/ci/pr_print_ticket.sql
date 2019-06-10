@@ -6,8 +6,9 @@ ALTER PROCEDURE dbo.pr_print_ticket(@codVenda VARCHAR(10)
 
 AS
 
--- DECLARE @codVenda VARCHAR(10) = '5ZFAICBECO'
+-- DECLARE @codVenda VARCHAR(10) = 'F6IGAOAICB'
 --         ,@indice INT = NULL
+--         ,@uniquename VARCHAR(100) = 'localhost'
 
 
 SET NOCOUNT ON;
@@ -97,8 +98,8 @@ tosch.id
 ,fp.ForPagto payment
 ,tfp.TipForPagto paymentType
 ,@transaction AS [transaction]
-,(CASE WHEN pv.id_pedido_venda IS NULL THEN c.Nome ELSE CONCAT(cli.ds_nome,' ',cli.ds_sobrenome) END) buyer
-,(CASE WHEN pv.id_pedido_venda IS NULL THEN c.CPF ELSE cli.cd_cpf END) buyerDoc
+,(CASE WHEN pv.id_pedido_venda IS NULL THEN c.Nome ELSE cli.ds_nome + ' ' + cli.ds_sobrenome COLLATE SQL_Latin1_General_CP1_CI_AS END) buyer 
+,(CASE WHEN pv.id_pedido_venda IS NULL THEN c.CPF ELSE cli.cd_cpf COLLATE SQL_Latin1_General_CP1_CI_AS END) buyerDoc
 ,(CASE WHEN eei.insurance_policy IS NULL THEN '' ELSE eei.insurance_policy END) insurance_policy
 ,(CASE WHEN eei.opening_time IS NULL THEN '' ELSE eei.opening_time END) opening_time
 -- ,p.NomResPeca eventResp
@@ -139,6 +140,7 @@ LEFT JOIN CI_MIDDLEWAY..ticketoffice_user tou ON tosch.id_ticketoffice_user=tou.
 LEFT JOIN tabControleSeqVenda csv ON ls.Indice=csv.Indice AND ls.CodApresentacao=csv.CodApresentacao AND csv.statusingresso IN ('L','V')
 WHERE ls.CodVenda=@codVenda
 AND (@indice IS NULL OR ls.Indice=@indice)
+-- return;
 
 SELECT
 [id]
@@ -184,3 +186,4 @@ SELECT
 ,CONVERT(VARCHAR(10),countTicket) + '/' + CONVERT(VARCHAR(10),(SELECT MAX(countTicket) FROM #result)) [howMany]
 ,reprint
 FROM #result
+ORDER BY countTicket

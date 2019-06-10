@@ -1,14 +1,14 @@
 --pr_event 'comedy_night_teatro_renaissance_22707', 'live_578abaf329f84119bb7c1e55dfdc7e0f4f20e693cd2c4bc7a5bc0a0965fae322'
 
-ALTER PROCEDURE dbo.pr_event (@key VARCHAR(100), @api VARCHAR(100))
+ALTER PROCEDURE dbo.pr_event_compreingressos (@key VARCHAR(100), @api VARCHAR(100))
 
 AS
 
--- DECLARE @key VARCHAR(100) = 'na_anatomia_oca_dos_passaros_teatro_italia_33202'
---         ,@api VARCHAR(100) = 'live_578abaf329f84119bb7c1e55dfdc7e0f4f20e693cd2c4bc7a5bc0a0965fae322'
+-- DECLARE @key VARCHAR(100) = 'inner_circle_cota_de_ingressos_22678'
+--         ,@api VARCHAR(100) = 'live_keykeykey'
 
 
-DECLARE @keyHelper VARCHAR(100) = '/evento/' + @key
+DECLARE @keyHelper VARCHAR(100) = '/espetaculos/' + @key
         ,@id_partner UNIQUEIDENTIFIER
         ,@show_partner_info BIT
 

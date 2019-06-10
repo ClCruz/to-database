@@ -2,7 +2,7 @@ ALTER PROCEDURE dbo.pr_event_bybase (@codPeca INT)
 
 AS
 
--- DECLARE @codPeca INT = 3244
+-- DECLARE @codPeca INT = 41
 
 SET NOCOUNT ON;
 
