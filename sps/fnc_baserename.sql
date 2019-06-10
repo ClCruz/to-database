@@ -12,6 +12,8 @@ BEGIN
         SET @RET = 'sazarte'
     IF LOWER(@sql) = 'antigos'
         SET @RET = 'sazarte'
+    IF LOWER(@sql) = 'construcaoteatral'
+        SET @RET = 'ingressoparatodos'
 
 
     RETURN @RET;
