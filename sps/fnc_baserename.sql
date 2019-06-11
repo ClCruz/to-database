@@ -1,4 +1,4 @@
-CREATE FUNCTION dbo.fnc_baserename (@sql VARCHAR(1000))
+ALTER FUNCTION dbo.fnc_baserename (@sql VARCHAR(1000))
 
 RETURNS VARCHAR(1000)
 
