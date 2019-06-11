@@ -3,7 +3,8 @@
 ALTER PROCEDURE pr_sell (@id_ticketoffice_user UNIQUEIDENTIFIER
         ,@id_payment INT
         ,@isComplementoMeia BIT = 0
-        ,@codCliente INT = NULL)
+        ,@codCliente INT = NULL
+        ,@api_code VARCHAR(1000) = NULL)
 
 AS
 
@@ -47,7 +48,7 @@ SELECT @id_base=id_base FROM CI_MIDDLEWAY..mw_base where ds_nome_base_sql=DB_NAM
 
 SELECT @NomeEmpresa=NomEmpresa FROM tabEmpresa
 
-UPDATE CI_MIDDLEWAY..ticketoffice_shoppingcart SET id_payment_type=@id_payment WHERE id_ticketoffice_user=@id_ticketoffice_user
+UPDATE CI_MIDDLEWAY..ticketoffice_shoppingcart SET id_payment_type=@id_payment WHERE id_ticketoffice_user=@id_ticketoffice_user AND (@api_code IS NULL OR api_code=@api_code)
 
 IF @codVenda IS NULL
 BEGIN
@@ -81,6 +82,7 @@ SELECT
 FROM CI_MIDDLEWAY..ticketoffice_user_base toub
 INNER JOIN CI_MIDDLEWAY..ticketoffice_user u ON toub.id_ticketoffice_user=u.id
 WHERE id_ticketoffice_user=@id_ticketoffice_user AND toub.id_base=@id_base
+AND (@api_code IS NULL OR api_code=@api_code)
 ORDER BY codCaixa DESC;
 
 SELECT @codMovimento=Codmovimento
@@ -101,12 +103,13 @@ INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_aprese
 INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
 INNER JOIN tabLugSala ls ON ls.CodApresentacao=a.CodApresentacao AND ls.Indice=tosc.indice
 WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+AND (@api_code IS NULL OR api_code=@api_code)
       AND tosc.id_base=@id_base
 
 DECLARE @amountDecimal DECIMAL(18,2)
         ,@amount INT
 
-SELECT @amount=SUM(tosc.amount_topay) FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+SELECT @amount=SUM(tosc.amount_topay) FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user AND (@api_code IS NULL OR api_code=@api_code)
 
 SET @amountDecimal=CONVERT(DECIMAL(18,2),@amount)/100
 
@@ -135,7 +138,7 @@ CodUsuario,CodForPagto,CodCaixa,DatMovimento,QtdBilhete,ValPagto, DatVenda, CodM
     INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao
     INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
     INNER JOIN tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND tosc.indice=ls.Indice
-    WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+    WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user AND (@api_code IS NULL OR api_code=@api_code)
 
 IF OBJECT_ID('tempdb.dbo.#helper', 'U') IS NOT NULL
     DROP TABLE #helper; 
@@ -150,7 +153,7 @@ INSERT INTO #helper (indice, id_apresentacao, codapresentacao, numLancamento, id
     INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao
     INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
     -- LEFT JOIN tabLancamento l ON ap.CodApresentacao=l.CodApresentacao AND tosc.indice=l.Indice    
-    WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+    WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user AND (@api_code IS NULL OR api_code=@api_code)
 
 IF (@codCliente IS NOT NULL)
 BEGIN
@@ -163,7 +166,7 @@ BEGIN
         ,h.codapresentacao
         ,h.indice
         FROM #helper h
-        INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id
+        INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id AND (@api_code IS NULL OR api_code=@api_code)
 END
 
 INSERT INTO tabComprovante
@@ -184,7 +187,7 @@ FROM #helper h
 INNER JOIN tabApresentacao a ON h.codapresentacao=a.CodApresentacao
 INNER JOIN tabPeca p ON a.CodPeca=p.codPeca
 INNER JOIN tabSala s ON a.CodSala=s.CodSala
-INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id
+INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id AND (@api_code IS NULL OR api_code=@api_code)
 
 INSERT INTO tabControleSeqVenda (codapresentacao, indice, numseq, codbar, statusingresso)
 SELECT 
@@ -199,7 +202,7 @@ right('00000'+convert(varchar,h.codapresentacao),5) --5
 +LEFT(CONVERT(VARCHAR(100),right(cast(rand(checksum(newid())) as decimal(15, 15)), 6)),6) --21
     ,'L'
 FROM #helper h
-INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id
+INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id AND (@api_code IS NULL OR api_code=@api_code)
 INNER JOIN tabApresentacao a ON h.codapresentacao=a.CodApresentacao
 INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSalDetalhe sd ON sd.Indice=h.indice AND sd.CodSala=a.CodSala
@@ -226,7 +229,7 @@ h.indice,@codVenda
 ,0,s.CodSala,(SELECT TOP 1 ep.id_cartao_patrocinado FROM CI_MIDDLEWAY..mw_evento_patrocinado ep WHERE ep.CodPeca=a.CodPeca AND ep.id_base=@id_base AND convert(varchar, a.datapresentacao,112) between convert(varchar, ep.dt_inicio,112) and convert(varchar, ep.dt_fim ,112))-- ep.id_cartao_patrocinado
 ,@NumeroBIN
 FROM #helper h
-INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id
+INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id AND (@api_code IS NULL OR api_code=@api_code)
 INNER JOIN tabApresentacao a ON h.codapresentacao=a.CodApresentacao
 INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSalDetalhe sd ON s.CodSala=sd.CodSala AND h.indice=sd.Indice
@@ -243,13 +246,13 @@ SELECT TOP 1
 ,@codUsuario
 ,'Venda de Ingressos - espetáculo '+ p.NomPeca + '  Dt.:' + convert(varchar(10),@now,103) + ' Cod.Venda:' + @codVenda
 FROM #helper h
-INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id
+INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart tosc ON h.id_shoppingCart=tosc.id AND (@api_code IS NULL OR api_code=@api_code)
 INNER JOIN tabPeca p ON tosc.id_event=p.CodPeca
 
 UPDATE CI_MIDDLEWAY..ticketoffice_shoppingcart SET id_pedido_venda=@idpedidovenda, codVenda=@codVenda WHERE @id_ticketoffice_user=@id_ticketoffice_user
 
-INSERT INTO CI_MIDDLEWAY..ticketoffice_shoppingcart_hist (id,created, id_shoppingcart_old,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, sell_date)
-SELECT newid(),created, id,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, @now FROM CI_MIDDLEWAY..ticketoffice_shoppingcart WHERE id_ticketoffice_user=@id_ticketoffice_user
+INSERT INTO CI_MIDDLEWAY..ticketoffice_shoppingcart_hist (id,created, id_shoppingcart_old,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, sell_date, api_code)
+SELECT newid(),created, id,id_ticketoffice_user,id_event,id_base,id_apresentacao,indice,quantity,currentStep,id_payment_type,amount,amount_discount,amount_topay,updated,id_ticket_type,codVenda,id_pedido_venda, @now, api_code FROM CI_MIDDLEWAY..ticketoffice_shoppingcart WHERE id_ticketoffice_user=@id_ticketoffice_user AND (@api_code IS NULL OR api_code=@api_code)
 
 INSERT INTO CI_MIDDLEWAY.[dbo].[ticketoffice_cashregister_moviment] ([id_ticketoffice_user],[id_ticketoffice_cashregister],[isopen],[amount],[type],[id_base],[codForPagto],[id_evento],[codVenda])
 SELECT tosc.id_ticketoffice_user,NULL,1,tosc.amount_topay,'add',tosc.id_base,tosc.id_payment_type,ap.id_evento,@codVenda
@@ -258,6 +261,7 @@ INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON tosc.id_apresentacao=ap.id_aprese
 INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
 INNER JOIN tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND tosc.indice=ls.Indice
 WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+AND (@api_code IS NULL OR api_code=@api_code)
 
 DECLARE @nextStep VARCHAR(100)
         ,@isMoney BIT
@@ -276,8 +280,9 @@ FROM CI_MIDDLEWAY..ticketoffice_shoppingcart tosc
 INNER JOIN tabForPagamento fp ON tosc.id_payment_type=fp.CodForPagto
 INNER JOIN tabTipForPagamento tfp ON fp.CodTipForPagto=tfp.CodTipForPagto
 WHERE tosc.id_ticketoffice_user=@id_ticketoffice_user
+AND (@api_code IS NULL OR api_code=@api_code)
 
-EXEC CI_MIDDLEWAY..pr_ticketoffice_shoppingcart_clear @id_ticketoffice_user
+EXEC CI_MIDDLEWAY..pr_ticketoffice_shoppingcart_clear @id_ticketoffice_user, @api_code
 
 IF (@isCreditCard = 1 OR @isDebitCard = 1) AND @PagarMe = 1
 BEGIN

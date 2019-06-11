@@ -18,7 +18,8 @@ SELECT
     ,COUNT(*) OVER() totalCount
     ,@currentPage currentPage
 FROM CI_MIDDLEWAY..to_admin_user tau
-WHERE ((@search IS NULL OR tau.name LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS)
+WHERE tau.system IS NULL
+AND ((@search IS NULL OR tau.name LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS)
 OR (@search IS NULL OR tau.[login] LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS)
 OR (@search IS NULL OR tau.email LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS)
 OR (@search IS NULL OR tau.document LIKE '%'+@search+'%' COLLATE SQL_Latin1_General_Cp1251_CI_AS))
