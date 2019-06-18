@@ -34,22 +34,22 @@ sd.Indice
 ,fp.ForPagto
 ,(CASE 
     WHEN pv.id_pedido_venda IS NULL THEN 
-        (CASE WHEN ls.StaCadeira = 'R' THEN cres.Nome COLLATE SQL_Latin1_General_CP1_CI_AI 
-                                        ELSE c.Nome COLLATE SQL_Latin1_General_CP1_CI_AI 
+        (CASE WHEN ls.StaCadeira = 'R' THEN cres.Nome COLLATE SQL_Latin1_General_CP1_CI_AS 
+                                        ELSE c.Nome COLLATE SQL_Latin1_General_CP1_CI_AS 
          END) 
-                                    ELSE cli.ds_nome + ' ' + cli.ds_sobrenome COLLATE SQL_Latin1_General_CP1_CI_AI 
+                                    ELSE cli.ds_nome + ' ' + cli.ds_sobrenome COLLATE SQL_Latin1_General_CP1_CI_AS 
   END) Nome
 ,(CASE 
     WHEN pv.id_pedido_venda IS NULL THEN 
-        (CASE WHEN ls.StaCadeira = 'R' THEN cres.CPF COLLATE SQL_Latin1_General_CP1_CI_AI 
-                                        ELSE c.CPF COLLATE SQL_Latin1_General_CP1_CI_AI 
+        (CASE WHEN ls.StaCadeira = 'R' THEN cres.CPF COLLATE SQL_Latin1_General_CP1_CI_AS 
+                                        ELSE c.CPF COLLATE SQL_Latin1_General_CP1_CI_AS 
          END) 
-                                    ELSE cli.cd_cpf COLLATE SQL_Latin1_General_CP1_CI_AI 
+                                    ELSE cli.cd_cpf COLLATE SQL_Latin1_General_CP1_CI_AS 
   END) CPF
 ,(CASE 
     WHEN pv.id_pedido_venda IS NULL THEN 
-        (CASE WHEN ls.StaCadeira = 'R' THEN cres.DDD COLLATE SQL_Latin1_General_CP1_CI_AI 
-                                        ELSE c.DDD COLLATE SQL_Latin1_General_CP1_CI_AI 
+        (CASE WHEN ls.StaCadeira = 'R' THEN cres.DDD COLLATE SQL_Latin1_General_CP1_CI_AS 
+                                        ELSE c.DDD COLLATE SQL_Latin1_General_CP1_CI_AS 
          END) 
                                     ELSE (CASE WHEN cli.ds_ddd_celular IS NULL OR cli.ds_ddd_celular = '' THEN cli.ds_ddd_telefone ELSE cli.ds_ddd_celular COLLATE SQL_Latin1_General_CP1_CI_AS END) 
   END) DDD
