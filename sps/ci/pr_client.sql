@@ -28,7 +28,7 @@ BEGIN
         SELECT
             @Codigo=c.Codigo
         FROM tabCliente c
-        WHERE lower(c.Nome)=lower(@name) COLLATE SQL_Latin1_General_CP1_CI_AS
+        WHERE lower(c.Nome)=lower(@name) COLLATE SQL_Latin1_General_CP1_CI_AI
     END
 END
 ELSE

@@ -27,6 +27,7 @@ SELECT TOP 1 @id_partner=p.id FROM CI_MIDDLEWAY..[partner] p WHERE p.[key]=@api 
 
 SET @searchText = dbo.RemoveSpecialChars(LTRIM(RTRIM(lower(@search) COLLATE SQL_Latin1_General_Cp1251_CI_AS)))
 
+SET @type = REPLACE(@type,'_without_search','');
 
 IF OBJECT_ID('tempdb.dbo.#aux', 'U') IS NOT NULL
     DROP TABLE #aux; 
