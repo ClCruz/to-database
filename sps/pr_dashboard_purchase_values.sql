@@ -1,4 +1,6 @@
-CREATE PROCEDURE dbo.pr_dashboard_purchase_values (@id_evento INT
+-- exec sp_executesql N'EXEC pr_dashboard_purchase_values @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000)',N'43864',N'',N'2019-07-12',N'20h00',N'all',N'',N''
+
+ALTER PROCEDURE dbo.pr_dashboard_purchase_values (@id_evento INT
         ,@id_apresentacao INT
         ,@date DATETIME
         ,@hour VARCHAR(5)
@@ -20,6 +22,15 @@ AS
 --         ,@periodInit DATETIME = NULL
 --         ,@periodEnd DATETIME = NULL
 
+
+IF @id_apresentacao = 0
+    SET @id_apresentacao = NULL
+
+IF @id_apresentacao = 0
+    SET @id_apresentacao = NULL
+
+IF @id_apresentacao = 0
+    SET @id_apresentacao = NULL
 
 SET NOCOUNT ON;
 
