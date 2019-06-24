@@ -65,6 +65,7 @@ WHERE
     DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
     AND (@date IS NULL OR ap.dt_apresentacao=@date)
     AND e.in_ativo=1
+    AND ap.in_ativo=1
     --AND ds_municipio = @city COLLATE Latin1_general_CI_AI
 GROUP BY 
 h.id_evento

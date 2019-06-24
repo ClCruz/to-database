@@ -67,6 +67,7 @@ WHERE
     DATEADD(minute, (100), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
     AND e.in_ativo=1
     AND b.in_ativo=1
+    AND ap.in_ativo=1
     AND eei.showonline=1
 GROUP BY 
 e.id_evento
@@ -81,7 +82,6 @@ e.id_evento
 ,eei.cardbigimage
 ,eei.imageoriginal
 ,eei.uri
-
 
 UPDATE d
 SET d.outofdate=1

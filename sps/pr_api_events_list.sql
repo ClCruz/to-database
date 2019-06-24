@@ -1,9 +1,11 @@
+-- exec sp_executesql N'EXEC pr_api_seats_list @P1,@P2',N'@P1 nvarchar(4000),@P2 char(1)',N'qp_d46f770a04254154a8406a040d26c106e69b8414eee6486f92b12824b768eb8f',NULL
+
 
 ALTER PROCEDURE dbo.pr_api_events_list (@key VARCHAR(1000), @date DATETIME = NULL)
 
 AS
 
--- DECLARE @key VARCHAR(1000) = 'qp_ab8665e1345545bcb8c53afaaf83d257cf574ed6b0724526aa9f1d156d730fd3'
+-- DECLARE @key VARCHAR(1000) = 'qp_d46f770a04254154a8406a040d26c106e69b8414eee6486f92b12824b768eb8f'
 --         ,@date DATETIME = NULL
 --         -- ,@date DATETIME = '2019-05-31 13:49:19.693'
 
@@ -37,6 +39,7 @@ h.id_evento [id]
 ,FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100,'C', 'pt-br') minAmount
 ,FORMAT(CONVERT(DECIMAL(16,2),eei.maxAmount)/100,'C', 'pt-br') maxAmount
 ,(CASE WHEN eei.changed IS NULL THEN eei.created ELSE eei.changed END) changed
+-- ,eei.minuteBefore
 -- INTO #events
 FROM home h
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON h.id_evento=e.id_evento
@@ -47,11 +50,13 @@ INNER JOIN CI_MIDDLEWAY..quota_partner qp ON qpr.id_quotapartner=qp.id AND qp.[k
 INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
 LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
 WHERE 
-    DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
+    ap.in_ativo=1
     AND e.in_ativo=1
+    AND DATEADD(minute, ((eei.minuteBefore)*-1), CONVERT(VARCHAR(10),ap.dt_apresentacao,121) + ' ' + REPLACE(ap.hr_apresentacao, 'h', ':') + ':00.000')>=GETDATE()
     AND (@date IS NULL OR (eei.changed IS NULL OR eei.changed>=@date))
 GROUP BY 
 h.id_evento
+-- ,eei.minuteBefore
 ,h.ds_evento
 ,h.codPeca
 ,h.ds_nome_teatro

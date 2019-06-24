@@ -66,6 +66,7 @@ WHERE
     AND e.in_ativo=1
     AND b.in_ativo=1
     AND eei.showonline=1
+    AND ap.in_ativo=1
 ORDER BY (CASE WHEN ds_municipio = @city COLLATE SQL_Latin1_General_Cp1251_CI_AS THEN 1
                 WHEN ds_municipio != @city COLLATE SQL_Latin1_General_Cp1251_CI_AS
                      AND es.sg_estado = @state COLLATE SQL_Latin1_General_Cp1251_CI_AS THEN 2
