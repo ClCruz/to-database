@@ -92,13 +92,13 @@ SELECT
         ,@weekdayfull=(SELECT TOP 1 [full] FROM @weekday WHERE id = DATEPART(dw, a.DatApresentacao))
 
 FROM CI_MIDDLEWAY..mw_apresentacao ap
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento
 INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
 INNER JOIN tabPeca p ON e.CodPeca=p.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_produtor pr ON p.id_produtor=pr.id_produtor
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_local_evento le ON e.id_local_evento=le.id_local_evento
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids)
 
 DECLARE @seats INT = 0
         ,@seats_taken_web INT = 0
@@ -119,7 +119,8 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C'
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+WHERE S.TIPOBJETO='C'
 
 SELECT @seats_taken_web=COUNT(*)
 FROM tabSalDetalhe S
@@ -128,10 +129,11 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND pv.in_situacao='F' AND ls.StaCadeira='V'
+WHERE S.TIPOBJETO='C' AND pv.in_situacao='F' AND ls.StaCadeira='V'
 
 SELECT @seats_taken_ticketoffice=COUNT(*)
 FROM tabSalDetalhe S
@@ -140,9 +142,10 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON tosc.id_apresentacao=ap.id_apresentacao AND tosc.Indice=s.Indice AND tosc.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND ls.StaCadeira='V'
+WHERE S.TIPOBJETO='C' AND ls.StaCadeira='V'
 
 SELECT @seats_inprocess=COUNT(*)
 FROM tabSalDetalhe S
@@ -151,10 +154,11 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND pv.in_situacao='P' AND ls.StaCadeira='V'
+WHERE S.TIPOBJETO='C' AND pv.in_situacao='P' AND ls.StaCadeira='V'
 
 
 SELECT @seats_reserved=COUNT(*)
@@ -164,8 +168,9 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND ls.StaCadeira='R'
+WHERE S.TIPOBJETO='C' AND ls.StaCadeira='R'
 
 SELECT @seats_available=COUNT(*)
 FROM tabSalDetalhe S
@@ -174,8 +179,9 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 LEFT JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND ls.StaCadeira IS NULL
+WHERE S.TIPOBJETO='C' AND ls.StaCadeira IS NULL
 
 SELECT @seats_taken_web_paid=COUNT(*)
 FROM tabSalDetalhe S
@@ -184,12 +190,13 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete apb ON ipv.id_apresentacao_bilhete=apb.id_apresentacao_bilhete
 INNER JOIN tabTipBilhete tb ON apb.CodTipBilhete=tb.CodTipBilhete
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND pv.in_situacao='F' AND ls.StaCadeira='V' AND (tb.PerDesconto!=100)
+WHERE S.TIPOBJETO='C' AND pv.in_situacao='F' AND ls.StaCadeira='V' AND (tb.PerDesconto!=100)
 
 
 SELECT @seats_taken_web_free=COUNT(*)
@@ -199,12 +206,13 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete apb ON ipv.id_apresentacao_bilhete=apb.id_apresentacao_bilhete
 INNER JOIN tabTipBilhete tb ON apb.CodTipBilhete=tb.CodTipBilhete
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND pv.in_situacao='F' AND ls.StaCadeira='V' AND (tb.PerDesconto=100)
+WHERE S.TIPOBJETO='C' AND pv.in_situacao='F' AND ls.StaCadeira='V' AND (tb.PerDesconto=100)
 
 SELECT @seats_taken_ticketoffice_paid=COUNT(*)
 FROM tabSalDetalhe S
@@ -213,10 +221,11 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON tosc.id_apresentacao=ap.id_apresentacao AND tosc.Indice=s.Indice AND tosc.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN tabTipBilhete tb ON tosc.id_ticket_type=tb.CodTipBilhete
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND ls.StaCadeira='V' AND (tb.PerDesconto!=100)
+WHERE S.TIPOBJETO='C' AND ls.StaCadeira='V' AND (tb.PerDesconto!=100)
 
 SELECT @seats_taken_ticketoffice_free=COUNT(*)
 FROM tabSalDetalhe S
@@ -225,10 +234,11 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON tosc.id_apresentacao=ap.id_apresentacao AND tosc.Indice=s.Indice AND tosc.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN tabTipBilhete tb ON tosc.id_ticket_type=tb.CodTipBilhete
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND S.TIPOBJETO='C' AND ls.StaCadeira='V' AND (tb.PerDesconto=100)
+WHERE S.TIPOBJETO='C' AND ls.StaCadeira='V' AND (tb.PerDesconto=100)
 
 -- SELECT @seats seats
 --         ,@seats_taken_web seats_taken_web
@@ -280,10 +290,11 @@ INNER JOIN tabSetor se ON se.CodSala=a.CodSala
 INNER JOIN tabSalDetalhe sd ON sd.Indice=l.Indice AND sd.CodSala=a.CodSala AND sd.CodSetor=se.CodSetor
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND ap.CodApresentacao=a.CodApresentacao
+INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
 LEFT JOIN tabLugSala ls ON ls.INDICE = l.indice AND ls.CODAPRESENTACAO = l.CODAPRESENTACAO AND ls.CodTipBilhete=l.CodTipBilhete
 LEFT JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=l.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 LEFT JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
-WHERE ap.id_apresentacao IN (SELECT ID FROM #ids) AND sd.TipObjeto='C'
+WHERE sd.TipObjeto='C'
 
 SELECT 
         ra.CodSala

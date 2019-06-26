@@ -2,6 +2,7 @@
 ALTER PROCEDURE dbo.pr_admin_event_select (@id_user UNIQUEIDENTIFIER, @id_base INT)
 
 AS
+-- DECLARE @id_user UNIQUEIDENTIFIER = 'F2177E5E-F727-4906-948D-4EEA9B9BBD0E', @id_base INT = 213
 
 SET NOCOUNT ON;
 
@@ -33,4 +34,4 @@ LEFT JOIN CI_MIDDLEWAY..mw_municipio m ON m.id_municipio=le.id_municipio
 LEFT JOIN CI_MIDDLEWAY..mw_estado es ON m.id_estado=es.id_estado
 LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
 WHERE e.id_base=@id_base
-ORDER by e.ds_evento
+ORDER by LTRIM(e.ds_evento)
