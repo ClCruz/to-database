@@ -2,6 +2,7 @@
 -- exec sp_executesql N'EXEC pr_dashboard_purchase_values @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000)',N'43864',N'',N'2019-07-12',N'20h00',N'all',N'',N''
 -- exec sp_executesql N'EXEC pr_dashboard_purchase_values @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000)',N'43864',N'',N'2019-07-12',N'20h00',N'all',N'',N''
 --exec sp_executesql N'EXEC pr_dashboard_purchase_values @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000)',N'43864',N'',N'2019-07-12',N'20h00',N'seven',N'',N''
+---exec sp_executesql N'EXEC pr_dashboard_purchase_values @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000)',N'32955',N'',N'2019-06-28',N'21h00',N'today',N'',N''
 
 ALTER PROCEDURE dbo.pr_dashboard_purchase_values (@id_evento INT
         ,@id_apresentacao INT
@@ -12,6 +13,14 @@ ALTER PROCEDURE dbo.pr_dashboard_purchase_values (@id_evento INT
         ,@periodEnd DATETIME)
 
 AS
+
+-- DECLARE @id_evento INT = 32955
+--         ,@id_apresentacao INT = NULL
+--         ,@date DATETIME = '2019-06-28'
+--         ,@hour VARCHAR(5) = '21h00'
+--         ,@periodtype VARCHAR(100) = 'today' --- all, thirty, fifteen, seven, yesterday, today, custom
+--         ,@periodInit DATETIME = NULL
+--         ,@periodEnd DATETIME = NULL
 
 -- DECLARE @id_evento INT = 43864
 --         ,@id_apresentacao INT = NULL
@@ -332,10 +341,10 @@ DECLARE @total_sold INT
         ,@per DECIMAL(12,2)
         ,@perAmount DECIMAL(12,2)
 
-SELECT @total_sold = ISNULL((SELECT total_sold FROM #resultFinal),0)
-        ,@total_soldamount = ISNULL((SELECT total_sold FROM #resultFinal),0)
-        ,@total_soldPast = ISNULL((SELECT total_sold FROM #resultFinalPast),0)
-        ,@total_soldamountPast = ISNULL((SELECT total_sold FROM #resultFinalPast),0)
+SELECT @total_sold = ISNULL((SELECT TOP 1 total_sold FROM #resultFinal),0)
+        ,@total_soldamount = ISNULL((SELECT TOP 1 total_sold FROM #resultFinal),0)
+        ,@total_soldPast = ISNULL((SELECT TOP 1 total_sold FROM #resultFinalPast),0)
+        ,@total_soldamountPast = ISNULL((SELECT TOP 1 total_sold FROM #resultFinalPast),0)
 
 IF (@total_soldPast = 0)
 BEGIN
@@ -379,7 +388,7 @@ BEGIN
     SET @perAmount = ABS(@perAmount)
 END
 
-SELECT total_sold
+SELECT TOP 1 total_sold
         ,total_soldamount
         ,averageticket
         ,total_soldamountformatted
