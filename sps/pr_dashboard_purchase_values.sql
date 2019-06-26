@@ -3,6 +3,8 @@
 -- exec sp_executesql N'EXEC pr_dashboard_purchase_values @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000)',N'43864',N'',N'2019-07-12',N'20h00',N'all',N'',N''
 --exec sp_executesql N'EXEC pr_dashboard_purchase_values @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000)',N'43864',N'',N'2019-07-12',N'20h00',N'seven',N'',N''
 ---exec sp_executesql N'EXEC pr_dashboard_purchase_values @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000)',N'32955',N'',N'2019-06-28',N'21h00',N'today',N'',N''
+--exec sp_executesql N'EXEC pr_dashboard_purchase_values @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000)',N'43864',N'',N'2019-07-12',N'20h00',N'',N'2019-06-26',N'2019-06-28'
+
 
 ALTER PROCEDURE dbo.pr_dashboard_purchase_values (@id_evento INT
         ,@id_apresentacao INT
@@ -26,9 +28,9 @@ AS
 --         ,@id_apresentacao INT = NULL
 --         ,@date DATETIME = '2019-07-12'
 --         ,@hour VARCHAR(5) = '20h00'
---         ,@periodtype VARCHAR(100) = 'seven' --- all, thirty, fifteen, seven, yesterday, today, custom
---         ,@periodInit DATETIME = NULL
---         ,@periodEnd DATETIME = NULL
+--         ,@periodtype VARCHAR(100) = '' --- all, thirty, fifteen, seven, yesterday, today, custom
+--         ,@periodInit DATETIME = '2019-06-26'
+--         ,@periodEnd DATETIME = '2019-06-29'
 
 -- SELECT @id_evento
 --         ,@id_apresentacao
@@ -100,8 +102,20 @@ BEGIN
     SET @periodEndPast = CONVERT(VARCHAR(10),DATEADD(day, 0, GETDATE()),120)
 END
 
+
+IF @periodtype = ''
+BEGIN
+    DECLARE @diff INT
+    SET @diff = DATEDIFF(day, @periodInit, @periodEnd)
+
+
+    SET @periodInitPast = CONVERT(VARCHAR(10),DATEADD(day, @diff*-1, @periodInit),120)
+    SET @periodEndPast = CONVERT(VARCHAR(10),DATEADD(day, 0, @periodInit),120)
+-- select @diff
 -- select @periodInit,@periodEnd
 -- select @periodInitPast,@periodEndPast
+END
+
 -- return;
 
 IF OBJECT_ID('tempdb.dbo.#ids', 'U') IS NOT NULL
