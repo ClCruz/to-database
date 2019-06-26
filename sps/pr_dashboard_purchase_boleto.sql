@@ -111,10 +111,21 @@ SELECT
     @awaiting_payment = ISNULL((SELECT total FROM #result WHERE in_situacao='P'),0)
     ,@expired_payment = ISNULL((SELECT total FROM #result WHERE in_situacao='E'),0)
     ,@ok_payment = ISNULL((SELECT total FROM #result WHERE in_situacao='F'),0)
-    
 
+IF (CONVERT(DECIMAL(12,2),@expired_payment)+CONVERT(DECIMAL(12,2),@ok_payment)) = 0
+BEGIN
 SELECT @awaiting_payment awaiting_payment
         ,@expired_payment expired_payment
         ,@ok_payment ok_payment
-        ,CONVERT(DECIMAL(12,2),@expired_payment)/(CONVERT(DECIMAL(12,2),@expired_payment)+CONVERT(DECIMAL(12,2),@ok_payment)) ok_conversion
-        ,FORMAT(CONVERT(DECIMAL(12,2),CONVERT(DECIMAL(12,2),@expired_payment)/(CONVERT(DECIMAL(12,2),@expired_payment)+CONVERT(DECIMAL(12,2),@ok_payment))*100), 'N', 'pt-br') ok_conversionformatted
+        ,0 ok_conversion
+        ,FORMAT(0, 'N', 'pt-br') ok_conversionformatted
+END
+ELSE
+BEGIN
+    SELECT @awaiting_payment awaiting_payment
+            ,@expired_payment expired_payment
+            ,@ok_payment ok_payment
+            ,CONVERT(DECIMAL(12,2),@expired_payment)/(CONVERT(DECIMAL(12,2),@expired_payment)+CONVERT(DECIMAL(12,2),@ok_payment)) ok_conversion
+            ,FORMAT(CONVERT(DECIMAL(12,2),CONVERT(DECIMAL(12,2),@expired_payment)/(CONVERT(DECIMAL(12,2),@expired_payment)+CONVERT(DECIMAL(12,2),@ok_payment))*100), 'N', 'pt-br') ok_conversionformatted
+END
+
