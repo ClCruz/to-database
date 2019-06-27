@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_dashboard_purchase_timetable (@id_evento INT
+ALTER PROCEDURE dbo.pr_dashboard_purchase_timetable (@id_evento INT
         ,@id_apresentacao INT
         ,@date DATETIME
         ,@hour VARCHAR(5)
@@ -150,7 +150,7 @@ ra.web
 ,DATEPART(HOUR, ra.DatVenda) hour
 ,COUNT(*) sold
 FROM #resultAux ra
-WHERE ra.isok=1 AND ra.inprocess=0
+WHERE ra.isok=1-- AND ra.inprocess=0
 GROUP BY ra.web, DATEPART(HOUR, ra.DatVenda)
 ORDER BY 
 DATEPART(HOUR, ra.DatVenda)

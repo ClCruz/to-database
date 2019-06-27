@@ -188,7 +188,7 @@ SELECT
 ,ra.TipForPagto [name]
 ,COUNT(*) sold
 FROM #resultAux ra
-WHERE ra.isok=1 AND ra.inprocess=0
+WHERE ra.isok=1 --AND ra.inprocess=0
 GROUP BY ra.TipForPagto
 ORDER BY COUNT(*)
 
@@ -199,7 +199,7 @@ SELECT
 ,ra.TipForPagto [name]
 ,COUNT(*) sold
 FROM #resultAux ra
-WHERE ra.isok=1 AND ra.inprocess=0
+WHERE ra.isok=1 --AND ra.inprocess=0
 AND ra.web=1
 GROUP BY ra.TipForPagto
 ORDER BY COUNT(*)
@@ -211,7 +211,7 @@ SELECT
 ,ra.TipForPagto [name]
 ,COUNT(*) sold
 FROM #resultAux ra
-WHERE ra.isok=1 AND ra.inprocess=0
+WHERE ra.isok=1 --AND ra.inprocess=0
 AND ra.web=0
 GROUP BY ra.TipForPagto
 ORDER BY COUNT(*)

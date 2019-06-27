@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_dashboard_purchase_channel (@id_evento INT
+ALTER PROCEDURE dbo.pr_dashboard_purchase_channel (@id_evento INT
         ,@id_apresentacao INT
         ,@date DATETIME
         ,@hour VARCHAR(5)
@@ -149,7 +149,7 @@ SELECT
 ra.web
 ,COUNT(*) sold
 FROM #resultAux ra
-WHERE ra.isok=1 AND ra.inprocess=0
+WHERE ra.isok=1-- AND ra.inprocess=0
 GROUP BY ra.web
 ORDER BY 
 ra.web
