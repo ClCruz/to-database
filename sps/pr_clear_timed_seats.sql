@@ -2,6 +2,7 @@ ALTER PROCEDURE dbo.pr_clear_timed_seats
 
 AS
 
+SET NOCOUNT ON;
 
 IF OBJECT_ID('tempdb.dbo.#bases', 'U') IS NOT NULL
     DROP TABLE #bases; 
@@ -41,7 +42,7 @@ BEGIN
     SELECT TOP 1 @currentBase=id_base FROM #bases WHERE done=0 ORDER BY id_base
     SELECT TOP 1 @db_name=b.ds_nome_base_sql FROM CI_MIDDLEWAY..mw_base b WHERE b.id_base=@currentBase;
 
-    print @db_name
+    -- print @db_name
     SET @toExec=''
     SET @toExec = 'INSERT INTO #execsell (id_session, Indice, CodApresentacao, hasReservation, hasReservationOnTO, id_base) '
     SET @toExec = @toExec+' SELECT DISTINCT '
@@ -54,7 +55,7 @@ BEGIN
     SET @toExec = @toExec+' FROM ['+@db_name+']..tabLugSala ls '
     SET @toExec = @toExec+' WHERE StaCadeira=''T'' '
 
-    print @toExec
+    -- print @toExec
     exec sp_executesql @toExec
     
     UPDATE #bases SET done=1 WHERE id_base=@currentBase;

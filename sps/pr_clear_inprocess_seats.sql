@@ -2,6 +2,8 @@ ALTER PROCEDURE dbo.pr_clear_inprocess_seats
 
 AS
 
+SET NOCOUNT ON;
+
 IF OBJECT_ID('tempdb.dbo.#bases', 'U') IS NOT NULL
     DROP TABLE #bases; 
 
