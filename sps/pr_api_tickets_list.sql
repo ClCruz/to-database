@@ -3,7 +3,7 @@ ALTER PROCEDURE dbo.pr_api_tickets_list (@key VARCHAR(1000), @date DATETIME = NU
 
 AS
 
--- DECLARE @key VARCHAR(1000) = 'qp_ab8665e1345545bcb8c53afaaf83d257cf574ed6b0724526aa9f1d156d730fd3'
+-- DECLARE @key VARCHAR(1000) = 'qp_d46f770a04254154a8406a040d26c106e69b8414eee6486f92b12824b768eb8f'
 
 SET NOCOUNT ON;
 
@@ -160,9 +160,9 @@ id_event
 ,sectorDiscount
 ,seatName
 ,id_seat
-,(CASE WHEN PerDesconto = 0 AND (vl_preco_fixo = 0 OR vl_preco_fixo IS NULL ) THEN price
+,CONVERT(INT,(CASE WHEN PerDesconto = 0 AND (vl_preco_fixo = 0 OR vl_preco_fixo IS NULL ) THEN price
         WHEN PerDesconto <> 0 THEN price-(price*(PerDesconto/100))
-        WHEN PerDesconto = 0 AND vl_preco_fixo IS NOT NULL AND vl_preco_fixo <> 0 THEN vl_preco_fixo END) price
+        WHEN PerDesconto = 0 AND vl_preco_fixo IS NOT NULL AND vl_preco_fixo <> 0 THEN vl_preco_fixo END)*100) price
 ,allowticketoffice
 ,allowweb
 ,PerDesconto
