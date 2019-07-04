@@ -17,7 +17,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	declare @codpeca smallint,
-			@nompeca varchar(35),
+			@nompeca varchar(4000),
 			@stapeca char(1),
 			@in_vende_site char(1),
 			@id_base int,

@@ -23,6 +23,7 @@ DECLARE @domain VARCHAR(1000)
         ,@apikey VARCHAR(200) = ''
         ,@videoURI_MP4 VARCHAR(1000) = ''
         ,@videoURI_WEBM VARCHAR(1000) = ''
+        ,@fb_appid VARCHAR(1000) = ''
 
         ,@json_ga VARCHAR(100)
         ,@json_meta_description VARCHAR(MAX)
@@ -41,6 +42,7 @@ SELECT
     ,@name = p.name
     ,@uniquename = p.uniquename
     ,@apikey=p.[key]
+    ,@fb_appid=p.fb_appid
 FROM CI_MIDDLEWAY..[partner] p
 WHERE 
 p.id=@id
@@ -89,3 +91,4 @@ SELECT
     ,@scss_colors_primary scss_colors_primary
     ,@scss_colors_secondary scss_colors_secondary
     ,@apikey apikey
+    ,@fb_appid fb_appid

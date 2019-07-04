@@ -18,8 +18,8 @@ FROM CI_MIDDLEWAY..quota_partner qp
 WHERE qp.[key]=@key
 
 
-INSERT INTO CI_MIDDLEWAY..api_code (created, code, id_partner)
-SELECT GETDATE(), NULL, @id_partner
+INSERT INTO CI_MIDDLEWAY..api_code (created, code, id_partner, hasSell)
+SELECT GETDATE(), NULL, @id_partner, 0
 
 SELECT @id = @@IDENTITY
 
@@ -37,7 +37,3 @@ UPDATE CI_MIDDLEWAY..api_code SET code=@code WHERE id=@id
 
 
 SELECT @code code
-
--- SET @code = REPLACE(newid(),'-','')+REPLACE(newid(),'-','')+REPLACE(newid(),'-','')
-
--- SELECT @code
