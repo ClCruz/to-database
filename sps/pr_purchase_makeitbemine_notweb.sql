@@ -1,4 +1,4 @@
-ALTER PROCEDURE dbo.pr_purchase_makeitbemine (@session VARCHAR(1000), @id_client INT)
+CREATE PROCEDURE dbo.pr_purchase_makeitbemine_notweb (@session VARCHAR(1000), @id_client INT)
 
 AS
 
@@ -13,15 +13,10 @@ DECLARE @id_client_isok BIT = 0
 IF OBJECT_ID('tempdb.dbo.#bases', 'U') IS NOT NULL
     DROP TABLE #bases; 
 
-SELECT TOP 1 @id_client_isok=1 FROM CI_MIDDLEWAY..mw_cliente WHERE id_cliente=@id_client
-
 SELECT TOP 1 @session_isok=1 FROM CI_MIDDLEWAY..mw_reserva WHERE id_session=@session
 
 
-select @id_client_isok,@session_isok
-return
-
-IF @id_client_isok = 1 AND @session_isok = 1
+IF @session_isok = 1
 BEGIN
     SELECT DISTINCT e.id_base, 0 as done
     INTO #bases

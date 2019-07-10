@@ -1,9 +1,9 @@
 
--- ALTER PROCEDURE dbo.pr_api_seats_list (@key VARCHAR(1000), @date DATETIME = NULL)
+ALTER PROCEDURE dbo.pr_api_seats_list (@key VARCHAR(1000), @date DATETIME = NULL)
 
--- AS
+AS
 
-DECLARE @key VARCHAR(1000) = 'qp_d46f770a04254154a8406a040d26c106e69b8414eee6486f92b12824b768eb8f'
+-- DECLARE @key VARCHAR(1000) = 'qp_d46f770a04254154a8406a040d26c106e69b8414eee6486f92b12824b768eb8f'
 
 SET NOCOUNT ON;
 
@@ -112,6 +112,7 @@ BEGIN
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabSalDetalhe sd ON sd.CodSala=a.CodSala AND sd.Indice=qpr.indice '
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabSetor se ON a.CodSala=se.CodSala AND sd.CodSetor=se.CodSetor '
     SET @toExec = @toExec + ' INNER JOIN '+@db_name+'.dbo.tabLugSala ls ON a.CodApresentacao=ls.CodApresentacao AND sd.Indice=ls.Indice '
+    SET @toExec = @toExec + ' WHERE ls.StaCadeira=''R'' '
 
     -- select @toExec
     exec sp_executesql @toExec

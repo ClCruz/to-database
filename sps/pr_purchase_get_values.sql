@@ -6,13 +6,13 @@
 -- select * from bringressos..tabtipbilhete
 -- -- DECLARE @id_client INT = 30
 
-ALTER PROCEDURE dbo.pr_purchase_get_values (@id_client INT)
+ALTER PROCEDURE dbo.pr_purchase_get_values (@id_client INT, @id_session VARCHAR(100) = NULL)
 
 AS
 
--- DECLARE @id_client INT = 83
+-- DECLARE @id_client INT = 19344
 
-DECLARE @id_session VARCHAR(100)
+-- DECLARE @id_session VARCHAR(100)
 
 SET NOCOUNT ON;
 
@@ -94,10 +94,12 @@ CREATE TABLE #current (
     , purchasebythiscpf INT
     )
 
-SELECT @id_session = csc.id_session
-FROM CI_MIDDLEWAY..current_session_client csc
-WHERE csc.id_cliente = @id_client
-
+IF @id_session IS NULL OR @id_session = ''
+BEGIN
+    SELECT @id_session = csc.id_session
+    FROM CI_MIDDLEWAY..current_session_client csc
+    WHERE csc.id_cliente = @id_client
+END
 -- SET @id_session = 'thslkr39i6nhon6qgbgs5bnoc2'
 INSERT INTO #current
 EXEC pr_purchase_get_current @id_session;

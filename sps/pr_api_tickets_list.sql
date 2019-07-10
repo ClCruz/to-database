@@ -1,3 +1,4 @@
+-- EXEC CI_MIDDLEWAY..pr_api_tickets_list 'qp_d46f770a04254154a8406a040d26c106e69b8414eee6486f92b12824b768eb8f', NULL;
 
 ALTER PROCEDURE dbo.pr_api_tickets_list (@key VARCHAR(1000), @date DATETIME = NULL)
 

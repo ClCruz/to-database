@@ -35,7 +35,9 @@ c.Nome
 ,togr.transactionKey
 ,(CASE WHEN togr.transactionKey IS NULL THEN 0 ELSE 1 END) refundInGateway
 ,ls.CodVenda
-,(CASE WHEN tosh.id IS NULL THEN 'web' ELSE 'bilheteria' END) purchaseType
+,(CASE WHEN tosh.id IS NULL AND ls.id_quotapartner IS NULL THEN 'web' 
+    WHEN tosh.id IS NULL AND ls.id_quotapartner IS NOT NULL THEN 'api'
+  ELSE 'bilheteria' END) purchaseType
 FROM tabLugSala ls
 INNER JOIN tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
 INNER JOIN tabPeca p ON a.CodPeca=p.CodPeca
