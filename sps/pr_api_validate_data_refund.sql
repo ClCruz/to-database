@@ -18,6 +18,7 @@ SET NOCOUNT ON;
 
 DECLARE @eventOK BIT = 0
         ,@presentationOK BIT = 0
+        ,@presentationPast BIT = 0
         ,@seatOK BIT = 1
         ,@codVendaOK BIT = 0
         ,@id_base INT
@@ -27,6 +28,7 @@ DECLARE @eventOK BIT = 0
 SELECT @eventOK = 1 FROM CI_MIDDLEWAY..mw_evento WHERE id_evento=@id_event
 
 SELECT @presentationOK = 1 FROM CI_MIDDLEWAY..mw_apresentacao WHERE id_apresentacao=@id_presentation-- AND dt_apresentacao>=GETDATE()
+SELECT @presentationPast = 1 FROM CI_MIDDLEWAY..mw_apresentacao WHERE id_apresentacao=@id_presentation AND dt_apresentacao>GETDATE()
 
 IF OBJECT_ID('tempdb.dbo.#data_bases', 'U') IS NOT NULL
     DROP TABLE #data_bases; 
@@ -102,4 +104,5 @@ END
 SELECT @seatOK seatOK
         ,@eventOK eventOK
         ,@presentationOK presentationOK
+        ,@presentationPast presentationPast
         ,@codVendaOK codVendaOK
