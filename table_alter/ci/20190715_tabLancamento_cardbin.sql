@@ -1,0 +1,1 @@
+ALTER TABLE dbo.tabLancamento ADD cardbin varchar(10) NULL

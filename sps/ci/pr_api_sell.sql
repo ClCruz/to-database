@@ -3,7 +3,8 @@ ALTER PROCEDURE pr_api_sell (@id_session VARCHAR(100)
          ,@seats VARCHAR(MAX)
         ,@id_payment INT
         ,@codCliente INT = NULL
-        ,@qpcode VARCHAR(1000) = NULL)
+        ,@qpcode VARCHAR(1000) = NULL
+        ,@bin VARCHAR(10) = NULL)
 
 AS
 
@@ -142,7 +143,7 @@ AND e.id_base=@id_base
 DECLARE @NumLancamento INT
 SELECT @NumLancamento = (SELECT COALESCE(MAX(NumLancamento),0)+1 FROM tabLancamento)
 
-INSERT INTO tabLancamento (NumLancamento,CodTipBilhete,CodTipLancamento,CodApresentacao,Indice,CodUsuario,CodForPagto,CodCaixa,DatMovimento,QtdBilhete,ValPagto, DatVenda, CodMovimento)
+INSERT INTO tabLancamento (NumLancamento,CodTipBilhete,CodTipLancamento,CodApresentacao,Indice,CodUsuario,CodForPagto,CodCaixa,DatMovimento,QtdBilhete,ValPagto, DatVenda, CodMovimento, cardbin)
     SELECT  DISTINCT
         @NumLancamento
         ,ab.CodTipBilhete
@@ -157,6 +158,7 @@ INSERT INTO tabLancamento (NumLancamento,CodTipBilhete,CodTipLancamento,CodApres
         ,CONVERT(DECIMAL(18,2),db.price)/100
         ,@now
         ,@codMovimento
+        ,@bin
     FROM CI_MIDDLEWAY..mw_reserva r
     INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON r.id_apresentacao=ap.id_apresentacao
     INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
