@@ -4,31 +4,14 @@
 ALTER PROCEDURE dbo.pr_report_partnersale (@comission FLOAT
         ,@dtinit VARCHAR(10)
         ,@dtend VARCHAR(10)
-        ,@uniquename VARCHAR(100))
+        ,@id_quotapartner UNIQUEIDENTIFIER)
 
 AS
 
--- relatorio
--- data e hora da venda
--- |evento
--- |data/hora
--- |valor da venda
--- |forma de pagamento
--- |% a ser exibida
--- |valor da venda * %
--- |(comissão)dados do cliente
--- | (clicado)detalhe da compra
--- | (clicado) - tipo de bilhete
--- , parcelado, etc
----total de venda, total de comissão, % a ser exibida
-
--- SET @uniquename = 'sazarte'
 -- DECLARE @comission FLOAT = 7.89
 --         ,@dtinit VARCHAR(10) = '2019-01-01'
---         ,@dtend VARCHAR(10) = '2019-05-20'
---         ,@uniquename VARCHAR(100) = 'tixsme'
-        -- ,@uniquename VARCHAR(100) = 'localhost'
--- select * from CI_MIDDLEWAY..mw_base order by ds_nome_base_sql
+--         ,@dtend VARCHAR(10) = '2019-07-31'
+--         ,@id_quotapartner UNIQUEIDENTIFIER = 'bfbf240a-a026-4ce4-945b-575098046c98'
 
 SET @dtinit = @dtinit + ' 00:00:00';
 SET @dtend = @dtend + ' 23:59:59';
@@ -39,44 +22,40 @@ IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
     DROP TABLE #result; 
 
 SELECT DISTINCT
-        pv.id_pedido_venda
-        ,CONVERT(VARCHAR(10),pv.dt_pedido_venda,103) dt_pedido_venda
-        ,e.ds_evento
-        ,eei.uri
-        ,CONVERT(VARCHAR(10),ap.dt_apresentacao,103) dt_apresentacao
-        ,ap.hr_apresentacao
-        ,pv.vl_total_pedido_venda
-        ,REPLACE(mp.ds_meio_pagamento, 'Pagar.me ','') ds_meio_pagamento
+        ls.CodVenda
+        ,p.NomPeca
+        ,CONVERT(VARCHAR(10),l.DatVenda,103) DatVenda
+        ,CONVERT(VARCHAR(10),a.DatApresentacao,103) DatApresentacao
+        ,a.HorSessao
+        ,SUM(l.ValPagto) vl_total_pedido_venda
+        ,tfp.TipForPagto
+        ,CONVERT(DECIMAL(18,2),(ROUND(CONVERT(DECIMAL(18,4),SUM(l.ValPagto))*(@comission)/100,2))) comission_amount
         ,@comission comission
-        ,CONVERT(DECIMAL(18,2),(ROUND(CONVERT(DECIMAL(18,4),pv.vl_total_pedido_venda)*(@comission)/100,2))) comission_amount
-        ,c.ds_nome + ' ' + c.ds_sobrenome [client_name]
-        ,c.cd_cpf
-        ,c.cd_email_login
-        ,CONVERT(VARCHAR(10),c.dt_nascimento,103) dt_nascimento
-        -- ,ab.ds_tipo_bilhete
-        ,pv.nr_parcelas_pgto
-        ,(CASE WHEN pv.nr_parcelas_pgto > 1 THEN 1 ELSE 0 END) isInstallment
-        ,h.host
-        ,b.ds_nome_base_sql
-        -- ,dbo.fnc_checkdomain(h.host,b.ds_nome_base_sql)
+        ,cli.Nome
+        ,cli.EMail
+        ,cli.CPF
 INTO #result
-FROM CI_MIDDLEWAY..mw_pedido_venda pv
-INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON pv.id_pedido_venda=ipv.id_pedido_venda
-INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON ipv.id_apresentacao=ap.id_apresentacao
--- INNER JOIN CI_MIDDLEWAY..mw_apresentacao_bilhete ab ON ipv.id_apresentacao_bilhete=ab.id_apresentacao_bilhete AND ap.id_apresentacao=ab.id_apresentacao
-INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento
-INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
-INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
-INNER JOIN CI_MIDDLEWAY..mw_meio_pagamento mp ON pv.id_meio_pagamento=mp.id_meio_pagamento
-INNER JOIN CI_MIDDLEWAY..mw_cliente c ON pv.id_cliente=c.id_cliente
-LEFT JOIN CI_MIDDLEWAY..order_host oh ON oh.id_pedido_venda=pv.id_pedido_venda AND oh.indice=ipv.Indice
-LEFT JOIN CI_MIDDLEWAY..host h ON oh.id_host=h.id
-WHERE pv.in_situacao='F'
-AND pv.dt_pedido_venda BETWEEN @dtinit AND @dtend
-AND h.host=@uniquename
-AND dbo.fnc_checkdomain(h.host,b.ds_nome_base_sql)=0
-ORDER BY pv.id_pedido_venda DESC
--- RETURN;
+FROM ci_localhost..tabLugSala ls
+INNER JOIN ci_localhost..tabApresentacao a ON ls.CodApresentacao=a.CodApresentacao
+INNER JOIN ci_localhost..tabPeca p ON a.CodPeca=p.CodPeca
+INNER JOIN ci_localhost..tabLancamento l ON ls.CodApresentacao=l.CodApresentacao AND ls.Indice=l.Indice
+INNER JOIN ci_localhost..tabHisCliente hc ON hc.CodApresentacao=ls.CodApresentacao AND hc.Indice=ls.Indice AND l.NumLancamento=hc.NumLancamento
+INNER JOIN ci_localhost..tabCliente cli ON hc.Codigo=cli.Codigo
+INNER JOIN ci_localhost..tabForPagamento fp ON l.CodForPagto=fp.CodForPagto
+INNER JOIN ci_localhost..tabTipForPagamento tfp ON fp.CodTipForPagto=tfp.CodTipForPagto
+WHERE ls.id_quotapartner=@id_quotapartner
+AND ls.StaCadeira='V'
+GROUP BY 
+        ls.CodVenda
+        ,p.NomPeca
+        ,CONVERT(VARCHAR(10),l.DatVenda,103)
+        ,CONVERT(VARCHAR(10),a.DatApresentacao,103)
+        ,a.HorSessao
+        ,tfp.TipForPagto
+        ,cli.Nome
+        ,cli.EMail
+        ,cli.CPF
+
 DECLARE @total DECIMAL(18,2) = 0
         ,@total_comission DECIMAL(18,2) = 0
 
@@ -86,28 +65,21 @@ SELECT @total_comission=SUM(r.comission_amount) FROM #result r
 
 
 SELECT 
-r.id_pedido_venda
-,@total total
-,FORMAT(CONVERT(DECIMAL(18,2),(@total)), 'N', 'pt-br') total_formatted
-,@total_comission total_comission
-,FORMAT(CONVERT(DECIMAL(18,2),(@total_comission)), 'N', 'pt-br') total_comission_formatted
-,r.dt_pedido_venda
-,r.ds_evento
-,r.uri
-,r.dt_apresentacao
-,r.hr_apresentacao
+r.CodVenda
+,r.NomPeca
+,r.DatVenda
+,r.DatApresentacao
+,r.HorSessao
 ,r.vl_total_pedido_venda
-,r.ds_meio_pagamento
-,r.comission
+,r.TipForPagto
 ,r.comission_amount
+,r.comission
+,r.Nome
+,r.EMail
+,r.CPF
+,FORMAT(CONVERT(DECIMAL(18,2),(@total)), 'N', 'pt-br') total_formatted
+,FORMAT(CONVERT(DECIMAL(18,2),(@total_comission)), 'N', 'pt-br') total_comission_formatted
+,@total total
+,@total_comission total_comission
 ,FORMAT(CONVERT(DECIMAL(18,2),r.comission_amount), 'N', 'pt-br') comission_amount_formatted
-,r.[client_name]
-,r.cd_cpf
-,r.cd_email_login
-,r.dt_nascimento
--- ,r.ds_tipo_bilhete
-,r.nr_parcelas_pgto
-,r.isInstallment
-,r.host
-,r.ds_nome_base_sql
 FROM #result r

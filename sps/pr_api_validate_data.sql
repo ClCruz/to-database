@@ -6,10 +6,10 @@ CREATE PROCEDURE dbo.pr_api_validate_data (@id_event INT
 
 AS
 
--- DECLARE @id_event INT = 43879
---         ,@id_presentation INT = 179598
---         ,@seats VARCHAR(MAX) = '78#1|74#7'
---         ,@key VARCHAR(1000) = 'qp_d46f770a04254154a8406a040d26c106e69b8414eee6486f92b12824b768eb8f'
+-- DECLARE @id_event INT = 43880
+--         ,@id_presentation INT = 179689
+--         ,@seats VARCHAR(MAX) = '94#1|95#7'
+--         ,@key VARCHAR(1000) = 'qp_8abe913f0970473fa59a6aac1cfe4736ecc59d6b276d496ba9ab2ff698cecf53'
 
 SET NOCOUNT ON;
 
