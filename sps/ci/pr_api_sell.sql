@@ -4,7 +4,8 @@ ALTER PROCEDURE pr_api_sell (@id_session VARCHAR(100)
         ,@id_payment INT
         ,@codCliente INT = NULL
         ,@qpcode VARCHAR(1000) = NULL
-        ,@bin VARCHAR(10) = NULL)
+        ,@bin VARCHAR(10) = NULL
+        ,@date DATETIME = NULL)
 
 AS
 
@@ -57,6 +58,11 @@ INSERT INTO #seats (id, tickettype)
 DECLARE @id_quotapartner UNIQUEIDENTIFIER
 
 SELECT @id_quotapartner = qp.id FROM CI_MIDDLEWAY..quota_partner qp WHERE qp.[key]=@qpcode
+
+IF @date IS NULL OR @date = '1900-01-01'
+BEGIN
+    SET @date = GETDATE()
+END
 
 BEGIN TRY
 
@@ -156,7 +162,7 @@ INSERT INTO tabLancamento (NumLancamento,CodTipBilhete,CodTipLancamento,CodApres
         ,CONVERT(SMALLDATETIME,CONVERT(VARCHAR(8), @now,112) + ' ' + LEFT(CONVERT(VARCHAR, @now,114),8))
         ,1
         ,CONVERT(DECIMAL(18,2),db.price)/100
-        ,@now
+        ,@date
         ,@codMovimento
         ,@bin
     FROM CI_MIDDLEWAY..mw_reserva r
@@ -254,7 +260,7 @@ h.indice,@codVenda
 ,SUBSTRING(p.Diretor,1,50),SUBSTRING(s.NomRedSala,1,6),SUBSTRING(tb.TipBilhete,1,20)
 ,(CONVERT(DECIMAL(18,2),db.price)/100),@codCaixa,SUBSTRING('api', 0, 10)
 ,SUBSTRING(p.NomResPeca,0,6),p.CenPeca,SUBSTRING(se.NomSetor,1,26)
-,@now, 1,tb.PerDesconto
+,@date, 1,tb.PerDesconto
 ,0,s.CodSala,(SELECT TOP 1 ep.id_cartao_patrocinado FROM CI_MIDDLEWAY..mw_evento_patrocinado ep WHERE ep.CodPeca=a.CodPeca AND ep.id_base=@id_base AND convert(varchar, a.datapresentacao,112) between convert(varchar, ep.dt_inicio,112) and convert(varchar, ep.dt_fim ,112))-- ep.id_cartao_patrocinado
 ,@NumeroBIN
 FROM #helper h
