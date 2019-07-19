@@ -6,9 +6,10 @@ ALTER PROCEDURE dbo.pr_print_ticket(@codVenda VARCHAR(10)
 
 AS
 
--- DECLARE @codVenda VARCHAR(10) = 'D64ICCCAHG'
+
+-- DECLARE @codVenda VARCHAR(10) = 'S74CCGBDDE'
 --         ,@indice INT = NULL
---         ,@uniquename VARCHAR(100) = 'localhost'
+--         ,@uniquename VARCHAR(100) = 'sazarteingressos'
 
 
 SET NOCOUNT ON;
@@ -131,7 +132,7 @@ INNER JOIN tabLancamento l ON ls.CodApresentacao=l.CodApresentacao AND ls.Indice
 INNER JOIN CI_MIDDLEWAY..mw_produtor pro ON p.id_produtor=pro.id_produtor
 LEFT JOIN CI_MIDDLEWAY..mw_local_evento le ON e.id_local_evento=le.id_local_evento
 LEFT JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosch ON ls.Indice=tosch.indice AND ap.id_apresentacao=tosch.id_apresentacao
-LEFT JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.Indice=ls.Indice AND ipv.id_apresentacao=ap.id_apresentacao
+LEFT JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.Indice=ls.Indice AND ipv.id_apresentacao=ap.id_apresentacao AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 LEFT JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
 LEFT JOIN CI_MIDDLEWAY..mw_cliente cli ON pv.id_cliente=cli.id_cliente
 LEFT JOIN tabTipBilhete tb ON l.CodTipBilhete=tb.CodTipBilhete
@@ -147,6 +148,7 @@ AND (@indice IS NULL OR ls.Indice=@indice)
 
 SELECT DISTINCT
 r.id
+,r.in_situacao
 ,r.seatIndice
 ,r.[local]
 ,r.[address]

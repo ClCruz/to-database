@@ -4,8 +4,8 @@ ALTER PROCEDURE dbo.pr_seat_info (@id_apresentacao INT
 
 AS
 
--- DECLARE @id_apresentacao INT = 167818
---         ,@indice INT = 4177--4175--4131--4181
+-- DECLARE @id_apresentacao INT = 179319
+--         ,@indice INT = 1969--4175--4131--4181
 --         ,@id VARCHAR(1000) = 'f2177e5e-f727-4906-948d-4eea9b9bbd0e'
 
 SET NOCOUNT ON;
@@ -77,7 +77,7 @@ LEFT JOIN CI_MIDDLEWAY..mw_reserva re ON re.id_cadeira=sd.Indice AND re.id_apres
 LEFT JOIN tabLugSala ls ON sd.Indice=ls.Indice AND a.CodApresentacao=ls.CodApresentacao
 LEFT JOIN tabLancamento l ON ls.CodApresentacao=l.CodApresentacao AND ls.Indice=l.Indice AND l.CodTipLancamento=1 AND l.NumLancamento NOT IN (SELECT sub.NumLancamento FROM tablancamento sub WHERE sub.indice=ls.Indice AND sub.CodApresentacao=ls.codapresentacao AND sub.CodTipLancamento=2)
 LEFT JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosch ON ls.Indice=tosch.indice AND ap.id_apresentacao=tosch.id_apresentacao
-LEFT JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.Indice=ls.Indice AND ipv.id_apresentacao=ap.id_apresentacao
+LEFT JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.Indice=ls.Indice AND ipv.id_apresentacao=ap.id_apresentacao AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 LEFT JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
 LEFT JOIN CI_MIDDLEWAY..mw_cliente cli ON pv.id_cliente=cli.id_cliente
 LEFT JOIN tabTipBilhete tb ON l.CodTipBilhete=tb.CodTipBilhete
