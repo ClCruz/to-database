@@ -36,6 +36,8 @@ DECLARE @domain VARCHAR(1000)
         ,@json_info_companyname VARCHAR(MAX)
         ,@scss_colors_primary VARCHAR(50)
         ,@scss_colors_secondary VARCHAR(50)
+        ,@scss_colors_text VARCHAR(50)
+        ,@scss_image_background VARCHAR(50)
 
 SELECT
     @domain = p.domain
@@ -66,6 +68,8 @@ SELECT @json_meta_description=wlc.json_meta_description
         ,@json_info_companyname=wlc.json_info_companyname
         ,@scss_colors_primary=wlc.scss_colors_primary
         ,@scss_colors_secondary=wlc.scss_colors_secondary
+        ,@scss_colors_text=wlc.scss_colors_text
+        ,@scss_image_background=wlc.scss_image_background
 FROM CI_MIDDLEWAY..whitelabelcontent wlc
 WHERE wlc.id_partner=@id
 
@@ -90,5 +94,7 @@ SELECT
     ,@json_info_companyname json_info_companyname
     ,@scss_colors_primary scss_colors_primary
     ,@scss_colors_secondary scss_colors_secondary
+    ,@scss_colors_text scss_colors_text
+    ,@scss_image_background scss_image_background
     ,@apikey apikey
     ,@fb_appid fb_appid

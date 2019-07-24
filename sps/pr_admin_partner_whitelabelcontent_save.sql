@@ -9,7 +9,9 @@ ALTER PROCEDURE pr_admin_partner_whitelabelcontent_save (@id_partner UNIQUEIDENT
 ,@json_info_companyaddress VARCHAR(MAX)
 ,@json_info_companyname VARCHAR(MAX)
 ,@scss_colors_primary VARCHAR(50)
-,@scss_colors_secondary VARCHAR(50))
+,@scss_colors_secondary VARCHAR(50)
+,@scss_colors_text VARCHAR(50) = NULL
+,@scss_image_background VARCHAR(1000) = NULL)
 
 AS
 
@@ -38,6 +40,8 @@ BEGIN
           ,wlc.json_info_companyname=@json_info_companyname
           ,wlc.scss_colors_primary=@scss_colors_primary
           ,wlc.scss_colors_secondary=@scss_colors_secondary
+          ,wlc.scss_colors_text=@scss_colors_text
+          ,wlc.scss_image_background=@scss_image_background
     FROM CI_MIDDLEWAY..whitelabelcontent wlc
     WHERE id=@id
 END
@@ -46,9 +50,9 @@ BEGIN
     INSERT INTO CI_MIDDLEWAY..whitelabelcontent (id_partner,uniquename,json_ga,json_meta_description
                                                 ,json_meta_keywords,json_template,json_info_title
                                                 ,json_info_description,json_info_cnpj,json_info_companyaddress,json_info_companyname
-                                                ,scss_colors_primary,scss_colors_secondary)
+                                                ,scss_colors_primary,scss_colors_secondary,scss_colors_text,scss_image_background)
     VALUES (@id_partner,@uniquename,@json_ga,@json_meta_description
                                                 ,@json_meta_keywords,@json_template,@json_info_title
                                                 ,@json_info_description,@json_info_cnpj,@json_info_companyaddress,@json_info_companyname
-                                                ,@scss_colors_primary,@scss_colors_secondary)
+                                                ,@scss_colors_primary,@scss_colors_secondary,@scss_colors_text,@scss_image_background)
 END
