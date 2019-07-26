@@ -30,9 +30,14 @@ tosc.id_apresentacao
 ,0 amountSubTotalSector
 ,0 amountSubTotalTicket
 ,(CASE WHEN tosc.id_ticket_type IS NULL THEN 0 ELSE 1 END) valid
-,tpb.TipBilhete
+,(CASE WHEN tpb.id_promocao_controle IS NOT NULL AND pc.id_patrocinador=1 THEN tpb.ds_nome_site
+        ELSE tpb.TipBilhete END) TipBilhete
 ,tpb.PerDesconto PerDescontoTipBilhete
 ,(CASE WHEN tpb.vl_preco_fixo IS NULL OR tpb.vl_preco_fixo = 0 THEN 0 ELSE 1 END) isFixedAmount
+,(CASE WHEN tpb.id_promocao_controle IS NOT NULL AND pc.id_patrocinador=1 THEN 1
+        ELSE  0 END) in_obriga_cpf
+,(CASE WHEN tpb.id_promocao_controle IS NOT NULL AND pc.id_patrocinador=1 THEN 1
+        ELSE  0 END) in_obriga_cartao
 INTO #result
 FROM CI_MIDDLEWAY.dbo.ticketoffice_shoppingcart tosc
 INNER JOIN CI_MIDDLEWAY.dbo.mw_apresentacao ap ON tosc.id_apresentacao=ap.id_apresentacao
@@ -42,6 +47,7 @@ INNER JOIN tabSetor se ON s.CodSala=se.CodSala
 INNER JOIN tabSalDetalhe sd ON s.CodSala=sd.CodSala AND tosc.indice=sd.Indice AND sd.CodSetor=se.CodSetor
 INNER JOIN tabLugSala ls ON ap.CodApresentacao=ls.CodApresentacao AND tosc.indice=ls.Indice
 LEFT JOIN tabTipBilhete tpb ON tosc.id_ticket_type=tpb.CodTipBilhete
+LEFT JOIN CI_MIDDLEWAY..mw_promocao_controle pc ON pc.id_promocao_controle = tpb.id_promocao_controle
 WHERE id_ticketoffice_user=@id
 ORDER BY se.NomSetor, sd.NomObjeto
 
@@ -67,4 +73,6 @@ id_apresentacao
 ,TipBilhete
 ,PerDesconto PerDescontoTipBilhete
 ,isFixedAmount
+,in_obriga_cartao
+,in_obriga_cpf
 FROM #result
