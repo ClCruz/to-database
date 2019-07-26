@@ -26,7 +26,8 @@ ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@showonline BIT = 1
     ,@minAmount INT = 0
     ,@maxAmount INT = 0
-    ,@in_entrega_ingresso BIT = 0)
+    ,@in_entrega_ingresso BIT = 0
+    ,@external_uri VARCHAR(1000) = NULL)
     
 
 
@@ -240,6 +241,7 @@ SET [description]=@description
     ,showonline=@showonline
     ,minAmount=@minAmount
     ,maxAmount=@maxAmount
+    ,external_uri=@external_uri
 WHERE id_evento=@id_evento
 
 UPDATE CI_MIDDLEWAY..search
