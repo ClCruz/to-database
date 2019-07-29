@@ -1,8 +1,8 @@
--- -- ALTER PROCEDURE dbo.pr_tickettype_select (@showto VARCHAR(100), @principal BIT = 0, @fixed BIT = 0, @discount BIT = 0, @half BIT = 0, @plus BIT = 0, @allotment BIT = 0)
+CREATE PROCEDURE dbo.pr_tickettype_select (@showto VARCHAR(100), @principal BIT = 0, @fixed BIT = 0, @discount BIT = 0, @half BIT = 0, @plus BIT = 0, @free BIT = 0, @pos BIT = 0, @allotment BIT = 0)
 
--- -- AS
+AS
 
-DECLARE @showto VARCHAR(100) = 'all', @principal BIT = 0, @fixed BIT = 0, @half BIT = 0, @plus BIT = 0, @allotment BIT = 0, @discount BIT = 0, @free BIT = 0, @pos BIT = 0
+-- DECLARE @showto VARCHAR(100) = 'all', @principal BIT = 0, @fixed BIT = 0, @half BIT = 0, @plus BIT = 0, @allotment BIT = 0, @discount BIT = 0, @free BIT = 0, @pos BIT = 0
 
 SET NOCOUNT ON;
 
@@ -40,6 +40,7 @@ SELECT
   ,tb.vl_preco_fixo
 FROM [dbo].tabTipBilhete tb
 WHERE tb.isOld=0
+AND tb.TipBilhete NOT LIKE 'MW_%'
 AND tb.StaTipBilhete='A'
 AND (@allowweb = 0 OR tb.allowweb=@allowweb)
 AND (@allowticketoffice = 0 OR tb.allowticketoffice=@allowticketoffice)

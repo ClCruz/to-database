@@ -1,41 +1,80 @@
-CREATE PROCEDURE dbo.pr_tickettype_event_save (@id_evento INT
+
+-- exec sp_executesql N'EXEC pr_tickettype_event_save @P1,@P2,@P3,@P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'43980',N'4',N'2019-08-01',N'2019-08-30'
+
+ALTER PROCEDURE dbo.pr_tickettype_event_save (@id_evento INT
         ,@codTipBilhete INT
-        ,@DatIniDesconto DATETIME
-        ,@DatFinDesconto DATETIME)
+        ,@date_start DATETIME
+        ,@date_end DATETIME)
 
 AS
 
+-- DECLARE @id_evento INT = 43980
+--         ,@codTipBilhete INT = 4
+--         ,@date_start DATETIME = '2019-08-07'
+--         ,@date_end DATETIME = '2019-08-30'
+
+
 SET NOCOUNT ON;
 
+IF @date_start>@date_end
+BEGIN
+        SELECT 0 success
+        ,'Datas invalidas.' msg
+        RETURN;
+END
+
+
 DECLARE @codPeca INT
+        ,@db_start DATETIME
+        ,@db_end DATETIME
 
--- SELECT @codPeca=codPeca FROM CI_MIDDLEWAY..mw_evento WHERE id_evento=@id_evento
+SELECT @codPeca=codPeca FROM CI_MIDDLEWAY..mw_evento WHERE id_evento=@id_evento
 
--- DECLARE @has BIT = 0
+SELECT @db_start=MIN(dt_apresentacao) FROM CI_MIDDLEWAY..mw_apresentacao ap WHERE ap.id_evento=@id_evento AND in_ativo=1
+SELECT @db_end=MAX(dt_apresentacao) FROM CI_MIDDLEWAY..mw_apresentacao ap WHERE ap.id_evento=@id_evento AND in_ativo=1
 
--- SELECT @has = 1 FROM tabValBilhete WHERE CodTipBilhete=@codTipBilhete AND CodPeca=@codPeca
+-- SELECT (CASE WHEN @date_start>=@db_start THEN 1 ELSE 0 END),(CASE WHEN @date_end<=@db_end THEN 1 ELSE 0 END)
 
--- IF @has = 1
--- BEGIN
---     UPDATE [dbo].[tabValBilhete]
---     SET [DatIniDesconto] = @DatIniDesconto
---         ,[DatFinDesconto] = @DatFinDesconto
---     WHERE [CodTipBilhete] = @CodTipBilhete
---     AND [CodPeca] = @CodPeca
--- END
--- ELSE
--- BEGIN
--- INSERT INTO [dbo].[tabValBilhete]
---            ([CodTipBilhete]
---            ,[CodPeca]
---            ,[DatIniDesconto]
---            ,[DatFinDesconto])
---      VALUES
---            (@CodTipBilhete
---            ,@CodPeca
---            ,@DatIniDesconto
---            ,@DatFinDesconto)
--- END
+-- RETURN
 
--- SELECT 1 success
---         ,'Salvo com sucesso' msg
+IF @date_start>=@db_start AND @date_end<=@db_end
+BEGIN
+
+        DECLARE @has BIT = 0
+
+        SELECT @has = 1 FROM tabValBilhete WHERE CodTipBilhete=@codTipBilhete AND CodPeca=@codPeca
+
+        IF @has = 1
+        BEGIN
+        UPDATE [dbo].[tabValBilhete]
+        SET [DatIniDesconto] = @date_start
+                ,[DatFinDesconto] = @date_end
+        WHERE [CodTipBilhete] = @CodTipBilhete
+        AND [CodPeca] = @CodPeca
+        END
+        ELSE
+        BEGIN
+        INSERT INTO [dbo].[tabValBilhete]
+                ([CodTipBilhete]
+                ,[CodPeca]
+                ,[DatIniDesconto]
+                ,[DatFinDesconto])
+        VALUES
+                (@CodTipBilhete
+                ,@CodPeca
+                ,@date_start
+                ,@date_end)
+        END
+
+        SELECT 1 success
+                ,'Salvo com sucesso' msg
+END
+ELSE
+BEGIN
+        DECLARE @Helper VARCHAR(1000) = ''
+        SET @Helper = ' Data deve ser entre ' + CONVERT(VARCHAR(10), @db_start, 103) + ' '+ CONVERT(VARCHAR(10), @db_end, 103) + '.';
+
+        SELECT 0 success
+        ,'Datas invalidas.' + @Helper msg
+        RETURN;
+END
