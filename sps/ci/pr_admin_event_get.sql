@@ -2,6 +2,10 @@ ALTER PROCEDURE dbo.pr_admin_event_get (@id_user UNIQUEIDENTIFIER, @id_evento IN
 
 AS
 
+
+-- DECLARE @id_user UNIQUEIDENTIFIER = 'F2177E5E-F727-4906-948D-4EEA9B9BBD0E'
+--         ,@id_evento INT = 43980
+
 SET NOCOUNT ON;
 
 DECLARE @id_base INT
@@ -41,7 +45,7 @@ SELECT
     ,(CASE WHEN EXISTS(SELECT 1 FROM CI_MIDDLEWAY..mw_apresentacao sub WHERE sub.id_evento=e.id_evento AND sub.dt_apresentacao>=GETDATE()) THEN 1 ELSE 0 END) hasshowyet
     ,p.QtIngrPorPedido
     ,p.qt_ingressos_por_cpf
-    ,p.in_obriga_cpf
+    ,(CASE WHEN p.in_obriga_cpf = 1 OR p.in_obriga_cpf = '1' THEN 1 ELSE 0 END) in_obriga_cpf
     ,eei.ticketoffice_askemail
     ,eei.ticketoffice_ticketmodel
     ,eei.minAmount

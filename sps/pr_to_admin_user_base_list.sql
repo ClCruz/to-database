@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_to_admin_user_base_list (@id UNIQUEIDENTIFIER)
+ALTER PROCEDURE dbo.pr_to_admin_user_base_list (@id UNIQUEIDENTIFIER)
 
 AS
 
@@ -10,3 +10,4 @@ b.id_base
 FROM CI_MIDDLEWAY..mw_base b
 LEFT JOIN CI_MIDDLEWAY..to_admin_user_base pdb ON b.id_base=pdb.id_base AND pdb.id_to_admin_user=@id
 WHERE b.in_ativo=1
+ORDER BY b.ds_nome_base_sql

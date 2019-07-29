@@ -68,6 +68,7 @@ OR (@search IS NULL OR le.ds_local_evento LIKE '%'+@search+'%' COLLATE SQL_Latin
 AND (@onlywithshow IS NULL OR (CASE WHEN EXISTS(SELECT 1 FROM CI_MIDDLEWAY..mw_apresentacao sub WHERE sub.id_evento=e.id_evento AND sub.dt_apresentacao>=GETDATE()) THEN 1 ELSE 0 END)=@onlywithshow)
 AND (@internet IS NULL OR eei.showonline=@internet)
 AND (@id IS NULL OR e.id_evento=@id)
-ORDER by (CASE WHEN EXISTS(SELECT 1 FROM CI_MIDDLEWAY..mw_apresentacao sub WHERE sub.id_evento=e.id_evento AND sub.dt_apresentacao>=GETDATE()) THEN 0 ELSE 1 END), e.ds_evento
+ORDER BY e.id_evento DESC
+-- ORDER by (CASE WHEN EXISTS(SELECT 1 FROM CI_MIDDLEWAY..mw_apresentacao sub WHERE sub.id_evento=e.id_evento AND sub.dt_apresentacao>=GETDATE()) THEN 0 ELSE 1 END), e.ds_evento
  OFFSET (@currentPage-1)*@perPage ROWS
     FETCH NEXT @perPage ROWS ONLY;
