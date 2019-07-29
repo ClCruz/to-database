@@ -31,6 +31,7 @@ eei.id_evento
 ,(CASE WHEN convert(varchar(5), MIN(ap.dt_apresentacao),103) = convert(varchar(5), MAX(ap.dt_apresentacao),103) THEN convert(varchar(5), MIN(ap.dt_apresentacao),103) ELSE  convert(varchar(5), MIN(ap.dt_apresentacao),103) + ' - ' + convert(varchar(5), max(ap.dt_apresentacao),103) END) dates
 ,ISNULL(CI_MIDDLEWAY.dbo.fnc_eventonpartner(eei.id_evento, 'tixsme'),0) ontixsme
 ,dbo.fnc_baserename(b.ds_nome_base_sql) uniquename
+,eei.external_uri
 FROM CI_MIDDLEWAY..mw_evento_extrainfo eei
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON eei.id_evento=e.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_base b ON e.id_base=b.id_base
@@ -51,4 +52,5 @@ eei.id_evento
 ,e.id_base
 ,b.name_site
 ,b.ds_nome_base_sql
+,eei.external_uri
 ORDER BY eei.id_evento DESC

@@ -1,6 +1,13 @@
-CREATE PROCEDURE dbo.pr_tickettype (@CodPeca   INT, @id_apresentacao INT) 
+ALTER PROCEDURE dbo.pr_tickettype (@CodPeca   INT, @id_apresentacao INT) 
 
 AS
+
+-- use ci_localhost
+-- use teatroumc
+-- DECLARE @CodPeca INT = 25--45
+-- 		,@id_apresentacao INT = 179913--179691
+-- DECLARE @CodPeca INT = 45
+-- 		,@id_apresentacao INT = 179691
 
 SET NOCOUNT ON;
 
@@ -16,8 +23,13 @@ WHERE ap.id_apresentacao=@id_apresentacao
 
 SELECT
 	a.CodTipBilhete, 
-	a.TipBilhete, 
+	(CASE WHEN a.id_promocao_controle IS NOT NULL AND pc.id_patrocinador=1 THEN a.ds_nome_site
+		  ELSE  a.TipBilhete END) TipBilhete, 
 	a.PerDesconto,
+	(CASE WHEN a.id_promocao_controle IS NOT NULL AND pc.id_patrocinador=1 THEN 1
+		  ELSE  0 END) in_obriga_cpf, 
+	(CASE WHEN a.id_promocao_controle IS NOT NULL AND pc.id_patrocinador=1 THEN 1
+		  ELSE  0 END) in_obriga_cartao, 
 	acrdscperc = isnull((Select sum(case cx.icDebCre when 'D' then isnull(c.valor,0) else isnull(c.valor,0)*-1 end)
 			From	tabTipBilhTipLcto	c
 			INNER JOIN

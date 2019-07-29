@@ -78,6 +78,10 @@ BEGIN
     SELECT @codReserva=codReserva FROM #codReserva
 END
 
+DECLARE @cpfDB VARCHAR(100)
+SELECT @cpfDB = c.CPF FROM tabCliente c WHERE c.Codigo=@Codigo
+
 SELECT @Codigo codigo
         ,@codReserva codReserva
+        ,(CASE WHEN @cpfDB IS NULL THEN 0 ELSE 1 END) hasCPF
         ,@added added
