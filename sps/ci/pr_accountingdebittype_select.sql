@@ -12,6 +12,7 @@ SELECT
   ,tdb.DebBordero
   ,tdb.in_DescontaCartao
   ,tdb.PerDesconto
+  ,FORMAT(CONVERT(DECIMAL(12,2),(tdb.PerDesconto)), 'N', 'pt-br') PerDesconto_formatted
   ,tdb.QtdLimiteIngrParaVenda
   ,tdb.StaDebBordero
   ,tdb.StaDebBorderoLiq

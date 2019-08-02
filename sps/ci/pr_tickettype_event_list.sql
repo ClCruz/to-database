@@ -1,7 +1,12 @@
 ALTER PROCEDURE dbo.pr_tickettype_event_list (@id_evento INT)
 
 AS
+SELECT
 
+*
+
+FROM tabDebBordero db
+INNER JOIN tabTipDebBordero tdb ON db.CodTipDebBordero=tdb.CodTipDebBordero
 -- DECLARE @id_evento INT = 33016
 
 SET NOCOUNT ON;
