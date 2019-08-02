@@ -1,7 +1,8 @@
 ALTER PROCEDURE dbo.pr_accounting_debits (@id VARCHAR(100))
 
 AS
--- DECLARE @id VARCHAR(100) = 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
+-- DECLARE @id VARCHAR(100) = '46e5052f-6be4-43d5-a897-172e8337e9f4'
+
 
 
 
@@ -142,11 +143,11 @@ d.CodTipDebBordero
 ,d.TipValor
 ,d.amount
 ,FORMAT(CONVERT(DECIMAL(12,2),(d.PerDesconto)), 'N', 'pt-br') PerDescontoformatted
-,FORMAT(CONVERT(DECIMAL(12,2),(d.amount)/100), 'N', 'pt-br') amountformatted
+,FORMAT(CONVERT(DECIMAL(12,2),(d.amount)/CONVERT(DECIMAL(12,2),100)), 'N', 'pt-br') amountformatted
 ,@totaldeb total_onlydeb
-,FORMAT(CONVERT(DECIMAL(12,2),(@totaldeb)/100), 'N', 'pt-br') total_onlydebformatted
+,FORMAT(CONVERT(DECIMAL(12,2),(@totaldeb)/CONVERT(DECIMAL(12,2),100)), 'N', 'pt-br') total_onlydebformatted
 ,@amountanddeb total_amount
-,FORMAT(CONVERT(DECIMAL(12,2),(@amountanddeb)/100), 'N', 'pt-br') total_amountformatted
+,FORMAT(CONVERT(DECIMAL(12,2),(@amountanddeb)/CONVERT(DECIMAL(12,2),100)), 'N', 'pt-br') total_amountformatted
 FROM #debits d
 
 
