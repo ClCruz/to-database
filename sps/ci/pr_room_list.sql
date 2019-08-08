@@ -22,6 +22,7 @@ SELECT
             SELECT ',' + sub.NomSetor + '|' + CONVERT(VARCHAR(100),CONVERT(BIGINT, PerDesconto*100))  AS [text()]
             FROM tabSetor sub
             WHERE sub.CodSala=s.CodSala
+            AND sub.[Status]='A'
             ORDER BY sub.NomSetor
             FOR XML PATH ('')
         ), 2, 4000) [seattypes]

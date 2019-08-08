@@ -1,4 +1,6 @@
-CREATE PROCEDURE dbo.pr_room_save (
+-- exec sp_executesql N'EXEC pr_room_save @P1,@P2,@P3,@P4,@P5,@P6,@P7',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000)',N'',N's1',N's1ss',N's1s',1,N'613',N'A'
+delete from tabSala where CodSala=4
+ALTER PROCEDURE dbo.pr_room_save (
     @CodSala INT
     ,@NomSala VARCHAR(1000)
     ,@NomRedSala VARCHAR(12)
@@ -57,7 +59,8 @@ BEGIN
             ,nameonsite
             ,IngressoNumerado
             ,id_local_evento
-            ,StaSala)
+            ,StaSala
+            ,CadNumerada)
         VALUES
             (@CodSala
             ,@NomSala
@@ -65,7 +68,8 @@ BEGIN
             ,@nameonsite
             ,@IngressoNumerado
             ,@id_local_evento
-            ,'A')
+            ,'A'
+            ,0)
 
 END
 
