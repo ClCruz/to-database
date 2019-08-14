@@ -1,6 +1,6 @@
 -- pr_to_admin_partner_base_list '2F6DD49B-3292-4E64-A7A6-D725CDC7FF83'
 
-CREATE PROCEDURE dbo.pr_to_admin_partner_base_list (@id UNIQUEIDENTIFIER)
+ALTER PROCEDURE dbo.pr_to_admin_partner_base_list (@id UNIQUEIDENTIFIER)
 
 AS
 
@@ -12,3 +12,4 @@ b.id_base
 FROM CI_MIDDLEWAY..mw_base b
 LEFT JOIN CI_MIDDLEWAY..partner_database pdb ON b.id_base=pdb.id_base AND pdb.id_partner=@id
 WHERE b.in_ativo=1
+ORDER BY b.ds_nome_base_sql
