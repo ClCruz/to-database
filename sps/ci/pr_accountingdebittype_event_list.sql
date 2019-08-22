@@ -1,4 +1,4 @@
-ALTER  PROCEDURE dbo.pr_accountingdebittype_event_list (@id_evento INT)
+CREATE PROCEDURE dbo.pr_accountingdebittype_event_list (@id_evento INT)
 
 AS
 -- DECLARE @id_evento INT = 33016
