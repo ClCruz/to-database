@@ -1,6 +1,4 @@
--- exec sp_executesql N'EXEC pr_paymenttype_save @P1,@P2,@P3,@P4,@P5,@P6,@P7,@P8,@P9,@P10,@P11,@P12',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000),@P9 nvarchar(4000),@P10 nvarchar(4000),@P11 nvarchar(4000),@P12 nvarchar(4000)',N'',N'',N'52',N'teste',N'1.25',N'5',N'1',N'N',N'A',N'S',N'N',N'C'
-
-ALTER PROCEDURE dbo.pr_paymenttype_save (@CodForPagto INT
+CREATE PROCEDURE dbo.pr_paymenttype_save (@CodForPagto INT
   ,@CodBanco char(3)
   ,@CodTipForPagto INT
   ,@ForPagto VARCHAR(100)
