@@ -1,6 +1,6 @@
 
 -- exec sp_executesql N'EXEC pr_tickettype_event_save @P1,@P2,@P3,@P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'43980',N'4',N'2019-08-01',N'2019-08-30'
-exec sp_executesql N'EXEC pr_accountingdebittype_event_save @P1,@P2,@P3,@P4',N'@P1 nvarchar(4000),@P2 char(1),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'43980',NULL,N'2019-08-01',N'2019-08-07'
+-- exec sp_executesql N'EXEC pr_accountingdebittype_event_save @P1,@P2,@P3,@P4',N'@P1 nvarchar(4000),@P2 char(1),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'43980',NULL,N'2019-08-01',N'2019-08-07'
 
 CREATE PROCEDURE dbo.pr_accountingdebittype_event_save (@id_evento INT
         ,@CodTipDebBordero INT
