@@ -172,3 +172,9 @@ SELECT 'report-binpromotion', 'Venda para promoção BIN', 'Venda para promoçã
 
 INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
 SELECT 'partner-paymenttype', 'Tipo de pagamento para o parceiro - Inclusão/Alteração', 'Inclusão e alteração do tipo de pagamento no parceiro','Parceiro'
+
+INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
+SELECT 'report-binpromotion-reduced', 'Venda para promoção BIN - Resumida', 'Venda para promoção BIN - Resumida','Relatório'
+
+
+select * from CI_MIDDLEWAY..to_admin_authorization where [group]='Relatório'
