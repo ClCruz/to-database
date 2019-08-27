@@ -1,20 +1,21 @@
 -- exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'167857',N'4097,4098,4147,4148',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'19318',N'RX6DGGICAH',N'0'
-
+-- exec sp_executesql N'EXEC pr_seat_reservation_multi @P1, @P2, @P3, @P4, @P5, @P6, @P7, @P8',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 int,@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000)',N'179914',N'197',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N'',N'0'
 ALTER PROCEDURE dbo.pr_seat_reservation_multi (@id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL, @overwrite BIT = 0)
 AS
 
 -- DECLARE @id_apresentacao INT, @indice VARCHAR(MAX), @id VARCHAR(100), @NIN VARCHAR(10), @minutesToExpire INT, @codCliente INT = NULL, @codReserva VARCHAR(10) = NULL
 --         ,@overwrite BIT = 0
 
+-- '179914',N'197',N'F2177E5E-F727-4906-948D-4EEA9B9BBD0E',N'',15,N'',N'',N'0'
 -- SELECT
---     @id_apresentacao=167856
---     ,@indice='1797'
+--     @id_apresentacao=179914
+--     ,@indice='197'
 --     ,@id='f2177e5e-f727-4906-948d-4eea9b9bbd0e'
 --     ,@minutesToExpire=15
 --     ,@NIN=''
 --     ,@codCliente=''
 --     ,@codReserva=''
---     ,@overwrite=1
+--     ,@overwrite=0
 
 SET NOCOUNT ON;
 
@@ -235,7 +236,7 @@ BEGIN
     UPDATE #indice SET limitedByPurchase=1,hasError=1 WHERE isAdd=1
 END
 
-IF @NIN IS NOT NULL
+IF @NIN IS NOT NULL AND @NIN != ''
 BEGIN
     DECLARE @reservedCPF INT = 1
             ,@purchasedCPF INT = 0
@@ -353,6 +354,7 @@ DECLARE @total INT
 SELECT @totalError = SUM(1) FROM #indice WHERE hasError=1
 SELECT @total = SUM(1) FROM #indice
 
+select * from #indice
 
 SELECT indice
     ,seatTaken
