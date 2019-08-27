@@ -104,7 +104,7 @@ SELECT
   ,COUNT(*) OVER() totalCount
   ,@currentPage currentPage
 FROM [dbo].tabTipBilhete tb
-WHERE tb.isOld=0
+WHERE tb.TipBilhete NOT IN ('Temporário', 'MW_PLANETGIRLS')  --tb.isOld=0
 AND ((@text IS NULL OR tb.TipBilhete like '%'+@text+'%') 
         OR (@text IS NULL OR tb.nameWeb like '%'+@text+'%') 
         OR (@text IS NULL OR tb.nameTicketOffice like '%'+@text+'%')
