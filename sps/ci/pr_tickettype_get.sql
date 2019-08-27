@@ -52,5 +52,6 @@ SELECT
   ,tb.TipBilhete
   ,tb.TipCaixa
   ,tb.vl_preco_fixo
+  ,ISNULL(tb.allpartner,0) allpartner
 FROM [dbo].tabTipBilhete tb
 WHERE tb.CodTipBilhete=@id

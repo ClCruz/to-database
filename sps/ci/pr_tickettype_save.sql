@@ -32,13 +32,15 @@ ALTER PROCEDURE dbo.pr_tickettype_save (@id INT
 ,@TipBilhete VARCHAR(100)
 ,@StaTipBilhMeiaEstudante VARCHAR(1)
 ,@StaTipBilhMeia VARCHAR(1)
-,@in_venda_site VARCHAR(1))
+,@in_venda_site VARCHAR(1)
+,@allpartner BIT)
 
 AS
 
 SET NOCOUNT ON;
 
-DECLARE @has BIT = 0;
+DECLARE @has BIT = 0
+
 
 IF @id != 0
 BEGIN
@@ -82,6 +84,7 @@ BEGIN
         ,[nameTicketOffice] = @nameTicketOffice
         ,[nameAPI] = @nameAPI
         ,[description] = @description
+        ,[allpartner] = @allpartner
     WHERE CodTipBilhete=@id
 END
 ELSE
@@ -140,7 +143,8 @@ BEGIN
             ,[nameWeb]
             ,[nameTicketOffice]
             ,[nameAPI]
-            ,[description])
+            ,[description]
+            ,[allpartner])
         VALUES
             (@CodTipBilhete
             ,@TipBilhete
@@ -187,7 +191,13 @@ BEGIN
             ,@nameWeb
             ,@nameTicketOffice
             ,@nameAPI
-            ,@description)
+            ,@description
+            ,@allpartner)
+END
+
+IF @allpartner = 1
+BEGIN
+    UPDATE CI_MIDDLEWAY..tickettype_partner SET active=0 WHERE CodTipBilhete=@id AND id_base=@id_base
 END
 
 SELECT 1 success

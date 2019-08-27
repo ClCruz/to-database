@@ -8,7 +8,7 @@ AS
 
 SET NOCOUNT ON;
 
--- DECLARE @start DATETIME = '2019-07-01 00:00:00', @end DATETIME = '2019-07-31 23:59:59'
+-- DECLARE @start DATETIME = '2019-07-01 00:00:00', @end DATETIME = '2019-08-27 23:59:59'
 
 IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
     DROP TABLE #result; 
@@ -26,7 +26,7 @@ SELECT DISTINCT
 ipv.CodVenda
 ,CONVERT(VARCHAR(10),pv.dt_pedido_venda,103) created_at
 ,pv.dt_pedido_venda
-,(c.ds_nome + ' ' + c.ds_sobrenome) buyer
+,dbo.fn_StripCharacters((c.ds_nome + ' ' + c.ds_sobrenome), '^a-Z,0-9,'' ''') buyer 
 ,c.cd_cpf buyer_document
 ,pv.cd_bin_cartao bin
 ,'web' [sellfrom]
