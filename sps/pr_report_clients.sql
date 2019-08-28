@@ -48,10 +48,11 @@ SET @toExec = @toExec + ' SELECT '
 SET @toExec = @toExec + ' c.Codigo '
 SET @toExec = @toExec + ' ,c.Nome '
 SET @toExec = @toExec + ' ,c.CPF '
-SET @toExec = @toExec + ' ,RTRIM(LTRIM(c.EMail)) '
+SET @toExec = @toExec + ' ,LTRIM(RTRIM((CASE WHEN cli.id_cliente IS NOT NULL THEN cli.cd_email_login COLLATE SQL_Latin1_General_CP1_CI_AS ELSE c.EMail COLLATE SQL_Latin1_General_CP1_CI_AS END))) '
 SET @toExec = @toExec + ' FROM ['+@db_name+'].dbo.tabCliente c '
+SET @toExec = @toExec + ' LEFT JOIN CI_MIDDLEWAY..mw_cliente cli ON c.CPF=cli.cd_cpf COLLATE SQL_Latin1_General_CP1_CI_AS AND cli.uniquename_partner=@uniquename_partner '
 
-EXEC sp_executesql @toExec
+EXEC sp_executesql @toExec, N'@uniquename_partner VARCHAR(1000)',@uniquename_partner
 
 SELECT DISTINCT
 -- r.id

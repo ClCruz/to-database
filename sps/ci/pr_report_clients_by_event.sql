@@ -1,5 +1,3 @@
--- exec sp_executesql N'EXEC pr_report_clients_by_event @P1,@P2,@P3,@P4',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000)',N'214',N'33189',N'',N''
-
 ALTER PROCEDURE dbo.pr_report_clients_by_event (@id_base INT
                                         ,@id_evento INT
                                         ,@date DATETIME = NULL
@@ -7,8 +5,8 @@ ALTER PROCEDURE dbo.pr_report_clients_by_event (@id_base INT
 
 AS
 
--- DECLARE @id_base INT = 214
---         ,@id_evento INT = 33189
+-- DECLARE @id_base INT = 279
+--         ,@id_evento INT = 44109
 --         ,@date DATETIME = NULL
 --         ,@hour VARCHAR(100) = NULL
 --         -- ,@date DATETIME = '2019-08-03'
@@ -80,7 +78,7 @@ SELECT DISTINCT
 c.Codigo
 ,c.Nome
 ,c.CPF
-,c.EMail
+,(CASE WHEN cli.id_cliente IS NOT NULL THEN cli.cd_email_login COLLATE SQL_Latin1_General_CP1_CI_AS ELSE c.EMail COLLATE SQL_Latin1_General_CP1_CI_AS END)
 ,hc.Indice
 ,ap.CodApresentacao
 ,sd.NomObjeto
@@ -96,8 +94,9 @@ INNER JOIN #ids i ON ap.id_apresentacao=i.ID
 INNER JOIN tabLancamento l ON hc.NumLancamento=l.NumLancamento AND l.CodApresentacao=hc.CodApresentacao AND l.CodTipLancamento=1 AND hc.Indice=l.Indice
 INNER JOIN tabSala s ON a.CodSala=s.CodSala
 INNER JOIN tabSalDetalhe sd ON s.CodSala=sd.CodSala AND hc.Indice=sd.Indice
+LEFT JOIN CI_MIDDLEWAY..mw_cliente cli ON c.CPF=cli.cd_cpf COLLATE SQL_Latin1_General_CP1_CI_AS AND cli.uniquename_partner=@uniquename_partner
 LEFT JOIN tabLancamento lr ON hc.NumLancamento=l.NumLancamento AND l.CodApresentacao=hc.CodApresentacao AND l.CodTipLancamento=2 AND hc.Indice=l.Indice
-WHERE lr.NumLancamento IS NULL
+WHERE lr.NumLancamento IS NULL 
 
 
 SELECT DISTINCT
@@ -116,13 +115,11 @@ WHERE r.document IS NOT NULL
 AND r.document != ''
 AND r.name != ''
 
-
 UPDATE rf
 SET rf.email=rf2.email
     ,rf.name=rf2.name
 FROM #resultfinal rf
 INNER JOIN #resultfinal rf2 ON rf.document=rf2.document AND rf2.email != '' AND rf2.email IS NOT NULL
-
 
 SELECT
 t.document
