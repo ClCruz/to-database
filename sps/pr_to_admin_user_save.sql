@@ -1,8 +1,6 @@
-ALTER PROCEDURE dbo.pr_to_admin_user_save (@api VARCHAR(100), @id VARCHAR(100), @name VARCHAR(1000), @login VARCHAR(1000), @email VARCHAR(1000), @document VARCHAR(50), @active BIT, @newPass VARCHAR(1000))
+ALTER PROCEDURE dbo.pr_to_admin_user_save (@api VARCHAR(100), @id VARCHAR(100), @name VARCHAR(1000), @login VARCHAR(1000), @email VARCHAR(1000), @document VARCHAR(50), @active BIT, @newPass VARCHAR(1000), @changePass BIT = 0)
 
 AS 
-
--- declare @api VARCHAR(100) = 'live_185e1621cf994a99ba945fe9692d4bf6d66ef03a1fcc47af8ac909dbcea53fb5', @id VARCHAR(100)='', @name VARCHAR(1000)= 'teste', @login VARCHAR(1000)='teste', @email VARCHAR(1000)='teste@gmail.com', @document VARCHAR(50) = 'dddd', @active BIT= 1, @newPass VARCHAR(1000) = '56f4485c63c0ef77d158f4739d4a4025148e1091'
 
 SET NOCOUNT ON;
 
@@ -49,6 +47,11 @@ BEGIN
 END
 
 UPDATE CI_MIDDLEWAY..ticketoffice_user SET active=0 WHERE [login]=@login AND active=1 AND id!=@idAux
+
+IF @changePass = 1
+BEGIN
+    UPDATE CI_MIDDLEWAY..to_admin_user SET [password]=@newPass WHERE id=@idAux
+END
 
 SELECT 1 success
         ,'' msg
