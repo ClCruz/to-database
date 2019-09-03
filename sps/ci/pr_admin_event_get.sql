@@ -55,6 +55,7 @@ SELECT
     ,ISNULL((SELECT TOP 1 1 FROM tabApresentacao sub WHERE sub.CodPeca=p.CodPeca),0) hasPresentantion
     ,e.in_entrega_ingresso
     ,ISNULL(eei.external_uri, '') external_uri
+    ,ISNULL(eei.mmAmountIsPer, 0) mmAmountIsPer
 FROM tabPeca p
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca AND e.id_base=@id_base
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
