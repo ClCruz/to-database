@@ -1,7 +1,8 @@
 ALTER PROCEDURE dbo.pr_accounting_key_add (@id_to_admin_user UNIQUEIDENTIFIER
                                             ,@id_evento INT
                                             ,@date VARCHAR(10)
-                                            ,@hour VARCHAR(10))
+                                            ,@hour VARCHAR(10)
+                                            ,@pass VARCHAR(1000) = NULL)
 
 AS
 
@@ -17,7 +18,9 @@ INSERT INTO CI_MIDDLEWAY.[dbo].[accounting_key]
            ,[date]
            ,[hour]
            ,[used]
-           ,[used_date])
+           ,[used_date]
+           ,[password]
+           ,id)
      VALUES
            (@id
            ,GETDATE()
@@ -27,6 +30,7 @@ INSERT INTO CI_MIDDLEWAY.[dbo].[accounting_key]
            ,@date
            ,@hour
            ,0
-           ,NULL)
+           ,NULL
+           ,@pass)
 
 SELECT @id id
