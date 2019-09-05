@@ -2,7 +2,7 @@ ALTER PROCEDURE dbo.pr_purchase_summary (@id_session VARCHAR(1000))
 
 AS
 
--- DECLARE @id_session VARCHAR(1000) = 'qhekhoaa6ftbn9robsvn9svfp7'
+-- DECLARE @id_session VARCHAR(1000) = '9qt9kr0nojt7e2619mhi26vvm7'
 
 SET NOCOUNT ON;
 
@@ -28,7 +28,7 @@ CREATE TABLE #data_bases (id UNIQUEIDENTIFIER, id_base INT, base_sql VARCHAR(100
     ,active BIT,allowticketoffice BIT,allowweb BIT
     ,NomObjeto VARCHAR(1000),NomSetor VARCHAR(1000),PerDescontoSetor FLOAT
     ,[Status] VARCHAR(1000),PerDesconto FLOAT,QtdVendaPorLote INT
-    ,StaTipBilhMeiaEstudante VARCHAR(1000),StaTipBilhete VARCHAR(1000),TipBilhete VARCHAR(1000), ID_PROMOCAO_CONTROLE INT
+    ,StaTipBilhMeiaEstudante VARCHAR(1000),StaTipBilhete VARCHAR(1000),TipBilhete VARCHAR(1000),TipBilhete2 VARCHAR(1000), ID_PROMOCAO_CONTROLE INT
     ,id_evento INT, id_apresentacao INT, id_reserva INT, hoursinadvance INT, in_taxa_por_pedido VARCHAR(1), id_apresentacao_bilhete INT, nr_beneficio VARCHAR(32),QT_INGRESSOS_POR_CPF INT, purchasebythiscpf INT, vl_preco_fixo FLOAT)
 
 SELECT e.id_base, e.id_evento, e.CodPeca, a.CodApresentacao,a.id_apresentacao, r.id_reserva, r.id_cadeira
@@ -62,7 +62,7 @@ BEGIN
     SET @toExec = @toExec + ',active,allowticketoffice,allowweb '
     SET @toExec = @toExec + ',NomObjeto,NomSetor,PerDescontoSetor '
     SET @toExec = @toExec + ',[Status],PerDesconto,QtdVendaPorLote '
-    SET @toExec = @toExec + ',StaTipBilhMeiaEstudante,StaTipBilhete,TipBilhete, ID_PROMOCAO_CONTROLE'
+    SET @toExec = @toExec + ',StaTipBilhMeiaEstudante,StaTipBilhete,TipBilhete,TipBilhete2, ID_PROMOCAO_CONTROLE'
     SET @toExec = @toExec + ',id_evento, id_apresentacao, id_reserva,hoursinadvance,in_taxa_por_pedido,id_apresentacao_bilhete, nr_beneficio,QT_INGRESSOS_POR_CPF,purchasebythiscpf, vl_preco_fixo) '
     SET @toExec = @toExec + 'SELECT DISTINCT '
     SET @toExec = @toExec + '        NEWID() '
@@ -92,6 +92,7 @@ BEGIN
     SET @toExec = @toExec + '        ,tb.StaTipBilhMeiaEstudante '
     SET @toExec = @toExec + '        ,tb.StaTipBilhete '
     SET @toExec = @toExec + '        ,tb.TipBilhete '
+    SET @toExec = @toExec + '        ,tb.ds_nome_site '
     SET @toExec = @toExec + '        ,tb.ID_PROMOCAO_CONTROLE '
     SET @toExec = @toExec + '        ,e.id_evento '
     SET @toExec = @toExec + '        ,ap.id_apresentacao '
@@ -135,7 +136,7 @@ SELECT
     id
     ,NomSetor
     ,NomObjeto
-    ,TipBilhete
+    ,(CASE WHEN TipBilhete LIKE 'MW%' THEN TipBilhete2 ELSE TipBilhete END) TipBilhete
     ,0 amount
     ,0 amount_service
     ,0 amount_total
@@ -423,6 +424,9 @@ SELECT @totalWithoutDiscount = SUM(r.amount) FROM #result r
 SELECT @totalWithDiscount = SUM(r.amountallWithoutService) FROM #result r
 SELECT @totalWithService = SUM(r.amountallWithService) FROM #result r
 
+
+
+
 UPDATE d
 SET d.amountcalculated = r.amountallWithoutService
     ,d.amountServicecalculeted = r.serviceAmountINT
@@ -431,12 +435,10 @@ INNER JOIN #result r ON d.id_reserva=r.id
 
 UPDATE u
 SET u.amount=r.amountallWithoutService
-    ,u.amount_service=r.serviceAmount
+    ,u.amount_service=r.serviceAmountINT
     ,u.amount_total=r.amountallWithService
 FROM #resultToFinal u
 INNER JOIN #result r ON u.Indice=r.indice
--- select * from #result
--- return;
 
 SELECT 
     id
