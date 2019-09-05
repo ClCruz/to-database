@@ -2,6 +2,8 @@ ALTER PROCEDURE dbo.pr_tickettype_get (@id INT)
 
 AS
 
+-- DECLARE @id INT = 8
+
 SET NOCOUNT ON;
 
 SELECT 
@@ -51,7 +53,7 @@ SELECT
   ,tb.StaTipBilhMeiaEstudante
   ,tb.TipBilhete
   ,tb.TipCaixa
-  ,tb.vl_preco_fixo
+  ,CONVERT(BIGINT,(tb.vl_preco_fixo)*100) vl_preco_fixo
   ,ISNULL(tb.allpartner,0) allpartner
 FROM [dbo].tabTipBilhete tb
 WHERE tb.CodTipBilhete=@id
