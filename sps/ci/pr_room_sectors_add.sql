@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_room_sectors_add (@codSala INT
+ALTER PROCEDURE dbo.pr_room_sectors_add (@codSala INT
                                             ,@name VARCHAR(1000)
                                             ,@value FLOAT
                                             ,@color VARCHAR(100))
@@ -21,7 +21,7 @@ END
 ELSE
 BEGIN
     DECLARE @idDB INT
-    SELECT @idDB=MAX(CodSetor)+1 FROM tabSetor
+    SELECT @idDB=MAX(CodSetor)+1 FROM tabSetor WHERE CodSala=@codSala AND [Status]='A'
     IF @idDB IS NULL
     BEGIN
         SET @idDB = 1

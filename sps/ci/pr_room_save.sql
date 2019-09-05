@@ -59,7 +59,11 @@ BEGIN
             ,IngressoNumerado
             ,id_local_evento
             ,StaSala
-            ,CadNumerada)
+            ,CadNumerada
+            ,Altura
+            ,Largura
+            ,CodEmpresa
+            ,in_venda_mesa)
         VALUES
             (@CodSala
             ,@NomSala
@@ -68,6 +72,10 @@ BEGIN
             ,@IngressoNumerado
             ,@id_local_evento
             ,'A'
+            ,0
+            ,300
+            ,300
+            ,1
             ,0)
 
 END
