@@ -29,26 +29,28 @@ IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
 IF OBJECT_ID('tempdb.dbo.#resultfinal', 'U') IS NOT NULL
     DROP TABLE #resultfinal; 
 
-CREATE TABLE #result (id INT, [name] VARCHAR(1000), document VARCHAR(1000), email VARCHAR(1000))
+CREATE TABLE #result (id INT, [name] VARCHAR(1000), document VARCHAR(1000), email VARCHAR(1000), phone VARCHAR(100))
 
-INSERT INTO #result (id, name, document, email)
+INSERT INTO #result (id, [name], document, email, phone)
 SELECT
 c.id_cliente
 ,c.ds_nome + ' ' + c.ds_sobrenome
 ,c.cd_cpf
 ,c.cd_email_login
+,c.ds_ddd_celular+c.ds_celular
 FROM CI_MIDDLEWAY..mw_cliente c
 WHERE c.uniquename_partner=@uniquename_partner
 
 DECLARE @toExec NVARCHAR(MAX)
 
 SET @toExec=''
-SET @toExec = @toExec + ' INSERT INTO #result (id, name, document, email) '
+SET @toExec = @toExec + ' INSERT INTO #result (id, name, document, email, phone) '
 SET @toExec = @toExec + ' SELECT '
 SET @toExec = @toExec + ' c.Codigo '
 SET @toExec = @toExec + ' ,c.Nome '
 SET @toExec = @toExec + ' ,c.CPF '
 SET @toExec = @toExec + ' ,LTRIM(RTRIM((CASE WHEN cli.id_cliente IS NOT NULL THEN cli.cd_email_login COLLATE SQL_Latin1_General_CP1_CI_AS ELSE c.EMail COLLATE SQL_Latin1_General_CP1_CI_AS END))) '
+SET @toExec = @toExec + ' ,LTRIM(RTRIM((CASE WHEN cli.id_cliente IS NOT NULL THEN cli.ds_ddd_celular+cli.ds_celular COLLATE SQL_Latin1_General_CP1_CI_AS ELSE c.DDD+c.Telefone COLLATE SQL_Latin1_General_CP1_CI_AS END))) '
 SET @toExec = @toExec + ' FROM ['+@db_name+'].dbo.tabCliente c '
 SET @toExec = @toExec + ' LEFT JOIN CI_MIDDLEWAY..mw_cliente cli ON c.CPF=cli.cd_cpf COLLATE SQL_Latin1_General_CP1_CI_AS AND cli.uniquename_partner=@uniquename_partner '
 
@@ -59,6 +61,7 @@ SELECT DISTINCT
 r.document
 ,REPLACE(RTRIM(LTRIM(dbo.fn_StripCharacters((r.name), '^a-Z,0-9,'' '''))),'  ', ' ') [name]
 ,ISNULL((CASE WHEN r.email = '0' THEN '' ELSE r.email END),NULL) email
+,r.phone
 INTO #resultfinal
 FROM #result r
 WHERE r.document IS NOT NULL 
@@ -81,11 +84,13 @@ SELECT
 t.document
 ,t.email
 ,t.name
+,t.phone
 ,ROW_NUMBER() OVER (order by t.document) [id]
 FROM (
 SELECT DISTINCT
 rf.document
 ,rf.name
 ,rf.email
+,rf.phone
 FROM #resultfinal rf) as t
 ORDER BY t.name
