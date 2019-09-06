@@ -8,7 +8,7 @@ AS
 
 SET NOCOUNT ON;
 
--- DECLARE @start DATETIME = '2019-07-01 00:00:00', @end DATETIME = '2019-08-27 23:59:59'
+-- DECLARE @start DATETIME = '2019-08-01 00:00:00', @end DATETIME = '2019-09-06 23:59:59'
 
 IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
     DROP TABLE #result; 
@@ -104,6 +104,8 @@ r.buyer
 ,r.sponsor
 ,r.dt_pedido_venda
 ,FORMAT(CONVERT(DECIMAL(12,2),(SELECT SUM(sub.vl_total_pedido_venda) FROM #result sub)), 'N', 'pt-br') selltotal
+,(SELECT COUNT(sub.vl_total_pedido_venda) FROM #result sub) sellcount
+,FORMAT(CONVERT(DECIMAL(12,2),(SELECT AVG(sub.vl_total_pedido_venda) FROM #result sub)), 'N', 'pt-br') sellavg
 FROM #result r
 ORDER BY r.dt_pedido_venda DESC
 
