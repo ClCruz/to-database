@@ -124,6 +124,7 @@ SELECT --DISTINCT
         ,CONVERT(BIGINT,ABS(l.ValPagto)*100) ValPagto
         ,(CASE WHEN pv.id_pedido_venda IS NOT NULL AND pv.in_situacao='P' THEN 1 ELSE 0 END) inprocess
         ,(CASE WHEN ls.Indice IS NOT NULL AND ls.StaCadeira='V' THEN 1 ELSE 0 END) isok
+        ,(CASE WHEN pv.id_pedido_venda IS NOT NULL AND pv.in_situacao='V' THEN 'web' ELSE 'ticketoffice' END) channel
         ,ISNULL((SELECT TOP 1 1 FROM tabLancamento sub WHERE sub.NumLancamento=l.NumLancamento AND sub.Indice=l.Indice AND sub.CodTipBilhete=l.CodTipBilhete AND sub.CodApresentacao=l.CodApresentacao AND sub.CodTipLancamento=2),0) hasRefund
         ,fp.PcTxAdm taxa_administrativa
         ,fp.PrzRepasseDias

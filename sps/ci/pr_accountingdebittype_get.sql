@@ -1,4 +1,4 @@
-CREATE PROCEDURE dbo.pr_accountingdebittype_get (@id INT)
+ALTER PROCEDURE dbo.pr_accountingdebittype_get (@id INT)
 
 AS
 
@@ -17,5 +17,6 @@ SELECT
   ,tdb.TipValor
   ,tdb.ValIngressoExcedente
   ,tdb.VlMinimo
+  ,ISNULL(tdb.sell_channel,'all') sell_channel
 FROM [dbo].tabTipDebBordero tdb
 WHERE tdb.CodTipDebBordero=@id

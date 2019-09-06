@@ -1,10 +1,7 @@
--- -- exec pr_accounting 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
--- -- exec pr_accounting_debits 'a705cc76-9078-4cb4-849e-0e6b31adeb52'
-
 ALTER PROCEDURE dbo.pr_accounting (@id VARCHAR(100))
 
 AS
--- DECLARE @id VARCHAR(100) = '78F4934C-1B8F-4A74-BE39-83CB7601A7FC'
+-- DECLARE @id VARCHAR(100) = 'BBDAB4C3-F4FB-4998-8621-F7B857B74C98'
 
 SET NOCOUNT ON;
 
@@ -33,24 +30,24 @@ INSERT INTO @weekday (id, [name],[full]) VALUES(5, 'qui', 'quinta-feira')
 INSERT INTO @weekday (id, [name],[full]) VALUES(6, 'sex', 'sexta-feira')
 INSERT INTO @weekday (id, [name],[full]) VALUES(7, 'sab', 'sábado')
 
-IF OBJECT_ID('tempdb.dbo.#ids', 'U') IS NOT NULL
-    DROP TABLE #ids; 
+IF OBJECT_ID('tempdb.dbo.#ids__ac', 'U') IS NOT NULL
+    DROP TABLE #ids__ac; 
 
-IF OBJECT_ID('tempdb.dbo.#resultAux', 'U') IS NOT NULL
-    DROP TABLE #resultAux; 
+IF OBJECT_ID('tempdb.dbo.#resultAux__ac', 'U') IS NOT NULL
+    DROP TABLE #resultAux__ac; 
 
-IF OBJECT_ID('tempdb.dbo.#resultToCount', 'U') IS NOT NULL
-    DROP TABLE #resultToCount; 
+IF OBJECT_ID('tempdb.dbo.#resultToCount__ac', 'U') IS NOT NULL
+    DROP TABLE #resultToCount__ac; 
 
-IF OBJECT_ID('tempdb.dbo.#resultFinal', 'U') IS NOT NULL
-    DROP TABLE #resultFinal; 
+IF OBJECT_ID('tempdb.dbo.#resultFinal__ac', 'U') IS NOT NULL
+    DROP TABLE #resultFinal__ac; 
 
 
-CREATE TABLE #ids (ID INT)
+CREATE TABLE #ids__ac (ID INT)
 
 IF @id_apresentacao IS NULL
 BEGIN
-        INSERT INTO #ids (id)
+        INSERT INTO #ids__ac (id)
         SELECT ap.id_apresentacao
         FROM CI_MIDDLEWAY..mw_apresentacao ap
         WHERE ap.id_evento=@id_evento
@@ -59,7 +56,7 @@ BEGIN
 END
 ELSE
 BEGIN
-        INSERT INTO #ids (id)
+        INSERT INTO #ids__ac (id)
         SELECT @id_apresentacao
 END
 
@@ -92,7 +89,7 @@ SELECT
         ,@weekdayfull=(SELECT TOP 1 [full] FROM @weekday WHERE id = DATEPART(dw, a.DatApresentacao))
 
 FROM CI_MIDDLEWAY..mw_apresentacao ap
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON ap.id_evento=e.id_evento
 INNER JOIN tabApresentacao a ON ap.CodApresentacao=a.CodApresentacao
 INNER JOIN tabPeca p ON e.CodPeca=p.CodPeca
@@ -119,7 +116,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 WHERE S.TIPOBJETO='C'
 
 SELECT @seats_taken_web=COUNT(*)
@@ -129,7 +126,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
@@ -142,7 +139,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON tosc.id_apresentacao=ap.id_apresentacao AND tosc.Indice=s.Indice AND tosc.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 WHERE S.TIPOBJETO='C' AND ls.StaCadeira='V'
@@ -154,7 +151,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
@@ -168,7 +165,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 WHERE S.TIPOBJETO='C' AND ls.StaCadeira='R'
 
@@ -179,7 +176,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 LEFT JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 WHERE S.TIPOBJETO='C' AND ls.StaCadeira IS NULL
 
@@ -190,7 +187,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
@@ -206,7 +203,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=s.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
@@ -221,7 +218,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON tosc.id_apresentacao=ap.id_apresentacao AND tosc.Indice=s.Indice AND tosc.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN tabTipBilhete tb ON tosc.id_ticket_type=tb.CodTipBilhete
@@ -234,7 +231,7 @@ INNER JOIN tabApresentacao A ON A.CODSALA = S.CODSALA
 INNER JOIN tabPeca P ON P.CODPECA = A.CODPECA
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON a.CodApresentacao=ap.CodApresentacao AND ap.id_evento=e.id_evento
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 INNER JOIN tabLugSala ls ON ls.INDICE = S.INDICE AND ls.CODAPRESENTACAO = A.CODAPRESENTACAO
 INNER JOIN CI_MIDDLEWAY..ticketoffice_shoppingcart_hist tosc ON tosc.id_apresentacao=ap.id_apresentacao AND tosc.Indice=s.Indice AND tosc.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 INNER JOIN tabTipBilhete tb ON tosc.id_ticket_type=tb.CodTipBilhete
@@ -280,7 +277,7 @@ SELECT DISTINCT
         ,CONVERT(BIGINT,ABS(l.ValPagto)*100) ValPagto
         ,(CASE WHEN pv.id_pedido_venda IS NOT NULL AND pv.in_situacao='P' THEN 1 ELSE 0 END) inprocess
         ,(CASE WHEN ls.Indice IS NOT NULL AND ls.StaCadeira='V' THEN 1 ELSE 0 END) isok
-INTO #resultAux
+INTO #resultAux__ac
 FROM tabLancamento l
 INNER JOIN tabTipBilhete tb ON l.CodTipBilhete=tb.CodTipBilhete
 INNER JOIN tabApresentacao a ON l.CodApresentacao=a.CodApresentacao
@@ -290,7 +287,7 @@ INNER JOIN tabSetor se ON se.CodSala=a.CodSala
 INNER JOIN tabSalDetalhe sd ON sd.Indice=l.Indice AND sd.CodSala=a.CodSala AND sd.CodSetor=se.CodSetor
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON p.CodPeca=e.CodPeca
 INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento AND ap.CodApresentacao=a.CodApresentacao
-INNER JOIN #ids i ON ap.id_apresentacao=i.ID 
+INNER JOIN #ids__ac i ON ap.id_apresentacao=i.ID 
 LEFT JOIN tabLugSala ls ON ls.INDICE = l.indice AND ls.CODAPRESENTACAO = l.CODAPRESENTACAO AND ls.CodTipBilhete=l.CodTipBilhete
 LEFT JOIN CI_MIDDLEWAY..mw_item_pedido_venda ipv ON ipv.id_apresentacao=ap.id_apresentacao AND ipv.Indice=l.Indice AND ipv.CodVenda=ls.CodVenda COLLATE SQL_Latin1_General_CP1_CI_AS
 LEFT JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
@@ -304,12 +301,12 @@ SELECT
         ,ra.CodTipBilhete
         ,ra.TipBilhete
         ,ra.ValPagto
-        ,ISNULL((SELECT COUNT(*) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=1 AND sub.ValPagto=ra.ValPagto AND sub.isok=1),0) sold
-        ,ISNULL((SELECT SUM(sub.ValPagto) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=1 AND sub.ValPagto=ra.ValPagto AND sub.isok=1),0) soldamount
-        ,ISNULL((SELECT SUM(sub.ValPagto) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=2 AND sub.ValPagto=ra.ValPagto),0) refundamount
-        ,ISNULL((SELECT COUNT(*) FROM #resultAux sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=2 AND sub.ValPagto=ra.ValPagto),0) refund
-INTO #resultToCount
-FROM #resultAux ra
+        ,ISNULL((SELECT COUNT(*) FROM #resultAux__ac sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=1 AND sub.ValPagto=ra.ValPagto AND sub.isok=1),0) sold
+        ,ISNULL((SELECT SUM(sub.ValPagto) FROM #resultAux__ac sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=1 AND sub.ValPagto=ra.ValPagto AND sub.isok=1),0) soldamount
+        ,ISNULL((SELECT SUM(sub.ValPagto) FROM #resultAux__ac sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=2 AND sub.ValPagto=ra.ValPagto),0) refundamount
+        ,ISNULL((SELECT COUNT(*) FROM #resultAux__ac sub WHERE sub.CodSala=ra.CodSala AND sub.CodSetor=ra.CodSetor AND sub.CodTipBilhete=ra.CodTipBilhete AND sub.CodTipLancamento=2 AND sub.ValPagto=ra.ValPagto),0) refund
+INTO #resultToCount__ac
+FROM #resultAux__ac ra
 GROUP BY ra.CodSala, ra.NomSala,ra.CodSetor,ra.NomSetor,ra.CodTipBilhete,ra.TipBilhete,ra.ValPagto
 ORDER BY ra.TipBilhete, ra.NomSetor
 
@@ -354,8 +351,8 @@ SELECT
         -- ,FORMAT(CONVERT(DECIMAL(12,2),(rf.soldamount-rf.refundamount)/100), 'N', 'pt-br') soldamountformatted
         ,@result_occupancyrate occupancyrate
         -- ,rf.soldamount soldamountt
-INTO #resultFinal
-FROM #resultToCount rf
+INTO #resultFinal__ac
+FROM #resultToCount__ac rf
 ORDER BY rf.TipBilhete, rf.NomSetor
 
 SELECT
@@ -388,11 +385,11 @@ SELECT
         ,rf.soldamount
         ,rf.soldamountformatted
         ,rf.occupancyrate
-        ,(SELECT SUM(sub.refund) FROM #resultFinal sub) total_refund
-        ,(SELECT SUM(sub.sold) FROM #resultFinal sub) total_sold
-        ,(SELECT SUM(sub.soldamount) FROM #resultFinal sub) total_soldamount
-        ,FORMAT(CONVERT(DECIMAL(12,2),(SELECT SUM(sub.soldamount) FROM #resultFinal sub)/100), 'N', 'pt-br') total_soldamountformatted
+        ,(SELECT SUM(sub.refund) FROM #resultFinal__ac sub) total_refund
+        ,(SELECT SUM(sub.sold) FROM #resultFinal__ac sub) total_sold
+        ,(SELECT SUM(sub.soldamount) FROM #resultFinal__ac sub) total_soldamount
+        ,FORMAT(CONVERT(DECIMAL(12,2),(SELECT SUM(sub.soldamount) FROM #resultFinal__ac sub)/100), 'N', 'pt-br') total_soldamountformatted
         ,CONVERT(VARCHAR(10),GETDATE(),103) + ' ' + CONVERT(VARCHAR(8),GETDATE(),114) [date]
         -- ,rf.soldamount soldamountt
-FROM #resultFinal rf
+FROM #resultFinal__ac rf
 ORDER BY rf.TipBilhete, rf.NomSetor

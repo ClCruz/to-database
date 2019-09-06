@@ -1,17 +1,3 @@
--- exec sp_executesql N'EXEC pr_accountingdebittype_save @P1,@P2,@P3,@P4,@P5,@P6,@P7,@P8,@P9,@P10,@P11,@P12',N'@P1 nvarchar(4000),@P2 nvarchar(4000),@P3 nvarchar(4000),@P4 nvarchar(4000),@P5 nvarchar(4000),@P6 nvarchar(4000),@P7 nvarchar(4000),@P8 nvarchar(4000),@P9 nvarchar(4000),@P10 nvarchar(4000),@P11 char(1),@P12 nvarchar(4000)',N'',N'testing',N'1.23',N'A',N'V',N'A',N'0',N'S',N'',N'0',NULL,N'N'
--- N''
--- N'testing'
--- N'1.23'
--- N'A'
--- N'V'
--- N'A'
--- N'0'
--- N'S'
--- N''
--- N''
--- NULL
--- N'N'
-
 ALTER PROCEDURE dbo.pr_accountingdebittype_save (@CodTipDebBordero INT
       ,@DebBordero varchar(40)
       ,@PerDesconto float
@@ -24,6 +10,7 @@ ALTER PROCEDURE dbo.pr_accountingdebittype_save (@CodTipDebBordero INT
       ,@ValIngressoExcedente numeric(10,2)
       ,@CodTipBilhete smallint
       ,@in_DescontaCartao VARCHAR(1)
+      ,@sell_channel VARCHAR(50)
 )
 
 AS
@@ -43,6 +30,9 @@ IF @ValIngressoExcedente = 0
 
 IF @CodTipBilhete = 0
     SET @CodTipBilhete = NULL
+
+IF @sell_channel = 'all'
+    SET @sell_channel = NULL
 
 IF @CodTipDebBordero != 0
 BEGIN
@@ -65,6 +55,7 @@ UPDATE [dbo].[tabTipDebBordero]
       ,[ValIngressoExcedente] = @ValIngressoExcedente
       ,[CodTipBilhete] = @CodTipBilhete
       ,[in_DescontaCartao] = @in_DescontaCartao
+      ,[sell_channel]=@sell_channel
  WHERE CodTipDebBordero=@CodTipDebBordero
 
 END
@@ -90,7 +81,8 @@ BEGIN
             ,[QtdLimiteIngrParaVenda]
             ,[ValIngressoExcedente]
             ,[CodTipBilhete]
-            ,[in_DescontaCartao])
+            ,[in_DescontaCartao]
+            ,[sell_channel])
         VALUES
             (@CodTipDebBordero
             ,@DebBordero
@@ -103,7 +95,8 @@ BEGIN
             ,@QtdLimiteIngrParaVenda
             ,@ValIngressoExcedente
             ,@CodTipBilhete
-            ,@in_DescontaCartao)
+            ,@in_DescontaCartao
+            ,@sell_channel)
 
 END
 
