@@ -1,6 +1,6 @@
 /*
 exec sp_executesql N'EXEC pr_admin_presentation_add @P1',N'@P1 nvarchar(4000)',N'<?xml version="1.0"?>
-<root><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Ter&#xE7;a" weekday="2" ValPeca="1.05" amount="105" HorSessao="22:00" dateStart="2019-04-22" dateEnd="2019-04-26" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quarta" weekday="3" ValPeca="1.05" amount="105" HorSessao="22:00" dateStart="2019-04-22" dateEnd="2019-04-26" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="33016" id_base="213" weekdayName="Quinta" weekday="4" ValPeca="1.05" amount="105" HorSessao="22:00" dateStart="2019-04-22" dateEnd="2019-04-26" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
+<root><item codSala="1" codApresentacao="" id_evento="44189" id_base="300" weekdayName="Sexta" weekday="5" ValPeca="24.90" amount="2490" HorSessao="20:00" dateStart="2019-10-05" dateEnd="2019-10-12" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/><item codSala="1" codApresentacao="" id_evento="44189" id_base="300" weekdayName="Sabado" weekday="6" ValPeca="24.90" amount="2490" HorSessao="20:00" dateStart="2019-10-05" dateEnd="2019-10-12" allowweb="true" allowwebBIT="1" allowticketoffice="true" allowticketofficeBIT="1"/></root>
 '
 */
 
@@ -176,6 +176,9 @@ UPDATE #toadd SET numBordero=numBordero+@maxNumBordero
 DECLARE @codApresentacaoCurrent INT
 
 SELECT @codApresentacaoCurrent=MAX(codApresentacao) FROM tabApresentacao
+
+IF (@codApresentacaoCurrent IS NULL)
+	SET @codApresentacaoCurrent = 1
 
 INSERT INTO tabApresentacao (codApresentacao,DatApresentacao,CodPeca,CodSala,HorSessao,ValPeca,NumBordero,StaAtivoWeb,StaAtivoBilheteria)
 SELECT 
