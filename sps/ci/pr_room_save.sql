@@ -72,7 +72,7 @@ BEGIN
             ,@IngressoNumerado
             ,@id_local_evento
             ,'A'
-            ,0
+            ,1
             ,300
             ,300
             ,1
