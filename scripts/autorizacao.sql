@@ -176,5 +176,26 @@ SELECT 'partner-paymenttype', 'Tipo de pagamento para o parceiro - Inclusão/Alt
 INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
 SELECT 'report-binpromotion-reduced', 'Venda para promoção BIN - Resumida', 'Venda para promoção BIN - Resumida','Relatório'
 
+INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
+SELECT 'shoppingfail-viewer', 'Compras com falhas', 'Compras com falhas','Buscas'
+
+INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
+SELECT 'search-viewer', 'Acesso ao menu de buscas', 'Acesso ao menu de buscas','Buscas'
+
+INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
+SELECT 'webpurchase-viewer', 'Lista de compras web', 'Acesso a lista de compras efetuadas na web','Buscas'
+
+INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
+SELECT 'webpurchase-gateway', 'Lista de compras web - URI Gateway', 'Acesso a URL do gateway com relação a compra','Buscas'
+
+INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
+SELECT 'webpurchase-detail', 'Lista de compras web - Detalhes', 'Acesso ao detalhes da compra','Buscas'
+
+INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
+SELECT 'webpurchase-print', 'Lista de compras web - Imprimir', 'Acesso a imprimir o ticket da compra','Buscas'
+
+INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
+SELECT 'webpurchase-refund', 'Lista de compras web - Estorno', 'Acesso para realizar o estorno da compra','Buscas'
+
 
 select * from CI_MIDDLEWAY..to_admin_authorization where [group]='Relatório'
