@@ -4,7 +4,7 @@ ALTER PROCEDURE dbo.pr_web_purchase_get (@uniquename VARCHAR(100) = NULL
 AS
 
 -- DECLARE @uniquename VARCHAR(100) = 'viveringressos'
---         ,@id_pedido_venda INT = 7485
+--         ,@id_pedido_venda INT = 7513
 
 
 SELECT DISTINCT
@@ -37,6 +37,7 @@ SELECT DISTINCT
     ,eei.uri
     ,eei.cardimage
     ,bs.ds_nome_base_sql
+    ,e.id_base
     ,(SELECT COUNT(*) FROM CI_MIDDLEWAY..mw_item_pedido_venda sub WHERE sub.id_pedido_venda=ipv.id_pedido_venda) tickets_count
 FROM CI_MIDDLEWAY..mw_item_pedido_venda ipv
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda

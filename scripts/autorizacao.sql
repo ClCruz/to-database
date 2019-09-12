@@ -192,7 +192,7 @@ INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[g
 SELECT 'webpurchase-detail', 'Lista de compras web - Detalhes', 'Acesso ao detalhes da compra','Buscas'
 
 INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
-SELECT 'webpurchase-print', 'Lista de compras web - Imprimir', 'Acesso a imprimir o ticket da compra','Buscas'
+SELECT 'webpurchase-print', 'Compra Web - Detalhe - Imprimir', 'Acesso a imprimir o ticket da compra','Buscas'
 
 INSERT INTO CI_MIDDLEWAY..to_admin_authorization (code, [name], [description],[group])
 SELECT 'webpurchase-refund', 'Lista de compras web - Estorno', 'Acesso para realizar o estorno da compra','Buscas'
