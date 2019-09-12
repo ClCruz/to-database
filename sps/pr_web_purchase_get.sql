@@ -36,6 +36,7 @@ SELECT DISTINCT
     ,pv.vl_total_pedido_venda
     ,eei.uri
     ,eei.cardimage
+    ,bs.ds_nome_base_sql
     ,(SELECT COUNT(*) FROM CI_MIDDLEWAY..mw_item_pedido_venda sub WHERE sub.id_pedido_venda=ipv.id_pedido_venda) tickets_count
 FROM CI_MIDDLEWAY..mw_item_pedido_venda ipv
 INNER JOIN CI_MIDDLEWAY..mw_pedido_venda pv ON ipv.id_pedido_venda=pv.id_pedido_venda
@@ -46,5 +47,6 @@ INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
 INNER JOIN CI_MIDDLEWAY..order_host oh ON pv.id_pedido_venda=oh.id_pedido_venda
 INNER JOIN CI_MIDDLEWAY..host h ON oh.id_host=h.id
 INNER JOIN CI_MIDDLEWAY..mw_meio_pagamento mp ON pv.id_meio_pagamento=mp.id_meio_pagamento
+INNER JOIN CI_MIDDLEWAY..mw_base bs ON e.id_base=bs.id_base
 WHERE pv.id_pedido_venda=@id_pedido_venda
 AND h.host=@uniquename
