@@ -33,6 +33,6 @@ LEFT JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
 LEFT JOIN tabTipPeca tp ON p.CodTipPeca=tp.CodTipPeca
 WHERE p.StaPeca='A' AND a.StaAtivoBilheteria='S' 
 AND (@id IS NULL OR p.CodPeca=@id)
-AND DATEADD(MINUTE, 100,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))>=GETDATE()
+AND GETDATE() <=  DATEADD(HOUR, 8,(CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')))
 --AND (@id IS NOT NULL OR CONVERT(DATETIME,CONVERT(VARCHAR(10),a.DatApresentacao,121) + ' ' + a.HorSessao + ':00.000')>=GETDATE())
 ORDER BY p.NomPeca
