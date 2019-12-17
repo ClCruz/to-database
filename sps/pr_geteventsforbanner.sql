@@ -34,7 +34,7 @@ h.id_evento
 FROM home h
 INNER JOIN CI_MIDDLEWAY..mw_evento e ON h.id_evento=e.id_evento
 INNER JOIN CI_MIDDLEWAY..mw_evento_extrainfo eei ON e.id_evento=eei.id_evento
-INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento
+INNER JOIN CI_MIDDLEWAY..mw_apresentacao ap ON e.id_evento=ap.id_evento and ap.dt_apresentacao >=getdate()
 INNER JOIN CI_MIDDLEWAY..partner_database pd ON e.id_base=pd.id_base AND pd.id_partner=@id_partner
 LEFT JOIN CI_MIDDLEWAY..genre g ON eei.id_genre=g.id
 WHERE 
