@@ -1,4 +1,4 @@
-ALTER PROCEDURE dbo.pr_search(@search VARCHAR(100), @type VARCHAR(100), @startAt INT = 0, @howMany INT = 10, @city VARCHAR(100) = NULL, @state VARCHAR(100) = NULL, @api VARCHAR(100))
+CREATE PROCEDURE dbo.pr_search(@search VARCHAR(100), @type VARCHAR(100), @startAt INT = 0, @howMany INT = 10, @city VARCHAR(100) = NULL, @state VARCHAR(100) = NULL, @api VARCHAR(100))
 
 AS
 
@@ -90,6 +90,13 @@ SELECT DISTINCT
     ,es.ds_estado
     ,es.sg_estado
     ,ap.dt_apresentacao
+
+	,(CASE WHEN (eei.maxAmount IS NULL OR eei.maxAmount = 0) AND (eei.minAmount IS NOT NULL AND eei.minAmount !=0) THEN FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100,(CASE WHEN ISNULL(eei.mmAmountIsPer,0) = 0 THEN 'C' ELSE 'g15' END), 'pt-br') ELSE FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100,(CASE WHEN ISNULL(eei.mmAmountIsPer,0) = 0 THEN 'C' ELSE 'g15' END), 'pt-br')+' a '+FORMAT(CONVERT(DECIMAL(16,2),eei.maxAmount)/100,(CASE WHEN ISNULL(eei.mmAmountIsPer,0) = 0 THEN 'C' ELSE 'g15' END), 'pt-br') END) valores
+    ,FORMAT(CONVERT(DECIMAL(16,2),eei.minAmount)/100, (CASE WHEN ISNULL(eei.mmAmountIsPer,0) = 0 THEN 'C' ELSE 'g15' END), 'pt-br') minAmount
+    ,FORMAT(CONVERT(DECIMAL(16,2),eei.maxAmount)/100,(CASE WHEN ISNULL(eei.mmAmountIsPer,0) = 0 THEN 'C' ELSE 'g15' END), 'pt-br') maxAmount
+    ,ISNULL(eei.mmAmountIsPer,0) mmAmountIsPer
+
+
     ,SUBSTRING(
             (
                 SELECT ','+subB.name + '|' + subB.img  AS [text()]
@@ -137,6 +144,10 @@ SELECT DISTINCT
     ,ds_municipio
     ,ds_estado
     ,sg_estado
+	,valores
+	,minAmount
+	,maxAmount
+	,mmAmountIsPer
     ,badges
     ,promotion
     ,(CASE WHEN convert(varchar(5), MIN(dt_apresentacao),103) = convert(varchar(5), MAX(dt_apresentacao),103) THEN convert(varchar(5), MIN(dt_apresentacao),103) ELSE  convert(varchar(5), MIN(dt_apresentacao),103) + ' - ' + convert(varchar(5), max(dt_apresentacao),103) END) datas
@@ -154,7 +165,11 @@ GROUP BY
     ,ds_municipio
     ,ds_estado
     ,sg_estado
-    ,badges
+    ,valores
+	,minAmount
+	,maxAmount
+	,mmAmountIsPer
+	,badges
     ,promotion
 )
 SELECT DISTINCT
@@ -169,6 +184,10 @@ SELECT DISTINCT
     ,ds_municipio
     ,ds_estado
     ,sg_estado
+    ,valores
+	,minAmount
+	,maxAmount
+	,mmAmountIsPer
     ,badges
     ,datas
     ,promotion
