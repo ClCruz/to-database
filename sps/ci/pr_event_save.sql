@@ -27,6 +27,7 @@ ALTER PROCEDURE dbo.pr_event_save (@api VARCHAR(100)
     ,@minAmount INT = 0
     ,@maxAmount INT = 0
     ,@in_entrega_ingresso BIT = 0
+    ,@showPin CHAR(1) = '0'
     ,@external_uri VARCHAR(1000) = NULL
     ,@mmAmountIsPer BIT = 0)
     
@@ -240,6 +241,7 @@ SET [description]=@description
     ,interest_rate=@interest_rate
     ,ticketoffice_ticketmodel=@ticketoffice_ticketmodel
     ,showonline=@showonline
+    ,showPin=@showPin
     ,minAmount=@minAmount
     ,maxAmount=@maxAmount
     ,mmAmountIsPer=@mmAmountIsPer
