@@ -25,23 +25,23 @@ AS
            ,transfer_interval
            ,transfer_enabled)
      VALUES
-           ('E2C CIA ENTRETENIMENTO ESPORTES TECNOLOGIA NEGÓCIOS LTDA'
-           ,'28427697000109'
-           ,'E2C CIA ENTRETENIMENTO ESPORTES TECNOLOGIA NEGÓCIOS LTDA'
-           ,'leonel.costa@ticketoffice.com.br'
+           ('BILHETERIA.COM'
+           ,'07.741.441/0001-93'
+           ,'BILHETERIA.COM'
+           ,'clcruz@clcruz.com.br'
            ,'11'
            ,'111111'
            ,'11'
            ,'11111'
-           ,'001'
-           ,'3554'
-           ,'8'
-           ,'24161'
+           ,'237'
+           ,'2062'
            ,'0'
+           ,'19778'
+           ,'5'
            ,'CC'
            ,@id_produtor
            ,1
-		   ,'re_cjqh35gsd04w46460f9nx9mz4'
+		   ,'re_ck7534cfe2zn8ur60coq35zh1'
            ,1
            ,'monthly'
            ,0)
